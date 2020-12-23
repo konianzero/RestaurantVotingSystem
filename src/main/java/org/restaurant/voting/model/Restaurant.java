@@ -6,8 +6,8 @@ import java.util.List;
 @Entity
 @Table(name = "restaurants", uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "restaurants_unique_idx"))
 public class Restaurant extends AbstractNamedEntity {
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
-    @OrderBy("date desc")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @OrderBy("date DESC")
     private List<Dish> menu;
 
     public Restaurant() {
