@@ -9,6 +9,8 @@ import java.util.List;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.repository.DishRepository;
 
+import static org.restaurant.voting.util.ValidationUtil.*;
+
 @Service
 public class DishService {
 
@@ -38,15 +40,15 @@ public class DishService {
     }
 
     public Dish get(int id, int restaurantId) {
-        return repository.get(id, restaurantId);
+        return checkNotFoundWithId(repository.get(id, restaurantId), id);
     }
 
     public void delete(int id, int restaurantId) {
-        repository.delete(id, restaurantId);
+        checkNotFoundWithId(repository.delete(id, restaurantId), id);
     }
 
     public Dish getWithRestaurant(int id) {
-        return repository.getWithRestaurant(id);
+        return checkNotFoundWithId(repository.getWithRestaurant(id), id);
     }
 
     public List<Dish> getAllByDate(int restaurantId, LocalDate date) {

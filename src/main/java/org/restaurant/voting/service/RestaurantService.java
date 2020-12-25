@@ -8,6 +8,8 @@ import java.util.List;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.repository.RestaurantRepository;
 
+import static org.restaurant.voting.util.ValidationUtil.*;
+
 @Service
 public class RestaurantService {
 
@@ -28,7 +30,7 @@ public class RestaurantService {
     }
 
     public Restaurant get(int id) {
-        return repository.get(id);
+        return checkNotFoundWithId(repository.get(id), id);
     }
 
     public List<Restaurant> getAll() {
@@ -36,6 +38,6 @@ public class RestaurantService {
     }
 
     public void delete(int id) {
-        repository.delete(id);
+        checkNotFoundWithId(repository.delete(id), id);
     }
 }

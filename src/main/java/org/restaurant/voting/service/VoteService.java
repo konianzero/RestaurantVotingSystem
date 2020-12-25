@@ -9,6 +9,8 @@ import java.util.List;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.VoteRepository;
 
+import static org.restaurant.voting.util.ValidationUtil.*;
+
 @Service
 public class VoteService {
 
@@ -19,7 +21,7 @@ public class VoteService {
     }
 
     public Vote get(int id, int userId) {
-        return voteRepository.get(id, userId);
+        return checkNotFoundWithId(voteRepository.get(id, userId), id);
     }
 
     public List<Vote> getAll(int userId) {
@@ -28,7 +30,8 @@ public class VoteService {
 
     public void update(Vote vote, int userId) {
         Assert.notNull(vote, "Vote must be not null");
-        voteRepository.save(vote, userId);
+        checkTimeOver();
+        checkNotFoundWithId(voteRepository.save(vote, userId), vote.getId());
     }
 
     public Vote create(Vote vote, int userId) {
@@ -38,6 +41,7 @@ public class VoteService {
     }
 
     public void delete(int id, int userId) {
-        voteRepository.delete(id, userId);
+        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        checkTimeOver();
     }
 }

@@ -8,6 +8,8 @@ import java.util.List;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.UserRepository;
 
+import static org.restaurant.voting.util.ValidationUtil.*;
+
 @Service
 public class UserService {
 
@@ -23,16 +25,16 @@ public class UserService {
     }
 
     public void delete(int id) {
-        userRepository.delete(id);
+        checkNotFoundWithId(userRepository.delete(id), id);
     }
 
     public User get(int id) {
-        return userRepository.get(id);
+        return checkNotFoundWithId(userRepository.get(id), id);
     }
 
     public User getByEmail(String email) {
         Assert.notNull(email, "Email must be not null");
-        return userRepository.getByEmail(email);
+        return checkNotFound(userRepository.getByEmail(email), "email=" + email);
     }
 
     public List<User> getAll() {
