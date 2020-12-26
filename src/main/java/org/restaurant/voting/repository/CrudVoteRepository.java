@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.restaurant.voting.model.Vote;
@@ -15,7 +14,7 @@ import org.restaurant.voting.model.Vote;
 public interface CrudVoteRepository extends JpaRepository<Vote, Integer> {
 
     @Query("SELECT v FROM Vote v WHERE v.user.id=:userId")
-    List<Vote> getAllByUserId(int userId);
+    List<Vote> getAllByUserId(@Param("userId") int userId);
 
     @Modifying
     @Transactional

@@ -32,7 +32,7 @@ public class DishService {
 
     public void update(Dish dish, int restaurantId) {
         Assert.notNull(dish, "Meal must be not null");
-        repository.save(dish, restaurantId);
+        checkNotFoundWithId(repository.save(dish, restaurantId), dish.id());
     }
 
     public List<Dish> getAll(int restaurantId) {
