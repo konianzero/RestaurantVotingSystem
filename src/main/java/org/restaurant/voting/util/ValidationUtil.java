@@ -3,11 +3,27 @@ package org.restaurant.voting.util;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import org.restaurant.voting.HasId;
+import org.restaurant.voting.util.exception.IllegalRequestDataException;
 import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
 
 public class ValidationUtil {
     private ValidationUtil() {
+    }
+
+    public static void checkNew(HasId bean) {
+        if (!bean.isNew()) {
+            throw new IllegalRequestDataException(bean + " must be new (id=null)");
+        }
+    }
+
+    public static void assureIdConsistent(HasId bean, int id) {
+        if (bean.isNew()) {
+            bean.setId(id);
+        } else if (bean.getId() != id) {
+            throw new IllegalRequestDataException(bean + " must be with id=" + id);
+        }
     }
 
     public static <T> T checkNotFoundWithId(T object, int id) {

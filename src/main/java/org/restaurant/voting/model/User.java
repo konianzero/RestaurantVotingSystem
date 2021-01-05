@@ -1,5 +1,7 @@
 package org.restaurant.voting.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.restaurant.voting.HasEmail;
@@ -25,10 +28,12 @@ public class User extends AbstractNamedEntity implements HasId, HasEmail {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 100)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "registered", nullable = false, columnDefinition = "TIMESTAMP DEFAULT now()")
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date registered = new Date();
 
     @Column(name = "enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
@@ -41,6 +46,10 @@ public class User extends AbstractNamedEntity implements HasId, HasEmail {
     private Set<Role> roles;
 
     public User() {
+    }
+
+    public User(Integer id, String name, String email, String password, boolean enabled, Role role, Role... roles) {
+        this(id, name, new Date(), email, password, enabled, EnumSet.of(role, roles));
     }
 
     public User(Integer id, String name, Date registered, String email, String password, boolean enabled, Set<Role> roles) {

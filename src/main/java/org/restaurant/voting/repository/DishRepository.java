@@ -1,5 +1,6 @@
 package org.restaurant.voting.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,7 @@ import org.restaurant.voting.model.Dish;
 
 @Repository
 public class DishRepository {
+    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "name");
 
     private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
@@ -21,7 +23,7 @@ public class DishRepository {
 
     @Transactional
     public Dish save(Dish dish, int restaurantId) {
-        if (!dish.isNew() && get(dish.getId(), restaurantId) == null) {
+        if (preSaveCheck(dish, restaurantId)) {
             return null;
         }
         dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId));
@@ -29,8 +31,16 @@ public class DishRepository {
     }
 
     @Transactional
-    public List<Dish> save(List<Dish> dishes) {
+    public List<Dish> save(List<Dish> dishes, int restaurantId) {
+        if (dishes.stream().anyMatch(dish -> preSaveCheck(dish, restaurantId))) {
+            return null;
+        }
+        dishes.forEach(dish -> dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId)));
         return crudDishRepository.saveAll(dishes);
+    }
+
+    private boolean preSaveCheck(Dish dish, int restaurantId) {
+        return !dish.isNew() && get(dish.getId(), restaurantId) == null;
     }
 
     public Dish get(int dishId, int restaurantId) {
@@ -39,16 +49,20 @@ public class DishRepository {
                                  .orElse(null);
     }
 
-    public Dish getWithRestaurant(int id) {
-        return crudDishRepository.getWithRestaurant(id);
+    public Dish getWithRestaurant(int id, int restaurantId) {
+        return crudDishRepository.getWithRestaurant(id, restaurantId);
     }
 
-    public List<Dish> getAll(int restaurantId) {
-        return crudDishRepository.getAll(restaurantId);
+    public List<Dish> getAll() {
+        return crudDishRepository.findAll(SORT_BY_NAME);
     }
 
-    public List<Dish> getAllByDate(int restaurantId, LocalDate date) {
-        return crudDishRepository.getAllByDate(restaurantId, date);
+    public List<Dish> getAllByRestaurant(int restaurantId) {
+        return crudDishRepository.getAllByRestaurant(restaurantId);
+    }
+
+    public List<Dish> getAllByRestaurantAndDate(int restaurantId, LocalDate date) {
+        return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);
     }
 
     public boolean delete(int dishId, int restaurantId) {
