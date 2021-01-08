@@ -2,6 +2,7 @@ package org.restaurant.voting.web.controller.user;
 
 import org.junit.jupiter.api.Test;
 
+import org.restaurant.voting.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -14,6 +15,7 @@ import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.restaurant.voting.TestUtil;
 
+import static org.restaurant.voting.TestUtil.userHttpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,8 +35,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         UserTo newTo = createTo(newUser);
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL + "/register")
-                                                             .contentType(MediaType.APPLICATION_JSON)
-                                                             .content(JsonUtil.writeValue(newTo))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(newTo))
         ).andExpect(status().isCreated());
 
         User created = TestUtil.readFromJson(action, User.class);
@@ -47,28 +49,37 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(ADMIN));
+                .andExpect(USER_MATCHER.contentJson(USER));
+    }
+
+    @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     void update() throws Exception {
-        User updated = getUpdated();
+        User updated = new User(USER_ID, "Nickolas", "u@gmail.com", "pass", true, Role.USER);
         perform(MockMvcRequestBuilders.put(REST_URL)
+                                      .with(userHttpBasic(USER))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(updated))))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        USER_MATCHER.assertMatch(service.get(ADMIN_ID), updated);
+        USER_MATCHER.assertMatch(service.get(USER_ID), updated);
     }
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL))
+        perform(MockMvcRequestBuilders.delete(REST_URL)
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isNoContent());
-        USER_MATCHER.assertMatch(service.getAll(), USER);
+        USER_MATCHER.assertMatch(service.getAll(), ADMIN);
     }
 }

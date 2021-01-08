@@ -19,6 +19,9 @@ import org.restaurant.voting.TestUtil;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.restaurant.voting.TestUtil.userHttpBasic;
+import static org.restaurant.voting.UserTestData.ADMIN;
+import static org.restaurant.voting.UserTestData.USER;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +41,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish newDish = getNew();
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL + RESTAURANT_1_ID)
+                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newDish))
         ).andExpect(status().isCreated());
@@ -55,6 +59,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         List<Dish> newMenu = getNewMenu();
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL + "menu/" + RESTAURANT_1_ID)
+                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newMenu))
         );
@@ -71,7 +76,8 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + DISH_1_ID)
-                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID)))
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -79,9 +85,17 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getUnauth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + DISH_1_ID)
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void getWith() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "with/" + DISH_1_ID)
-                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID)))
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -90,7 +104,8 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -99,7 +114,8 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT_1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT_1_ID)
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -109,7 +125,8 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void getMenuByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT_1_ID)
-                                      .queryParam("date", "2020-12-20"))
+                                      .queryParam("date", "2020-12-20")
+                                      .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -121,6 +138,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
                                       .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
@@ -131,7 +149,8 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH_1_ID)
-                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID)))
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID, RESTAURANT_1_ID));
     }

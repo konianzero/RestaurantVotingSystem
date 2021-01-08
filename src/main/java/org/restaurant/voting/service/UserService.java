@@ -1,5 +1,9 @@
 package org.restaurant.voting.service;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -8,13 +12,15 @@ import java.util.List;
 
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.UserRepository;
+import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.UserUtil;
 
 import static org.restaurant.voting.util.ValidationUtil.*;
 
-@Service
-public class UserService {
+@Service("userService")
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -25,10 +31,6 @@ public class UserService {
     public User create(User user) {
         Assert.notNull(user, "User must be not null");
         return userRepository.save(user);
-    }
-
-    public void delete(int id) {
-        checkNotFoundWithId(userRepository.delete(id), id);
     }
 
     public User get(int id) {
@@ -55,5 +57,18 @@ public class UserService {
         User user = get(userTo.getId());
         User updated = UserUtil.updateFromTo(user, userTo);
         userRepository.save(updated);
+    }
+
+    public void delete(int id) {
+        checkNotFoundWithId(userRepository.delete(id), id);
+    }
+
+    @Override
+    public AuthorizedUser loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.getByEmail(email.toLowerCase());
+        if (user == null) {
+            throw new UsernameNotFoundException("User " + email + " is not found");
+        }
+        return new AuthorizedUser(user);
     }
 }
