@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,6 +21,7 @@ import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.to.DishWithRestaurantTo;
 import org.restaurant.voting.util.ValidationUtil;
+import org.restaurant.voting.View;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import static org.restaurant.voting.util.ValidationUtil.checkNew;
@@ -39,7 +41,7 @@ public class DishRestController {
     }
 
     @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DishTo> createWithLocation(@RequestBody Dish dish, @PathVariable int restaurantId) {
+    public ResponseEntity<DishTo> createWithLocation(@Validated(View.Web.class) @RequestBody Dish dish, @PathVariable int restaurantId) {
         checkNew(dish);
         log.info("Create {} for restaurant {}", dish, restaurantId);
         Dish created = service.create(dish, restaurantId);
@@ -54,7 +56,7 @@ public class DishRestController {
     }
 
     @PostMapping(value = "/menu/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<DishTo> createMenu(@RequestBody List<Dish> dishes, @PathVariable int restaurantId) {
+    public List<DishTo> createMenu(@Validated(View.Web.class) @RequestBody List<Dish> dishes, @PathVariable int restaurantId) {
         dishes.forEach(ValidationUtil::checkNew);
         log.info("Create menu {} for restaurant {}", dishes, restaurantId);
         List<Dish> created = service.createAllForRestaurant(dishes, restaurantId);
@@ -91,7 +93,7 @@ public class DishRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Dish dish, @PathVariable int id, @RequestParam int restaurantId) {
+    public void update(@Validated(View.Web.class) @RequestBody Dish dish, @PathVariable int id, @RequestParam int restaurantId) {
         assureIdConsistent(dish, id);
         log.info("Update {} for restaurant {}", dish, restaurantId);
         service.update(dish, restaurantId);

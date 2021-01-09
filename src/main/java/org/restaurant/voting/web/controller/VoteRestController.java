@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.to.VoteTo;
 import org.restaurant.voting.service.VoteService;
+import org.restaurant.voting.View;
 
 import static org.restaurant.voting.util.SecurityUtil.authUserId;
 import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
@@ -36,7 +38,7 @@ public class VoteRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VoteTo> createWithLocation(@RequestBody VoteTo voteTo) {
+    public ResponseEntity<VoteTo> createWithLocation(@Validated(View.Web.class) @RequestBody VoteTo voteTo) {
         checkNew(voteTo);
         log.info("Create {}", voteTo);
         Vote created = service.create(voteTo, authUserId());
@@ -72,7 +74,7 @@ public class VoteRestController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody VoteTo voteTo, @PathVariable int id) {
+    public void update(@Validated(View.Web.class) @RequestBody VoteTo voteTo, @PathVariable int id) {
         assureIdConsistent(voteTo, id);
         log.info("Update {}", voteTo);
         service.update(voteTo, authUserId());

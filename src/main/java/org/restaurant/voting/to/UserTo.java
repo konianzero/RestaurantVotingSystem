@@ -6,22 +6,27 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.hibernate.validator.constraints.SafeHtml;
 import org.restaurant.voting.HasEmail;
+
+import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 public class UserTo extends BaseTo implements HasEmail, Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Size(min = 5, max = 100)
+    @Size(min = 2, max = 100)
     @NotBlank
+    @SafeHtml(whitelistType = NONE)
     private String name;
 
     @Email
     @NotBlank
-    @Size(min = 5, max = 100)
+    @Size(min = 5, max = 50)
+    @SafeHtml(whitelistType = NONE)
     private String email;
 
     @NotBlank
-    @Size(min = 5, max = 225)
+    @Size(min = 5, max = 100)
     private String password;
 
     public UserTo() {
@@ -77,7 +82,7 @@ public class UserTo extends BaseTo implements HasEmail, Serializable {
 
     @Override
     public String toString() {
-        return "DishTo{" +
+        return "UserTo{" +
                 "id=" + id +
                 ", name='" + name +
                 ", email='" + email +

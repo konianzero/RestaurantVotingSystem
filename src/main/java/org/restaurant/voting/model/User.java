@@ -2,6 +2,8 @@ package org.restaurant.voting.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +16,9 @@ import java.util.Set;
 
 import org.restaurant.voting.HasEmail;
 import org.restaurant.voting.HasId;
+import org.restaurant.voting.View;
+
+import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email", name = "users_unique_idx"))
@@ -23,6 +28,7 @@ public class User extends AbstractNamedEntity implements HasId, HasEmail {
     @Email
     @NotBlank
     @Size(min = 5, max = 50)
+    @SafeHtml(groups = {View.Web.class}, whitelistType = NONE)
     private String email;
 
     @Column(name = "password", nullable = false)

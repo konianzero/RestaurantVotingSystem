@@ -43,7 +43,7 @@ public class DishServiceTest extends AbstractServiceTest {
 
     @Test
     void getAll() {
-        DISH_MATCHER.assertMatch(service.getAll(), DISH_7, DISH_4, DISH_1, DISH_2, DISH_8, DISH_5, DISH_3, DISH_6);
+        DISH_MATCHER.assertMatch(service.getAll(), DISH_1, DISH_2, DISH_3, DISH_4, DISH_5, DISH_6, DISH_7, DISH_8);
     }
 
     @Test

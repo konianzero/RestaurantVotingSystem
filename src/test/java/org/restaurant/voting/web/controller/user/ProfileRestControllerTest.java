@@ -2,25 +2,25 @@ package org.restaurant.voting.web.controller.user;
 
 import org.junit.jupiter.api.Test;
 
-import org.restaurant.voting.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import org.restaurant.voting.model.User;
+import org.restaurant.voting.model.Role;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.restaurant.voting.TestUtil;
 
-import static org.restaurant.voting.TestUtil.userHttpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.util.UserUtil.*;
+import static org.restaurant.voting.TestUtil.userHttpBasic;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
 
@@ -37,7 +37,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 MockMvcRequestBuilders.post(REST_URL + "/register")
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newTo))
-        ).andExpect(status().isCreated());
+        ).andDo(print())
+         .andExpect(status().isCreated());
 
         User created = TestUtil.readFromJson(action, User.class);
         int newId = created.getId();
@@ -64,7 +65,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        User updated = new User(USER_ID, "Nickolas", "u@gmail.com", "pass", true, Role.USER);
+        User updated = new User(USER_ID, "Nickolas", "u@gmail.com", "password", true, Role.USER);
         perform(MockMvcRequestBuilders.put(REST_URL)
                                       .with(userHttpBasic(USER))
                                       .contentType(MediaType.APPLICATION_JSON)

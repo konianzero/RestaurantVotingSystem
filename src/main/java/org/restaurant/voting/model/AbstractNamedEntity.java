@@ -1,9 +1,15 @@
 package org.restaurant.voting.model;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import org.restaurant.voting.View;
+
+import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @MappedSuperclass
 public abstract class AbstractNamedEntity extends AbstractBaseEntity {
@@ -11,6 +17,7 @@ public abstract class AbstractNamedEntity extends AbstractBaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
+    @SafeHtml(groups = {View.Web.class}, whitelistType = NONE)
     protected String name;
 
     protected AbstractNamedEntity() {

@@ -3,12 +3,12 @@ package org.restaurant.voting;
 import org.restaurant.voting.model.Role;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.to.UserTo;
+import org.restaurant.voting.util.JsonUtil;
 
 import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
     public static final TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator(User.class, "registered", "password");
-    public static final TestMatcher<UserTo> USER_TO_MATCHER = TestMatcher.usingEqualsComparator(UserTo.class);
 
     public static final int NOT_FOUND = 100;
     public static final int ADMIN_ID = START_SEQ;
@@ -23,5 +23,9 @@ public class UserTestData {
 
     public static User getUpdated() {
         return new User(ADMIN_ID, "Mike", "newadmin@gmail.com", "newPass", true, Role.ADMIN, Role.USER);
+    }
+
+    public static String jsonWithPassword(User user, String pass) {
+        return JsonUtil.writeAdditionProps(user, "password", pass);
     }
 }

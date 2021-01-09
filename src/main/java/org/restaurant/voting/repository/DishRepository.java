@@ -11,7 +11,7 @@ import org.restaurant.voting.model.Dish;
 
 @Repository
 public class DishRepository {
-    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "name");
+    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "date");
 
     private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
