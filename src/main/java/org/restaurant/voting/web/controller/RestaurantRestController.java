@@ -60,7 +60,7 @@ public class RestaurantRestController {
         return createWithMenuTo(service.getWithMenu(id));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<RestaurantTo> getAll() {
         log.info("Get all restaurants");
         return getTos(service.getAll());

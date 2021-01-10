@@ -15,9 +15,9 @@ import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.restaurant.voting.TestUtil;
 
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.util.UserUtil.*;
 import static org.restaurant.voting.TestUtil.userHttpBasic;
@@ -82,5 +82,28 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                                       .with(userHttpBasic(USER)))
                 .andExpect(status().isNoContent());
         USER_MATCHER.assertMatch(service.getAll(), ADMIN);
+    }
+
+    @Test
+    void registerInvalid() throws Exception {
+        UserTo newTo = new UserTo(null, null, null, null);
+        perform(MockMvcRequestBuilders.post(REST_URL + "/register")
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(newTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        UserTo updatedTo = new UserTo(null, null, null, "password");
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                                      .with(userHttpBasic(USER))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
     }
 }

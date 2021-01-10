@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.restaurant.voting.HasEmail;
+import org.restaurant.voting.HasIdAndEmail;
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.View;
 
@@ -22,7 +22,7 @@ import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email", name = "users_unique_idx"))
-public class User extends AbstractNamedEntity implements HasId, HasEmail {
+public class User extends AbstractNamedEntity implements HasId, HasIdAndEmail {
 
     @Column(name = "email", nullable = false, unique = true)
     @Email

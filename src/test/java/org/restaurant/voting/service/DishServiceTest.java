@@ -12,6 +12,7 @@ import org.restaurant.voting.util.exception.NotFoundException;
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.*;
+import static org.restaurant.voting.DishTestData.NOT_FOUND;
 import static org.restaurant.voting.DishTestData.getUpdated;
 import static org.restaurant.voting.DishTestData.getNew;
 import static org.restaurant.voting.RestaurantTestData.*;

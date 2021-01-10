@@ -1,12 +1,18 @@
 package org.restaurant.voting.to;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+
 public class VoteTo extends BaseTo {
+    @NotNull
+    @Min(START_SEQ)
+    private int restaurantId;
     private LocalDate votingDate;
     private int userId;
-    private int restaurantId;
 
     public VoteTo() {
     }

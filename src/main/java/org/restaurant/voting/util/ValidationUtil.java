@@ -4,9 +4,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.restaurant.voting.HasId;
+import org.restaurant.voting.util.exception.ErrorType;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
 import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.slf4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ValidationUtil {
     private ValidationUtil() {
@@ -54,5 +58,29 @@ public class ValidationUtil {
         if (now.isAfter(endTime)) {
             throw new VotingTimeOverException("It's " + timeFormatter.format(now) + ". Time for voting is over!");
         }
+    }
+
+    public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {
+        Throwable rootCause = ValidationUtil.getRootCause(e);
+        if (logStackTrace) {
+            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
+        } else {
+            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+        }
+        return rootCause;
+    }
+
+    public static Throwable getRootCause(Throwable t) {
+        Throwable result = t;
+        Throwable cause;
+
+        while (null != (cause = result.getCause()) && (result != cause)) {
+            result = cause;
+        }
+        return result;
+    }
+
+    public static String getMessage(Throwable e) {
+        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
     }
 }

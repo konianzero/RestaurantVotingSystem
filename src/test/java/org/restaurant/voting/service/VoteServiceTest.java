@@ -55,12 +55,12 @@ public class VoteServiceTest extends AbstractServiceTest {
         VOTE_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_2_ID), VOTE_1, VOTE_2, VOTE_3);
     }
 
-    @Test
-    void update() {
-        Vote updated = getUpdated();
-        service.update(createTo(updated), ADMIN_ID);
-        VOTE_MATCHER.assertMatch(service.get(VOTE_1_ID, ADMIN_ID), updated);
-    }
+//    @Test
+//    void update() {
+//        Vote updated = getUpdated();
+//        service.update(createTo(updated), ADMIN_ID);
+//        VOTE_MATCHER.assertMatch(service.get(VOTE_1_ID, ADMIN_ID), updated);
+//    }
 
     @Test
     void delete() {

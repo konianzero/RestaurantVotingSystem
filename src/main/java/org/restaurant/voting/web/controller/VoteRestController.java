@@ -1,5 +1,6 @@
 package org.restaurant.voting.web.controller;
 
+import org.restaurant.voting.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,6 @@ import org.restaurant.voting.to.VoteTo;
 import org.restaurant.voting.service.VoteService;
 import org.restaurant.voting.View;
 
-import static org.restaurant.voting.util.SecurityUtil.authUserId;
 import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.ValidationUtil.checkNew;
 import static org.restaurant.voting.util.VoteUtil.createTo;
@@ -40,8 +40,9 @@ public class VoteRestController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VoteTo> createWithLocation(@Validated(View.Web.class) @RequestBody VoteTo voteTo) {
         checkNew(voteTo);
-        log.info("Create {}", voteTo);
-        Vote created = service.create(voteTo, authUserId());
+        int userId = SecurityUtil.authUserId();
+        log.info("Create {} of user {}", voteTo, userId);
+        Vote created = service.create(voteTo, userId);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                           .path(REST_URL + "/{id}")
                                                           .buildAndExpand(created.getId())
@@ -52,8 +53,9 @@ public class VoteRestController {
 
     @GetMapping("/{id}")
     public VoteTo get(@PathVariable int id) {
-        log.info("Get vote {} of user {}", id, authUserId());
-        return createTo(service.get(id, authUserId()));
+        int userId = SecurityUtil.authUserId();
+        log.info("Get vote {} of user {}", id, userId);
+        return createTo(service.get(id, userId));
     }
 
     @GetMapping
@@ -76,14 +78,16 @@ public class VoteRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Validated(View.Web.class) @RequestBody VoteTo voteTo, @PathVariable int id) {
         assureIdConsistent(voteTo, id);
-        log.info("Update {}", voteTo);
-        service.update(voteTo, authUserId());
+        int userId = SecurityUtil.authUserId();
+        log.info("Update {} of user {}", voteTo, userId);
+        service.update(voteTo, userId);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("Delete vote {}", id);
-        service.delete(id, authUserId());
+        int userId = SecurityUtil.authUserId();
+        log.info("Delete vote {} of user {}", id, userId);
+        service.delete(id, userId);
     }
 }

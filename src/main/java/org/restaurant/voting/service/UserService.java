@@ -1,9 +1,13 @@
 package org.restaurant.voting.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -16,6 +20,7 @@ import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.UserUtil;
 
+import static org.restaurant.voting.util.UserUtil.prepareToSave;
 import static org.restaurant.voting.util.ValidationUtil.*;
 
 @Service("userService")
@@ -23,14 +28,16 @@ import static org.restaurant.voting.util.ValidationUtil.*;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User create(User user) {
         Assert.notNull(user, "User must be not null");
-        return userRepository.save(user);
+        return prepareAndSave(user);
     }
 
     public User get(int id) {
@@ -46,9 +53,17 @@ public class UserService implements UserDetailsService {
         return userRepository.getAll();
     }
 
+    @CacheEvict(value = "users", allEntries = true)
+    @Transactional
+    public void enable(int id, boolean enabled) {
+        User user = get(id);
+        user.setEnabled(enabled);
+        userRepository.save(user);
+    }
+
     public void update(User user) {
         Assert.notNull(user, "User must be not null");
-        userRepository.save(user);
+        prepareAndSave(user);
     }
 
     @Transactional
@@ -61,6 +76,10 @@ public class UserService implements UserDetailsService {
 
     public void delete(int id) {
         checkNotFoundWithId(userRepository.delete(id), id);
+    }
+
+    private User prepareAndSave(User user) {
+        return userRepository.save(prepareToSave(user, passwordEncoder));
     }
 
     @Override

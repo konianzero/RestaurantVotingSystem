@@ -17,4 +17,6 @@
     </mvc:annotation-driven>
 
     <context:component-scan base-package="org.restaurant.voting.**.web"/>
+
+    <bean id="defaultValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 </beans>

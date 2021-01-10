@@ -15,14 +15,15 @@ import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.restaurant.voting.TestUtil.userHttpBasic;
-import static org.restaurant.voting.UserTestData.ADMIN;
-import static org.restaurant.voting.UserTestData.USER;
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.restaurant.voting.UserTestData.ADMIN;
+import static org.restaurant.voting.UserTestData.USER;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.util.RestaurantUtil.*;
+import static org.restaurant.voting.TestUtil.userHttpBasic;
 
 class RestaurantRestControllerTest extends AbstractControllerTest {
 
@@ -66,6 +67,14 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + 100)
+                                      .with(userHttpBasic(USER)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void getWith() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "with/" + RESTAURANT_1_ID)
                                       .with(userHttpBasic(USER)))
@@ -102,5 +111,42 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                                       .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
+    }
+
+    @Test
+    void createInvalid() throws Exception {
+        Restaurant newRestaurant = new Restaurant(null, "");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(newRestaurant)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Restaurant updated = new Restaurant(RESTAURANT_1_ID, "1");
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_1_ID)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    void updateHtmlUnsafe() throws Exception {
+        Restaurant newRestaurant = new Restaurant(null, "<script>alert(123)</script>");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(newRestaurant)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+
     }
 }

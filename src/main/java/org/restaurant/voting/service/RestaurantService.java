@@ -40,7 +40,7 @@ public class RestaurantService {
 
     public void update(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
-        repository.save(createNewFromTo(restaurantTo));
+        checkNotFoundWithId(repository.save(createNewFromTo(restaurantTo)), restaurantTo.getId());
     }
 
     public void delete(int id) {

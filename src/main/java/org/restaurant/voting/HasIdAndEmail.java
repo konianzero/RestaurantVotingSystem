@@ -1,5 +1,5 @@
 package org.restaurant.voting;
 
-public interface HasEmail {
+public interface HasIdAndEmail extends HasId {
     String getEmail();
 }

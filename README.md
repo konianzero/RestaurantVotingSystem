@@ -18,12 +18,156 @@ Build a voting system for deciding where to have lunch.
 
 Each restaurant provides new menu each day.
 
-As a result, provide a link to github repository. It should contain the code, README.md with API documentation and couple curl commands to test it.
+---
+#### Users
+
+- Mike (Email: admin@gmail.com, password: admin),
+- Nick (Email: user@gmail.com, password: userpass);
 
 ---
+## CURL commands for the restaurant voting system REST API.
 
-P.S.: Make sure everything works with latest version that is on github :)
+### Restaurant
 
-P.P.S.: Asume that your API will be used by a frontend developer to build frontend on top of that.
+**Create restaurant**
+```
+curl -s -X POST -d '{"name":"Restaurant3"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/restaurants --user admin@gmail.com:admin
+```
+**Get restaurant**
+```
+curl -s http://localhost:8080/voting/rest/restaurants/100016 --user user@gmail.com:userpass
+```
+**Get restaurant with a menu**
+```
+curl -s http://localhost:8080/voting/rest/restaurants/with/100016 --user user@gmail.com:userpass
+```
+**Get all restaurants**
+```
+curl -s http://localhost:8080/voting/rest/restaurants/ --user user@gmail.com:userpass
+```
+**Update restaurant**
+```
+curl -s -X PUT -d '{"id":100016,"name":"RestThree"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/restaurants/100016 --user admin@gmail.com:admin
+```
+**Delete restaurant**
+```
+curl -s -X DELETE http://localhost:8080/voting/rest/restaurants/100016 --user admin@gmail.com:admin
+```
 
----
+### Dish
+
+**Create dish**
+```
+curl -s -X POST -d '{"name":"Sandwich","price":6,"date":"2020-12-21"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes/100002 --user admin@gmail.com:admin
+```
+**Create a menu**
+```
+curl -s -X POST -d '[{"name":"Salad","price":4,"date":"2020-12-21"},{"name":"Tea","price":2,"date":"2020-12-21"}]' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes/menu/100002 --user admin@gmail.com:admin
+```
+**Get dish**
+```
+curl -s http://localhost:8080/voting/rest/dishes/100016?restaurantId=100002 --user user@gmail.com:userpass
+```
+**Get dish with a restaurant**
+```
+curl -s http://localhost:8080/voting/rest/dishes/with/100016?restaurantId=100002 --user user@gmail.com:userpass
+```
+**Get all dishes**
+```
+curl -s http://localhost:8080/voting/rest/dishes --user user@gmail.com:userpass
+```
+**Get menu**
+```
+curl -s http://localhost:8080/voting/rest/dishes/menu/100002 --user user@gmail.com:userpass
+```
+**Get menu by date**
+```
+curl -s http://localhost:8080/voting/rest/dishes/menu/100002?date=2020-12-21 --user user@gmail.com:userpass
+```
+**Update dish**
+```
+curl -s -X PUT -d '{"id":100016,"name":"Sandwich with tune","price":8,"date":"2020-12-21"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100016?restaurantId=100002 --user admin@gmail.com:admin
+```
+**Delete dish**
+```
+curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100016?restaurantId=100002 --user admin@gmail.com:admin
+```
+
+### User
+
+#### Admin
+
+**Create user**
+```
+curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password","enabled":true,"roles":["USER"]}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
+```
+**Get user**
+```
+curl -s http://localhost:8080/voting/rest/admin/users/100016 --user admin@gmail.com:admin
+```
+**Get user by Email**
+```
+curl -s http://localhost:8080/voting/rest/admin/users/by?email=new@gmail.com --user admin@gmail.com:admin
+```
+**Get all users**
+```
+curl -s http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
+```
+**Update user**
+```
+curl -s -X PUT -d '{"id":100016,"name":"NewAdmin","email":"newadmin@gmail.com","password":"password","enabled":true,"roles":["USER","ADMIN"]}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/admin/users/100016 --user admin@gmail.com:admin
+```
+**Delete user**
+```
+curl -s -X DELETE http://localhost:8080/voting/rest/admin/users/100016 --user admin@gmail.com:admin
+```
+
+#### User
+
+**Register user**
+```
+curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/profile/register
+```
+**Get user**
+```
+curl -s http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+```
+**Update user**
+```
+curl -s -X PUT -d '{"name":"UpdatedUser","email":"updated@gmail.com","password":"passupdate"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+```
+**Delete user**
+```
+curl -s -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+```
+
+### Vote
+
+**Create vote**
+```
+curl -s -X POST -d '{"restaurantId":100002}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/votes --user user@gmail.com:userpass
+```
+**Get vote**
+```
+curl -s http://localhost:8080/voting/rest/votes/100016 --user user@gmail.com:userpass
+```
+**Get all votes**
+```
+curl -s http://localhost:8080/voting/rest/votes --user user@gmail.com:userpass
+```
+**Get all votes of user**
+```
+curl -s http://localhost:8080/voting/rest/votes/by?userId=100000 --user user@gmail.com:userpass
+```
+**Get all votes for restaurant**
+```
+curl -s http://localhost:8080/voting/rest/votes/by?restaurantId=100002 --user user@gmail.com:userpass
+```
+**Update vote**
+```
+curl -s -X PUT -d '{"id":100016,"restaurantId":100003}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes/100016 --user user@gmail.com:userpass
+```
+**Delete vote**
+```
+curl -s -X DELETE http://localhost:8080/voting/rest/votes/100016 --user user@gmail.com:userpass
+```

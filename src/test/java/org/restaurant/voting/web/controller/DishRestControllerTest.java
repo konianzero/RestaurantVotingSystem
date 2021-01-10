@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -19,9 +21,11 @@ import org.restaurant.voting.TestUtil;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.TestUtil.userHttpBasic;
 import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.USER;
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -92,6 +96,15 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(USER)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void getWith() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "with/" + DISH_1_ID)
                                       .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
@@ -153,5 +166,43 @@ class DishRestControllerTest extends AbstractControllerTest {
                                       .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID, RESTAURANT_1_ID));
+    }
+
+    @Test
+    void createInvalid() throws Exception {
+        Dish invalid = new Dish(null, "Sandwich", FIRST_RESTAURANT, 0, null);
+        perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT_1_ID)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Dish invalid = new Dish(DISH_1_ID, "Miso soup", FIRST_RESTAURANT, 0, null);
+        perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    void updateHtmlUnsafe() throws Exception {
+        Dish invalid = new Dish(null, "<script>alert(123)</script>", FIRST_RESTAURANT, 6, LocalDate.now());
+        perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
     }
 }

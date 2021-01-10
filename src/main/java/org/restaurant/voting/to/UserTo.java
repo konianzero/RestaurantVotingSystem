@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.hibernate.validator.constraints.SafeHtml;
-import org.restaurant.voting.HasEmail;
+import org.restaurant.voting.HasIdAndEmail;
 
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
-public class UserTo extends BaseTo implements HasEmail, Serializable {
+public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Size(min = 2, max = 100)

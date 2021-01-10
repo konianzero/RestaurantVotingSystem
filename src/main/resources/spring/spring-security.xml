@@ -16,7 +16,7 @@
         <intercept-url pattern="/rest/restaurants/**" method="GET" access="isAuthenticated()"/>
         <intercept-url pattern="/rest/restaurants/**" access="hasRole('ROLE_ADMIN')"/>
 
-        <intercept-url pattern="/rest/vote/**" access="isAuthenticated()"/>
+        <intercept-url pattern="/rest/votes/**" access="isAuthenticated()"/>
         <csrf disabled="true"/>
     </http>
 

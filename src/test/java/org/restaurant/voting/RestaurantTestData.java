@@ -14,6 +14,7 @@ public class RestaurantTestData {
     public static final TestMatcher<RestaurantTo> RESTAURANT_TO_MATCHER = TestMatcher.usingEqualsComparator(RestaurantTo.class);
     public static final TestMatcher<RestaurantWithMenuTo> RESTAURANT_WITH_MENU_MATCHER = TestMatcher.usingEqualsComparator(RestaurantWithMenuTo.class);
 
+    public static final int NOT_FOUND = 1000;
     public static final int RESTAURANT_1_ID = START_SEQ + 2;
     public static final int RESTAURANT_2_ID = START_SEQ + 3;
 
