@@ -51,8 +51,4 @@ public abstract class AbstractControllerTest {
     public ResultMatcher errorType(ErrorType type) {
         return jsonPath("$.type").value(type.name());
     }
-
-    public ResultMatcher detailMessage(String code) {
-        return jsonPath("$.details").value(code);
-    }
 }

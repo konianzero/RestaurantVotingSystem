@@ -173,31 +173,32 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR));
     }
 
-//    @Test
-//    @Transactional(propagation = Propagation.NEVER)
-//    void createDuplicate() throws Exception {
-//        User newUser = getNew();
-//        newUser.setEmail("user@gmail.com");
-//        perform(MockMvcRequestBuilders.post(REST_URL)
-//                                      .contentType(MediaType.APPLICATION_JSON)
-//                                      .with(userHttpBasic(ADMIN))
-//                                      .content(jsonWithPassword(newUser, newUser.getPassword())))
-//                .andDo(print())
-//                .andExpect(status().isUnprocessableEntity())
-//                .andExpect(errorType(VALIDATION_ERROR));
-//    }
-//
-//    @Test
-//    @Transactional(propagation = Propagation.NEVER)
-//    void updateDuplicate() throws Exception {
-//        User updated = getUpdated();
-//        updated.setEmail("admin@gmail.com");
-//        perform(MockMvcRequestBuilders.put(REST_URL + ADMIN_ID)
-//                                      .with(userHttpBasic(ADMIN))
-//                                      .contentType(MediaType.APPLICATION_JSON)
-//                                      .content(jsonWithPassword(updated, updated.getPassword())))
-//                .andDo(print())
-//                .andExpect(status().isUnprocessableEntity())
-//                .andExpect(errorType(VALIDATION_ERROR));
-//    }
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicate() throws Exception {
+        User newUser = getNew();
+        newUser.setEmail("user@gmail.com");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .with(userHttpBasic(ADMIN))
+                                      .content(jsonWithPassword(newUser, newUser.getPassword())))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateDuplicate() throws Exception {
+        User updated = getUpdated();
+        updated.setId(USER_ID + 1);
+        updated.setEmail("new@gmail.com");
+        perform(MockMvcRequestBuilders.put(REST_URL + ADMIN_ID)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(jsonWithPassword(updated, updated.getPassword())))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
 }

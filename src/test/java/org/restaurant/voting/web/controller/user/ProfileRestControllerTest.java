@@ -14,6 +14,8 @@ import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.restaurant.voting.TestUtil;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -98,6 +100,19 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     void updateInvalid() throws Exception {
         UserTo updatedTo = new UserTo(null, null, null, "password");
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                                      .with(userHttpBasic(USER))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateDuplicate() throws Exception {
+        UserTo updatedTo = new UserTo(USER_ID, "Update", "admin@gmail.com", "password");
         perform(MockMvcRequestBuilders.put(REST_URL)
                                       .with(userHttpBasic(USER))
                                       .contentType(MediaType.APPLICATION_JSON)
