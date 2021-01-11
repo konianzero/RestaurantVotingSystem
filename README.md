@@ -1,11 +1,8 @@
-### Restaurant Voting System
+# Restaurant Voting System
 
----
-_Design and implement a REST API using Hibernate/Spring/SpringMVC (or Spring-Boot) **without frontend**_.
+_A restaurant voting system REST API using Hibernate/Spring/SpringMVC_.
 
-**The task is**:
-
-Build a voting system for deciding where to have lunch.
+Voting system for deciding where to have lunch.
 
  * 2 types of users: admin and regular users
  * Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
@@ -19,10 +16,58 @@ Build a voting system for deciding where to have lunch.
 Each restaurant provides new menu each day.
 
 ---
-#### Users
+
+**Launch**
+```
+mvn clean package org.codehaus.cargo:cargo-maven2-plugin:1.7.5:run
+```
+
+URL: http://localhost:8080/voting
+
+---
+## Users
 
 - Mike (Email: admin@gmail.com, password: admin),
 - Nick (Email: user@gmail.com, password: userpass);
+
+---
+
+## API documentation
+
+| API        | Method | Description                  | URL                                                                | User           |
+|------------|--------|------------------------------|--------------------------------------------------------------------|----------------|
+| Admin      | POST   | Create user                  | {URL}/rest/admin/users                                      | Admin          |
+|            | GET    | Get user                     | {URL}/rest/admin/users/{userId}                             | Admin          |
+|            | GET    | Get user by Email            | {URL}/rest/admin/users/by?email={email}                     | Admin          |
+|            | GET    | Get all user                 | {URL}/rest/admin/users                                      | Admin          |
+|            | UPDATE | Update user                  | {URL}/rest/admin/users/{userId}                             | Admin          |
+|            | DELETE | Delete user                  | {URL}/rest/admin/users/{userId}                             | Admin          |
+| Profile    | POST   | Create user                  | {URL}/rest/profile/register                                 | Not Authorized |
+|            | GET    | Get user                     | {URL}/rest/profile                                          | Authorized     |
+|            | UPDATE | Update user                  | {URL}/rest/profile                                          | Authorized     |
+|            | DELETE | Delete user                  | {URL}/rest/profile                                          | Authorized     |
+| Restaurant | POST   | Create restaurant            | {URL}/rest/restaurants                                      | Admin          |
+|            | GET    | Get restaurant               | {URL}/rest/restaurants/{restaurantId}                | Authorized     |
+|            | GET    | Get restaurant with menu     | {URL}/rest/restaurants/with/{restaurantId}           | Authorized     |
+|            | GET    | Get all restaurants          | {URL}/rest/restaurants/                              | Authorized     | 
+|            | PUT    | Update restaurant            | {URL}/rest/restaurants/{restaurantId}                | Admin          |
+|            | DELETE | Delete restaurant            | {URL}/rest/restaurants/{restaurantId}                | Admin          |
+| Dish       | POST   | Create dish                  | {URL}/rest/dishes/{restaurantId}                            | Admin          |
+|            | POST   | Create menu                  | {URL}/rest/dishes/menu/{restaurantId}                       | Admin          |
+|            | GET    | Get dish                     | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Authorized     |
+|            | GET    | Get dish with restaurant     | {URL}/rest/dishes/with/{dishId}?restaurantId={restaurantId} | Authorized     |
+|            | GET    | Get all dishes               | {URL}/rest/dishes                                           | Authorized     |
+|            | GET    | Get menu                     | {URL}/rest/dishes/menu/{restaurantId}                       | Authorized     |
+|            | GET    | Get menu by date             | {URL}/rest/dishes/menu/{restaurantId}?date={date}           | Authorized     |
+|            | PUT    | Update dish                  | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+|            | DELETE | Get menu by date             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+| Vote       | POST   | Create vote                  | {URL}/rest/votes                                            | Authorized     |
+|            | GET    | Get vote                     | {URL}/rest/votes/{voteId}                                   | Authorized     |
+|            | GET    | Get all votes                | {URL}/rest/votes                                            | Authorized     |
+|            | GET    | Get all votes of user        | {URL}/rest/votes/by?userId={userId}                         | Authorized     |
+|            | GET    | Get all votes for restaurant | {URL}/rest/votes/by?restaurantId={restaurantId}             | Authorized     |
+|            | PUT    | Get all votes                | {URL}/rest/votes/{voteId}                                   | Authorized     |
+|            | DELETE | Get all votes                | {URL}/rest/votes/{voteId}                                   | Authorized     |
 
 ---
 ## CURL commands for the restaurant voting system REST API.
