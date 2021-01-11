@@ -2,6 +2,7 @@ package org.restaurant.voting.util;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.function.BooleanSupplier;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.ErrorType;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 public class ValidationUtil {
+    public static final LocalTime END_VOTING_TIME =  LocalTime.of(23, 0);
+
     private ValidationUtil() {
     }
 
@@ -49,14 +52,13 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkTimeOver() {
-        LocalTime now = LocalTime.now();
-        LocalTime endTime = LocalTime.of(23, 0);
+    public static BooleanSupplier isVotingTimeOver = () -> LocalTime.now().isAfter(END_VOTING_TIME);
 
+    public static void checkTimeOver() {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        if (now.isAfter(endTime)) {
-            throw new VotingTimeOverException("It's " + timeFormatter.format(now) + ". Time for voting is over!");
+        if (isVotingTimeOver.getAsBoolean()) {
+            throw new VotingTimeOverException("It's " + timeFormatter.format(LocalTime.now()) + ". Time for voting is over!");
         }
     }
 

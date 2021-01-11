@@ -2,6 +2,7 @@ package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
 
+import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.restaurant.voting.model.Vote;
@@ -13,6 +14,7 @@ import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.getUpdated;
 import static org.restaurant.voting.VoteTestData.getNew;
+import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
 import static org.restaurant.voting.util.VoteUtil.createTo;
 
 public class VoteServiceTest extends AbstractServiceTest {
@@ -55,12 +57,16 @@ public class VoteServiceTest extends AbstractServiceTest {
         VOTE_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_2_ID), VOTE_1, VOTE_2, VOTE_3);
     }
 
-//    @Test
-//    void update() {
-//        Vote updated = getUpdated();
-//        service.update(createTo(updated), ADMIN_ID);
-//        VOTE_MATCHER.assertMatch(service.get(VOTE_1_ID, ADMIN_ID), updated);
-//    }
+    @Test
+    void update() {
+        Vote updated = getUpdated();
+        if (isVotingTimeOver.getAsBoolean()) {
+            assertThrows(VotingTimeOverException.class, () -> service.get(VOTE_2_ID, USER_ID));
+        } else {
+            service.update(createTo(updated), ADMIN_ID);
+            VOTE_MATCHER.assertMatch(service.get(VOTE_1_ID, ADMIN_ID), updated);
+        }
+    }
 
     @Test
     void delete() {

@@ -31,6 +31,8 @@ import static org.restaurant.voting.RestaurantTestData.RESTAURANT_2_ID;
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.NOT_FOUND;
+import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
+import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
 import static org.restaurant.voting.util.VoteUtil.getTos;
 import static org.restaurant.voting.util.VoteUtil.createTo;
 
@@ -117,19 +119,37 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(VOTE_TO_MATCHER.contentJson(getTos(List.of(VOTE_1, VOTE_2, VOTE_3))));
     }
 
-//    @Test
-//    void update() throws Exception {
-//        Vote updated = getUpdated();
-//        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_1_ID)
-//                                      .with(userHttpBasic(ADMIN))
-//                                      .contentType(MediaType.APPLICATION_JSON)
-//                                      .content(JsonUtil.writeValue(createTo(updated))))
-//                .andExpect(status().isNoContent());
-//
-//        Vote actual = service.get(VOTE_1_ID, ADMIN_ID);
-//        VOTE_MATCHER.assertMatch(actual, updated);
-//        RESTAURANT_MATCHER.assertMatch(actual.getRestaurant(), updated.getRestaurant());
-//    }
+    @Test
+    void update() throws Exception {
+        Vote updated = getUpdated();
+        if (isVotingTimeOver.getAsBoolean()) {
+            updateAfter(updated);
+        } else {
+            updateBefore(updated);
+        }
+    }
+
+    void updateAfter(Vote updated) throws Exception {
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_1_ID)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(createTo(updated))))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(TIME_OVER));
+    }
+
+    void updateBefore(Vote updated) throws Exception {
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_1_ID)
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON)
+                                      .content(JsonUtil.writeValue(createTo(updated))))
+                .andExpect(status().isNoContent());
+
+        Vote actual = service.get(VOTE_1_ID, ADMIN_ID);
+        VOTE_MATCHER.assertMatch(actual, updated);
+        RESTAURANT_MATCHER.assertMatch(actual.getRestaurant(), updated.getRestaurant());
+    }
 
     @Test
     void delete() throws Exception {
