@@ -154,7 +154,7 @@ curl -s http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.
 ```
 **Get user by Email**
 ```
-curl -s http://localhost:8080/voting/rest/admin/users/by?email=new@gmail.com --user admin@gmail.com:admin
+curl -s http://localhost:8080/voting/rest/admin/users/by?email=user@gmail.com --user admin@gmail.com:admin
 ```
 **Get all users**
 ```
@@ -196,7 +196,7 @@ curl -s -X POST -d '{"restaurantId":100002}' -H 'Content-Type:application/json;c
 ```
 **Get vote**
 ```
-curl -s http://localhost:8080/voting/rest/votes/100012 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/votes/100013 --user user@gmail.com:userpass
 ```
 **Get all votes**
 ```

@@ -2,6 +2,8 @@ package org.restaurant.voting.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
@@ -21,6 +23,7 @@ import org.restaurant.voting.View;
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email", name = "users_unique_idx"))
 public class User extends AbstractNamedEntity implements HasId, HasIdAndEmail {
 
@@ -45,6 +48,7 @@ public class User extends AbstractNamedEntity implements HasId, HasIdAndEmail {
     @Column(name = "enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
 
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")

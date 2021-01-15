@@ -1,6 +1,7 @@
 package org.restaurant.voting.service;
 
 import org.restaurant.voting.to.RestaurantTo;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -21,6 +22,7 @@ public class RestaurantService {
         this.repository = repository;
     }
 
+    @CacheEvict(value = "dishes", allEntries = true)
     public Restaurant create(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
         return repository.save(createNewFromTo(restaurantTo));
@@ -38,11 +40,13 @@ public class RestaurantService {
         return repository.getAll();
     }
 
+    @CacheEvict(value = "dishes", allEntries = true)
     public void update(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
         checkNotFoundWithId(repository.save(createNewFromTo(restaurantTo)), restaurantTo.getId());
     }
 
+    @CacheEvict(value = "dishes", allEntries = true)
     public void delete(int id) {
         checkNotFoundWithId(repository.delete(id), id);
     }

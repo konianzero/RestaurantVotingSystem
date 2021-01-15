@@ -1,10 +1,9 @@
 package org.restaurant.voting.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +34,7 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public User create(User user) {
         Assert.notNull(user, "User must be not null");
         return prepareAndSave(user);
@@ -49,6 +49,7 @@ public class UserService implements UserDetailsService {
         return checkNotFound(userRepository.getByEmail(email), "email=" + email);
     }
 
+    @Cacheable("users")
     public List<User> getAll() {
         return userRepository.getAll();
     }
@@ -61,19 +62,22 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public void update(User user) {
         Assert.notNull(user, "User must be not null");
         prepareAndSave(user);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void update(UserTo userTo) {
         Assert.notNull(userTo, "UserTo must be not null");
         User user = get(userTo.getId());
         User updated = UserUtil.updateFromTo(user, userTo);
-        userRepository.save(updated);
+        prepareAndSave(updated);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
         checkNotFoundWithId(userRepository.delete(id), id);
     }
