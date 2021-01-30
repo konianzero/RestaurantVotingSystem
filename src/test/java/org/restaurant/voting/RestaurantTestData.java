@@ -1,12 +1,12 @@
 package org.restaurant.voting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.to.RestaurantWithMenuTo;
 
-import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
 import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
 
 public class RestaurantTestData {
@@ -24,7 +24,7 @@ public class RestaurantTestData {
     public static final List<Restaurant> ALL_RESTAURANTS = List.of(SECOND_RESTAURANT, FIRST_RESTAURANT);
 
     static {
-        FIRST_RESTAURANT.setMenu(FIRST_RESTAURANT_MENU);
+        FIRST_RESTAURANT.setMenu(new ArrayList<>());
     }
 
     public static Restaurant getNew() {

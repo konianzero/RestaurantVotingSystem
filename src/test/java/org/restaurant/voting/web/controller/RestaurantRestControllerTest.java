@@ -1,6 +1,9 @@
 package org.restaurant.voting.web.controller;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,16 +18,18 @@ import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.USER;
 import static org.restaurant.voting.RestaurantTestData.*;
+import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
 import static org.restaurant.voting.util.RestaurantUtil.*;
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.restaurant.voting.TestUtil.userHttpBasic;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RestaurantRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = RestaurantRestController.REST_URL + '/';
@@ -32,6 +37,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Autowired
     private RestaurantService service;
 
+    @Order(1)
     @Test
     void createWithLocation() throws Exception {
         Restaurant newRestaurant = getNew();
@@ -50,6 +56,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         RESTAURANT_MATCHER.assertMatch(service.get(newId), newRestaurant);
     }
 
+    @Order(2)
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_2_ID)
@@ -60,22 +67,27 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(RESTAURANT_TO_MATCHER.contentJson(createTo(SECOND_RESTAURANT)));
     }
 
+    @Order(3)
     @Test
     void getUnauth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_2_ID))
                 .andExpect(status().isUnauthorized());
     }
 
+    @Order(4)
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + 100)
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
                                       .with(userHttpBasic(USER)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
 
+    @Order(5)
     @Test
     void getWith() throws Exception {
+        FIRST_RESTAURANT.getMenu().addAll(FIRST_RESTAURANT_MENU);
+
         perform(MockMvcRequestBuilders.get(REST_URL + "with/" + RESTAURANT_1_ID)
                                       .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
@@ -84,6 +96,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(createWithMenuTo(FIRST_RESTAURANT)));
     }
 
+    @Order(6)
     @Test
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
@@ -94,6 +107,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(RESTAURANT_TO_MATCHER.contentJson(getTos(ALL_RESTAURANTS)));
     }
 
+    @Order(7)
     @Test
     void update() throws Exception {
         Restaurant updated = getUpdated();
@@ -105,6 +119,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
     }
 
+    @Order(8)
     @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_1_ID)
@@ -113,6 +128,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
     }
 
+    @Order(9)
     @Test
     void createInvalid() throws Exception {
         Restaurant newRestaurant = new Restaurant(null, "");
@@ -125,6 +141,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR));
     }
 
+    @Order(10)
     @Test
     void updateInvalid() throws Exception {
         Restaurant updated = new Restaurant(RESTAURANT_1_ID, "1");
@@ -137,6 +154,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR));
     }
 
+    @Order(11)
     @Test
     void updateHtmlUnsafe() throws Exception {
         Restaurant newRestaurant = new Restaurant(null, "<script>alert(123)</script>");
@@ -147,6 +165,5 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));
-
     }
 }

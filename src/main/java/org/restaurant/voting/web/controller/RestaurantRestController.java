@@ -1,6 +1,5 @@
 package org.restaurant.voting.web.controller;
 
-import org.restaurant.voting.to.RestaurantWithMenuTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.service.RestaurantService;
 import org.restaurant.voting.to.RestaurantTo;
+import org.restaurant.voting.to.RestaurantWithMenuTo;
 import org.restaurant.voting.View;
 
 import static org.restaurant.voting.util.RestaurantUtil.*;
