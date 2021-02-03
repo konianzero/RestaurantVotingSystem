@@ -11,7 +11,7 @@ Voting system for deciding where to have lunch.
  * Only one vote counted per user
  * If user votes again the same day:
     - If it is before 11:00 we asume that he changed his mind.
-    - If it is after 11:00 then it is too late, vote can't be changed
+    - If it is after 11:00 then it is too late, vote can't be changed.
 
 Each restaurant provides new menu each day.
 
@@ -25,6 +25,7 @@ mvn clean package org.codehaus.cargo:cargo-maven2-plugin:1.8.2:run
 URL: http://localhost:8080/voting
 
 ---
+
 ## Users
 
 | Name  | Email             | Password  | Roles         |
@@ -50,7 +51,7 @@ URL: http://localhost:8080/voting
 |            | DELETE | Delete user                  | {URL}/rest/profile                                          | Authorized     |
 | Restaurant | POST   | Create restaurant            | {URL}/rest/restaurants                                      | Admin          |
 |            | GET    | Get restaurant               | {URL}/rest/restaurants/{restaurantId}                       | Authorized     |
-|            | GET    | Get restaurant with menu     | {URL}/rest/restaurants/with/{restaurantId}                  | Authorized     |
+|            | GET    | Get restaurant with menu     | {URL}/rest/restaurants/{restaurantId}/with                  | Authorized     |
 |            | GET    | Get all restaurants          | {URL}/rest/restaurants/                                     | Authorized     | 
 |            | PUT    | Update restaurant            | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
 |            | DELETE | Delete restaurant            | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
@@ -62,16 +63,14 @@ URL: http://localhost:8080/voting
 |            | GET    | Get menu                     | {URL}/rest/dishes/menu/{restaurantId}                       | Authorized     |
 |            | GET    | Get menu by date             | {URL}/rest/dishes/menu/{restaurantId}?date={date}           | Authorized     |
 |            | PUT    | Update dish                  | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
-|            | DELETE | Get menu by date             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+|            | DELETE | Delete dish                  | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
 | Vote       | POST   | Create vote                  | {URL}/rest/votes                                            | Authorized     |
 |            | GET    | Get vote                     | {URL}/rest/votes/{voteId}                                   | Authorized     |
-|            | GET    | Get all votes                | {URL}/rest/votes                                            | Authorized     |
-|            | GET    | Get all votes of user        | {URL}/rest/votes/by?userId={userId}                         | Authorized     |
-|            | GET    | Get all votes for restaurant | {URL}/rest/votes/by?restaurantId={restaurantId}             | Authorized     |
-|            | PUT    | Get all votes                | {URL}/rest/votes/{voteId}                                   | Authorized     |
-|            | DELETE | Get all votes                | {URL}/rest/votes/{voteId}                                   | Authorized     |
+|            | GET    | Get last vote of user        | {URL}/rest/votes/last                                       | Authorized     |
+|            | PUT    | Update vote                  | {URL}/rest/votes/{voteId}                                   | Authorized     |
 
 ---
+
 ## CURL commands for the restaurant voting system REST API.
 
 ### Restaurant
@@ -198,23 +197,11 @@ curl -s -X POST -d '{"restaurantId":100002}' -H 'Content-Type:application/json;c
 ```
 curl -s http://localhost:8080/voting/rest/votes/100013 --user user@gmail.com:userpass
 ```
-**Get all votes**
+**Get last vote of user**
 ```
-curl -s http://localhost:8080/voting/rest/votes --user user@gmail.com:userpass
-```
-**Get all votes of user**
-```
-curl -s http://localhost:8080/voting/rest/votes/by?userId=100000 --user user@gmail.com:userpass
-```
-**Get all votes for restaurant**
-```
-curl -s http://localhost:8080/voting/rest/votes/by?restaurantId=100002 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/votes/last --user admin@gmail.com:admin
 ```
 **Update vote**
 ```
 curl -s -X PUT -d '{"id":100015,"restaurantId":100003}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes/100015 --user user@gmail.com:userpass
-```
-**Delete vote**
-```
-curl -s -X DELETE http://localhost:8080/voting/rest/votes/100015 --user user@gmail.com:userpass
 ```

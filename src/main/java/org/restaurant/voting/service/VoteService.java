@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.VoteRepository;
@@ -33,16 +32,8 @@ public class VoteService {
         return checkNotFoundWithId(voteRepository.get(id, userId), id);
     }
 
-    public List<Vote> getAll() {
-        return voteRepository.getAll();
-    }
-
-    public List<Vote> getAllByUser(int userId) {
-        return voteRepository.getAllByUser(userId);
-    }
-
-    public List<Vote> getAllByRestaurant(int restaurantId) {
-        return voteRepository.getAllByRestaurant(restaurantId);
+    public Vote getLast(int userId) {
+        return voteRepository.getLast(LocalDate.now(), userId);
     }
 
     public void update(VoteTo voteTo, int userId) {
@@ -52,9 +43,5 @@ public class VoteService {
         Vote vote = get(voteTo.getId(), userId);
         vote.setVotingDate(voteTo.getVotingDate());
         checkNotFoundWithId(voteRepository.save(vote, voteTo.getRestaurantId(), userId), voteTo.getId());
-    }
-
-    public void delete(int id, int userId) {
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
     }
 }

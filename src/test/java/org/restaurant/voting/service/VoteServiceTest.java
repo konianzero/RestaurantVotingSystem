@@ -2,14 +2,13 @@ package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
 
-import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.util.exception.NotFoundException;
+import org.restaurant.voting.util.exception.VotingTimeOverException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.restaurant.voting.RestaurantTestData.RESTAURANT_2_ID;
 import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.getUpdated;
@@ -43,39 +42,19 @@ public class VoteServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void getAll() {
-        VOTE_MATCHER.assertMatch(service.getAll(), VOTE_3, VOTE_4, VOTE_1, VOTE_2);
-    }
-
-    @Test
-    void getAllByUser() {
-        VOTE_MATCHER.assertMatch(service.getAllByUser(USER_ID), VOTE_2, VOTE_4);
-    }
-
-    @Test
-    void getAllByRestaurant() {
-        VOTE_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_2_ID), VOTE_1, VOTE_2, VOTE_3);
+    void getLast() {
+        Vote last = service.getLast(ADMIN_ID);
+        VOTE_MATCHER.assertMatch(last, VOTE_3);
     }
 
     @Test
     void update() {
         Vote updated = getUpdated();
         if (isVotingTimeOver.getAsBoolean()) {
-            assertThrows(VotingTimeOverException.class, () -> service.get(VOTE_2_ID, USER_ID));
+            assertThrows(VotingTimeOverException.class, () -> service.get(VOTE_3_ID, ADMIN_ID));
         } else {
             service.update(createTo(updated), ADMIN_ID);
-            VOTE_MATCHER.assertMatch(service.get(VOTE_1_ID, ADMIN_ID), updated);
+            VOTE_MATCHER.assertMatch(service.get(VOTE_3_ID, ADMIN_ID), updated);
         }
-    }
-
-    @Test
-    void delete() {
-        service.delete(VOTE_2_ID, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(VOTE_2_ID, USER_ID));
-    }
-
-    @Test
-    void deleteNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.delete(VOTE_2_ID, ADMIN_ID));
     }
 }

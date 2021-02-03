@@ -1,16 +1,14 @@
 package org.restaurant.voting.repository;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import org.restaurant.voting.model.Vote;
 
 @Repository
 public class VoteRepository {
-    private static final Sort SORT_BY_DATE = Sort.by(Sort.Direction.DESC, "votingDate");
 
     private final CrudVoteRepository crudVoteRepository;
     private final CrudUserRepository crudUserRepository;
@@ -38,18 +36,7 @@ public class VoteRepository {
                                  .orElse(null);
     }
 
-    public List<Vote> getAll() { return crudVoteRepository.findAll(SORT_BY_DATE); }
-
-    public List<Vote> getAllByUser(int userId) {
-        return crudVoteRepository.getAllByUserId(userId);
+    public Vote getLast(LocalDate now, int userId) {
+        return crudVoteRepository.getByDate(now, userId);
     }
-
-    public List<Vote> getAllByRestaurant(int restaurantId) {
-        return crudVoteRepository.getAllByRestaurantId(restaurantId);
-    }
-
-    public boolean delete(int voteId, int userId) {
-        return crudVoteRepository.delete(voteId, userId) != 0;
-    }
-
 }

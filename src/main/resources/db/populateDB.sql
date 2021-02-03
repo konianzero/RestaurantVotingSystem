@@ -29,7 +29,7 @@ INSERT INTO dishes (restaurant_id, name, price, date) VALUES
     (100003, 'Potato', 10, '2020-12-20');
 
 INSERT INTO votes (user_id, restaurant_id, voting_date) VALUES
-    (100000, 100003, '2020-12-19'),
-    (100001, 100003, '2020-12-19'),
-    (100000, 100003, '2020-12-20'),
-    (100001, 100002, '2020-12-20');
+    (100000, 100003, DATE_SUB(NOW, 1 DAY)),
+    (100001, 100003, DATE_SUB(NOW, 1 DAY)),
+    (100000, 100003, NOW);
+--     (100001, 100002, NOW);

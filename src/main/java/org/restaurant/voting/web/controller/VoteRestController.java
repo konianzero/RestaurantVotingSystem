@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.to.VoteTo;
@@ -23,7 +21,6 @@ import org.restaurant.voting.View;
 import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.ValidationUtil.checkNew;
 import static org.restaurant.voting.util.VoteUtil.createTo;
-import static org.restaurant.voting.util.VoteUtil.getTos;
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,20 +55,11 @@ public class VoteRestController {
         return createTo(service.get(id, userId));
     }
 
-    @GetMapping
-    public List<VoteTo> getAll() {
-        log.info("Get all votes");
-        return getTos(service.getAll());
-    }
-
-    @GetMapping("/by")
-    public List<VoteTo> getAllBy(@RequestParam Optional<Integer> userId, @RequestParam Optional<Integer> restaurantId) {
-        log.info("Get all votes");
-        return getTos(userId.isPresent()
-                ? service.getAllByUser(userId.get())
-                : restaurantId.isPresent()
-                    ? service.getAllByRestaurant(restaurantId.get())
-                    : List.of());
+    @GetMapping("/last")
+    public VoteTo getLastVote() {
+        int userId = SecurityUtil.authUserId();
+        log.info("Get last vote");
+        return createTo(service.getLast(userId));
     }
 
     @PutMapping("/{id}")
@@ -81,13 +69,5 @@ public class VoteRestController {
         int userId = SecurityUtil.authUserId();
         log.info("Update {} of user {}", voteTo, userId);
         service.update(voteTo, userId);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
-        int userId = SecurityUtil.authUserId();
-        log.info("Delete vote {} of user {}", id, userId);
-        service.delete(id, userId);
     }
 }
