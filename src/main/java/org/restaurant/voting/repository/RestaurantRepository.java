@@ -4,7 +4,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.restaurant.voting.model.Restaurant;
 
@@ -12,31 +14,44 @@ import org.restaurant.voting.model.Restaurant;
 public class RestaurantRepository {
     private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.DESC, "name");
 
-    private final CrudRestaurantRepository repository;
+    private final CrudDishRepository crudDishRepository;
+    private final CrudRestaurantRepository crudRestaurantRepository;
 
-    public RestaurantRepository(CrudRestaurantRepository repository) {
-        this.repository = repository;
+    public RestaurantRepository(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository) {
+        this.crudDishRepository = crudDishRepository;
+        this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
     @Transactional
     public Restaurant save(Restaurant restaurant) {
-        return repository.save(restaurant);
+        return crudRestaurantRepository.save(restaurant);
     }
 
     public Restaurant get(int id) {
-        return repository.findById(id)
+        return crudRestaurantRepository.findById(id)
                          .orElse(null);
     }
 
     public Restaurant getWithDishes(int id) {
-        return repository.getWithDishes(id);
+        return crudRestaurantRepository.getWithDishes(id);
     }
 
     public List<Restaurant> getAll() {
-        return repository.findAll(SORT_BY_NAME);
+        return crudRestaurantRepository.findAll(SORT_BY_NAME);
+    }
+
+    public List<Restaurant> getAllWithTodayMenu() {
+        return crudRestaurantRepository.findAll(SORT_BY_NAME)
+                                       .stream()
+                                       .peek(r ->
+                                               r.setMenu(
+                                                       crudDishRepository.getAllByRestaurantAndDate(r.getId(), LocalDate.of(2020, 12, 20))
+                                               )
+                                       )
+                                       .collect(Collectors.toList());
     }
 
     public boolean delete(int id) {
-        return repository.delete(id) != 0;
+        return crudRestaurantRepository.delete(id) != 0;
     }
 }

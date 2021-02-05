@@ -32,12 +32,16 @@ public class RestaurantService {
         return checkNotFoundWithId(repository.get(id), id);
     }
 
-    public Restaurant getWithMenu(int id) {
+    public Restaurant getWithDishes(int id) {
         return checkNotFoundWithId(repository.getWithDishes(id), id);
     }
 
     public List<Restaurant> getAll() {
         return repository.getAll();
+    }
+
+    public List<Restaurant> getAllWithTodayMenu() {
+        return repository.getAllWithTodayMenu();
     }
 
     @CacheEvict(value = "dishes", allEntries = true)

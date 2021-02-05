@@ -25,6 +25,8 @@ import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.USER;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
+import static org.restaurant.voting.DishTestData.TODAY_REST1_MENU;
+import static org.restaurant.voting.DishTestData.TODAY_REST2_MENU;
 import static org.restaurant.voting.util.RestaurantUtil.*;
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.restaurant.voting.TestUtil.userHttpBasic;
@@ -86,9 +88,10 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Order(5)
     @Test
     void getWith() throws Exception {
+        initMenu();
         FIRST_RESTAURANT.getMenu().addAll(FIRST_RESTAURANT_MENU);
 
-        perform(MockMvcRequestBuilders.get(REST_URL + "with/" + RESTAURANT_1_ID)
+        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_1_ID + "/with")
                                       .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -109,6 +112,21 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
 
     @Order(7)
     @Test
+    void getAllForToday() throws Exception {
+        initMenu();
+        FIRST_RESTAURANT.getMenu().addAll(TODAY_REST1_MENU);
+        SECOND_RESTAURANT.getMenu().addAll(TODAY_REST2_MENU);
+
+        perform(MockMvcRequestBuilders.get(REST_URL + "/today")
+                                      .with(userHttpBasic(USER)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(getTosWithMenu(ALL_RESTAURANTS)));
+    }
+
+    @Order(8)
+    @Test
     void update() throws Exception {
         Restaurant updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_1_ID)
@@ -119,7 +137,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
     }
 
-    @Order(8)
+    @Order(9)
     @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_1_ID)
@@ -128,7 +146,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
     }
 
-    @Order(9)
+    @Order(10)
     @Test
     void createInvalid() throws Exception {
         Restaurant newRestaurant = new Restaurant(null, "");
@@ -141,7 +159,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR));
     }
 
-    @Order(10)
+    @Order(11)
     @Test
     void updateInvalid() throws Exception {
         Restaurant updated = new Restaurant(RESTAURANT_1_ID, "1");
@@ -154,7 +172,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR));
     }
 
-    @Order(11)
+    @Order(12)
     @Test
     void updateHtmlUnsafe() throws Exception {
         Restaurant newRestaurant = new Restaurant(null, "<script>alert(123)</script>");

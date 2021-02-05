@@ -2,12 +2,17 @@ package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
 
+import org.restaurant.voting.model.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.util.exception.NotFoundException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.restaurant.voting.DishTestData.TODAY_MENU;
 import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
 import static org.restaurant.voting.DishTestData.DISH_MATCHER;
 import static org.restaurant.voting.RestaurantTestData.*;
@@ -28,27 +33,36 @@ public class RestaurantServiceTest extends AbstractServiceTest  {
     }
 
     @Test
-    void update() {
-        Restaurant updated = getUpdated();
-        service.update(createTo(updated));
-        RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
-    }
-
-    @Test
     void get() {
         Restaurant actual = service.get(RESTAURANT_1_ID);
         RESTAURANT_MATCHER.assertMatch(actual, FIRST_RESTAURANT);
     }
 
     @Test
-    void getWithMenu() {
-        Restaurant actual = service.getWithMenu(RESTAURANT_1_ID);
+    void getWithDishes() {
+        Restaurant actual = service.getWithDishes(RESTAURANT_1_ID);
         DISH_MATCHER.assertMatch(actual.getMenu(), FIRST_RESTAURANT_MENU);
     }
 
     @Test
     void getAll() {
         RESTAURANT_MATCHER.assertMatch(service.getAll(), SECOND_RESTAURANT, FIRST_RESTAURANT);
+    }
+
+    @Test
+    void getAllWithTodayMenu() {
+        List<Dish> today = service.getAllWithTodayMenu()
+                                   .stream()
+                                   .flatMap(r -> r.getMenu().stream())
+                                   .collect(Collectors.toList());
+        DISH_MATCHER.assertMatch(today, TODAY_MENU);
+    }
+
+    @Test
+    void update() {
+        Restaurant updated = getUpdated();
+        service.update(createTo(updated));
+        RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
     }
 
     @Test

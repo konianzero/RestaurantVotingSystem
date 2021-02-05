@@ -26,4 +26,10 @@ public class RestaurantUtil {
     public static RestaurantWithMenuTo createWithMenuTo(Restaurant restaurant) {
         return new RestaurantWithMenuTo(restaurant.getId(), restaurant.getName(), restaurant.getMenu());
     }
+
+    public static List<RestaurantWithMenuTo> getTosWithMenu(List<Restaurant> restaurants) {
+        return restaurants.stream()
+                          .map(RestaurantUtil::createWithMenuTo)
+                          .collect(Collectors.toList());
+    }
 }

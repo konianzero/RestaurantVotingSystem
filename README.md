@@ -37,37 +37,38 @@ URL: http://localhost:8080/voting
 
 ## API documentation
 
-| API        | Method | Description                  | URL                                                         | User           |
-|------------|--------|------------------------------|-------------------------------------------------------------|----------------|
-| Admin      | POST   | Create user                  | {URL}/rest/admin/users                                      | Admin          |
-|            | GET    | Get user                     | {URL}/rest/admin/users/{userId}                             | Admin          |
-|            | GET    | Get user by Email            | {URL}/rest/admin/users/by?email={email}                     | Admin          |
-|            | GET    | Get all user                 | {URL}/rest/admin/users                                      | Admin          |
-|            | UPDATE | Update user                  | {URL}/rest/admin/users/{userId}                             | Admin          |
-|            | DELETE | Delete user                  | {URL}/rest/admin/users/{userId}                             | Admin          |
-| Profile    | POST   | Create user                  | {URL}/rest/profile/register                                 | Not Authorized |
-|            | GET    | Get user                     | {URL}/rest/profile                                          | Authorized     |
-|            | UPDATE | Update user                  | {URL}/rest/profile                                          | Authorized     |
-|            | DELETE | Delete user                  | {URL}/rest/profile                                          | Authorized     |
-| Restaurant | POST   | Create restaurant            | {URL}/rest/restaurants                                      | Admin          |
-|            | GET    | Get restaurant               | {URL}/rest/restaurants/{restaurantId}                       | Authorized     |
-|            | GET    | Get restaurant with menu     | {URL}/rest/restaurants/{restaurantId}/with                  | Authorized     |
-|            | GET    | Get all restaurants          | {URL}/rest/restaurants/                                     | Authorized     | 
-|            | PUT    | Update restaurant            | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
-|            | DELETE | Delete restaurant            | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
-| Dish       | POST   | Create dish                  | {URL}/rest/dishes/{restaurantId}                            | Admin          |
-|            | POST   | Create menu                  | {URL}/rest/dishes/menu/{restaurantId}                       | Admin          |
-|            | GET    | Get dish                     | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Authorized     |
-|            | GET    | Get dish with restaurant     | {URL}/rest/dishes/with/{dishId}?restaurantId={restaurantId} | Authorized     |
-|            | GET    | Get all dishes               | {URL}/rest/dishes                                           | Authorized     |
-|            | GET    | Get menu                     | {URL}/rest/dishes/menu/{restaurantId}                       | Authorized     |
-|            | GET    | Get menu by date             | {URL}/rest/dishes/menu/{restaurantId}?date={date}           | Authorized     |
-|            | PUT    | Update dish                  | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
-|            | DELETE | Delete dish                  | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
-| Vote       | POST   | Create vote                  | {URL}/rest/votes                                            | Authorized     |
-|            | GET    | Get vote                     | {URL}/rest/votes/{voteId}                                   | Authorized     |
-|            | GET    | Get last vote of user        | {URL}/rest/votes/last                                       | Authorized     |
-|            | PUT    | Update vote                  | {URL}/rest/votes/{voteId}                                   | Authorized     |
+| API        | Method | Description                             | URL                                                         | User           |
+|------------|--------|-----------------------------------------|-------------------------------------------------------------|----------------|
+| Admin      | POST   | Create user                             | {URL}/rest/admin/users                                      | Admin          |
+|            | GET    | Get user                                | {URL}/rest/admin/users/{userId}                             | Admin          |
+|            | GET    | Get user by Email                       | {URL}/rest/admin/users/by?email={email}                     | Admin          |
+|            | GET    | Get all user                            | {URL}/rest/admin/users                                      | Admin          |
+|            | UPDATE | Update user                             | {URL}/rest/admin/users/{userId}                             | Admin          |
+|            | DELETE | Delete user                             | {URL}/rest/admin/users/{userId}                             | Admin          |
+| Profile    | POST   | Create user                             | {URL}/rest/profile/register                                 | Not Authorized |
+|            | GET    | Get user                                | {URL}/rest/profile                                          | Authorized     |
+|            | UPDATE | Update user                             | {URL}/rest/profile                                          | Authorized     |
+|            | DELETE | Delete user                             | {URL}/rest/profile                                          | Authorized     |
+| Restaurant | POST   | Create restaurant                       | {URL}/rest/restaurants                                      | Admin          |
+|            | GET    | Get restaurant                          | {URL}/rest/restaurants/{restaurantId}                       | Authorized     |
+|            | GET    | Get restaurant with dishes              | {URL}/rest/restaurants/{restaurantId}/with                  | Authorized     |
+|            | GET    | Get all restaurants                     | {URL}/rest/restaurants/                                     | Authorized     |
+|            | GET    | Get all restaurants with today's dishes | {URL}/rest/restaurants/today                                | Authorized     |  
+|            | PUT    | Update restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
+|            | DELETE | Delete restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
+| Dish       | POST   | Create dish                             | {URL}/rest/dishes/{restaurantId}                            | Admin          |
+|            | POST   | Create menu                             | {URL}/rest/dishes/menu/{restaurantId}                       | Admin          |
+|            | GET    | Get dish                                | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Authorized     |
+|            | GET    | Get dish with restaurant                | {URL}/rest/dishes/with/{dishId}?restaurantId={restaurantId} | Authorized     |
+|            | GET    | Get all dishes                          | {URL}/rest/dishes                                           | Authorized     |
+|            | GET    | Get menu                                | {URL}/rest/dishes/menu/{restaurantId}                       | Authorized     |
+|            | GET    | Get menu by date                        | {URL}/rest/dishes/menu/{restaurantId}?date={date}           | Authorized     |
+|            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+|            | DELETE | Delete dish                             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+| Vote       | POST   | Create vote                             | {URL}/rest/votes                                            | Authorized     |
+|            | GET    | Get vote                                | {URL}/rest/votes/{voteId}                                   | Authorized     |
+|            | GET    | Get last vote of user                   | {URL}/rest/votes/last                                       | Authorized     |
+|            | PUT    | Update vote                             | {URL}/rest/votes/{voteId}                                   | Authorized     |
 
 ---
 
@@ -83,13 +84,17 @@ curl -s -X POST -d '{"name":"Restaurant3"}' -H 'Content-Type:application/json;ch
 ```
 curl -s http://localhost:8080/voting/rest/restaurants/100002 --user user@gmail.com:userpass
 ```
-**Get restaurant with a menu**
+**Get restaurant with dishes**
 ```
-curl -s http://localhost:8080/voting/rest/restaurants/with/100002 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/restaurants/100002/with --user user@gmail.com:userpass
 ```
 **Get all restaurants**
 ```
 curl -s http://localhost:8080/voting/rest/restaurants/ --user user@gmail.com:userpass
+```
+**Get all restaurants with today's dishes**
+```
+curl -s http://localhost:8080/voting/rest/restaurants/today --user user@gmail.com:userpass
 ```
 **Update restaurant**
 ```

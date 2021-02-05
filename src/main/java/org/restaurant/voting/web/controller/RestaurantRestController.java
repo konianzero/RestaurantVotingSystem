@@ -54,16 +54,22 @@ public class RestaurantRestController {
         return createTo(service.get(id));
     }
 
-    @GetMapping("/with/{id}")
+    @GetMapping("/{id}/with")
     public RestaurantWithMenuTo getWith(@PathVariable int id) {
         log.info("Get restaurant {} with menu", id);
-        return createWithMenuTo(service.getWithMenu(id));
+        return createWithMenuTo(service.getWithDishes(id));
     }
 
     @GetMapping
     public List<RestaurantTo> getAll() {
         log.info("Get all restaurants");
         return getTos(service.getAll());
+    }
+
+    @GetMapping("/today")
+    public List<RestaurantWithMenuTo> getAllForToday() {
+        log.info("Get all restaurants");
+        return getTosWithMenu(service.getAllWithTodayMenu());
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
