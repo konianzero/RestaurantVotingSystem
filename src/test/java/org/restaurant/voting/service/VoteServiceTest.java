@@ -51,7 +51,7 @@ public class VoteServiceTest extends AbstractServiceTest {
     void update() {
         Vote updated = getUpdated();
         if (isVotingTimeOver.getAsBoolean()) {
-            assertThrows(VotingTimeOverException.class, () -> service.get(VOTE_3_ID, ADMIN_ID));
+            assertThrows(VotingTimeOverException.class, () -> service.update(createTo(updated), ADMIN_ID));
         } else {
             service.update(createTo(updated), ADMIN_ID);
             VOTE_MATCHER.assertMatch(service.get(VOTE_3_ID, ADMIN_ID), updated);

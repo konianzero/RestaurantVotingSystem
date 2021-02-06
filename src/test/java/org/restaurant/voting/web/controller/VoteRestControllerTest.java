@@ -107,7 +107,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(updated))))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isConflict())
                 .andExpect(errorType(TIME_OVER));
     }
 
