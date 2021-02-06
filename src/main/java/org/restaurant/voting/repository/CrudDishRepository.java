@@ -17,8 +17,8 @@ public interface CrudDishRepository extends JpaRepository<Dish, Integer> {
 
 //    @Query("SELECT d FROM Dish d JOIN FETCH d.restaurant WHERE d.id=:id")
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT d FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id=:id")
-    Dish getWithRestaurant(@Param("id") int id, @Param("restaurantId") int restaurantId);
+    @Query("SELECT d FROM Dish d WHERE d.id=:id")
+    Dish getWithRestaurant(@Param("id") int id);
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id=:restaurantId ORDER BY d.date DESC")
     List<Dish> getAllByRestaurant(@Param("restaurantId") int restaurantId);
@@ -28,6 +28,6 @@ public interface CrudDishRepository extends JpaRepository<Dish, Integer> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Dish d WHERE d.id=:dishId AND d.restaurant.id=:restaurantId")
-    int delete(@Param("dishId") int dishId, @Param("restaurantId") int restaurantId);
+    @Query("DELETE FROM Dish d WHERE d.id=:dishId")
+    int delete(@Param("dishId") int dishId);
 }

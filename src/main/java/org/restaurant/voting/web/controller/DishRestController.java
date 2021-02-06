@@ -20,7 +20,6 @@ import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.to.DishWithRestaurantTo;
-import org.restaurant.voting.util.ValidationUtil;
 import org.restaurant.voting.View;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
@@ -40,69 +39,61 @@ public class DishRestController {
         this.service = service;
     }
 
-    @PostMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DishTo> createWithLocation(@Validated(View.Web.class) @RequestBody Dish dish, @PathVariable int restaurantId) {
-        checkNew(dish);
-        log.info("Create {} for restaurant {}", dish, restaurantId);
-        Dish created = service.create(dish, restaurantId);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DishTo> createWithLocation(@Validated(View.Web.class) @RequestBody DishTo dishTo) {
+        checkNew(dishTo);
+        log.info("Create {}", dishTo);
+        Dish created = service.create(dishTo);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                           .path(REST_URL + "/{id}")
-                                                          .query("restaurantId={restaurantId}")
-                                                          .buildAndExpand(created.getId(),
-                                                                          created.getRestaurant().getId())
+                                                          .buildAndExpand(created.getId())
                                                           .toUri();
         return ResponseEntity.created(uriOfNewResource)
                              .body(createTo(created));
     }
 
-    @PostMapping(value = "/menu/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<DishTo> createMenu(@Validated(View.Web.class) @RequestBody List<Dish> dishes, @PathVariable int restaurantId) {
-        dishes.forEach(ValidationUtil::checkNew);
-        log.info("Create menu {} for restaurant {}", dishes, restaurantId);
-        List<Dish> created = service.createAllForRestaurant(dishes, restaurantId);
-        return getTos(created);
-    }
-
     @GetMapping("/{id}")
-    public DishTo get(@PathVariable int id, @RequestParam int restaurantId) {
-        log.info("Get {} from restaurant {}", id, restaurantId);
-        return createTo(service.get(id, restaurantId));
+    public DishTo get(@PathVariable int id) {
+        log.info("Get {}", id);
+        return createTo(service.get(id));
     }
 
-    @GetMapping("/with/{id}")
-    public DishWithRestaurantTo getWith(@PathVariable int id, @RequestParam int restaurantId) {
-        log.info("Get dish {} with restaurant {} info", id, restaurantId);
-        return createWithRestTo(service.getWithRestaurant(id, restaurantId));
+    @GetMapping("/{id}/with")
+    public DishWithRestaurantTo getWith(@PathVariable int id) {
+        log.info("Get dish {} with restaurant", id);
+        return createWithRestTo(service.getWithRestaurant(id));
     }
 
     @GetMapping
-    public List<DishTo> getAll() {
+    public List<DishTo> getAll(@RequestParam Optional<Integer> restaurantId,
+                               @RequestParam @DateTimeFormat(iso = DATE) Optional<LocalDate> date) {
+        return restaurantId.map(id -> getAllBy(id, date))
+                           .orElse(getAll());
+    }
+
+    private List<DishTo> getAll() {
         log.info("Get all dishes");
         return getTos(service.getAll());
     }
 
-    @GetMapping("/menu/{restaurantId}")
-    public List<DishTo> getMenu(@PathVariable int restaurantId,
-                                @RequestParam @DateTimeFormat(iso = DATE) Optional<LocalDate> date) {
-        log.info("Get menu from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
-        List<Dish> dishes = date.isPresent()
-                ? service.getAllByRestaurantAndDate(restaurantId, date.get())
-                : service.getAllByRestaurant(restaurantId);
-        return getTos(dishes);
+    private List<DishTo> getAllBy(int restaurantId, Optional<LocalDate> date) {
+        log.info("Get all dishes from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
+        return date.map(d -> getTos(service.getAllByRestaurantAndDate(restaurantId, d)))
+                   .orElse(getTos(service.getAllByRestaurant(restaurantId)));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody Dish dish, @PathVariable int id, @RequestParam int restaurantId) {
-        assureIdConsistent(dish, id);
-        log.info("Update {} for restaurant {}", dish, restaurantId);
-        service.update(dish, restaurantId);
+    public void update(@Validated(View.Web.class) @RequestBody DishTo dishTo, @PathVariable int id) {
+        assureIdConsistent(dishTo, id);
+        log.info("Update {}", dishTo);
+        service.update(dishTo);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id, @RequestParam int restaurantId) {
-        log.info("Delete meal {} of restaurant {}", id, restaurantId);
-        service.delete(id, restaurantId);
+    public void delete(@PathVariable int id) {
+        log.info("Delete {}", id);
+        service.delete(id);
     }
 }

@@ -10,7 +10,9 @@ import java.util.List;
 
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.repository.DishRepository;
+import org.restaurant.voting.to.DishTo;
 
+import static org.restaurant.voting.util.DishUtil.createNewFromTo;
 import static org.restaurant.voting.util.ValidationUtil.*;
 
 @Service
@@ -23,23 +25,19 @@ public class DishService {
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
-    public Dish create(Dish dish, int restaurantId) {
-        Assert.notNull(dish, "Dish must be not null");
-        return repository.save(dish, restaurantId);
+    public Dish create(DishTo dishTo) {
+        Assert.notNull(dishTo, "Dish must be not null");
+        dishTo.setDate(LocalDate.now());
+        Dish dish = createNewFromTo(dishTo);
+        return repository.save(dish, dishTo.getRestaurantId());
     }
 
-    @CacheEvict(value = "dishes", allEntries = true)
-    public List<Dish> createAllForRestaurant(List<Dish> dishes, int restaurantId) {
-        Assert.notNull(dishes, "Dishes must be not null");
-        return repository.save(dishes, restaurantId);
+    public Dish get(int id) {
+        return checkNotFoundWithId(repository.get(id), id);
     }
 
-    public Dish get(int id, int restaurantId) {
-        return checkNotFoundWithId(repository.get(id, restaurantId), id);
-    }
-
-    public Dish getWithRestaurant(int id, int restaurantId) {
-        return checkNotFoundWithId(repository.getWithRestaurant(id, restaurantId), id);
+    public Dish getWithRestaurant(int id) {
+        return checkNotFoundWithId(repository.getWithRestaurant(id), id);
     }
 
     @Cacheable("dishes")
@@ -59,13 +57,14 @@ public class DishService {
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
-    public void update(Dish dish, int restaurantId) {
-        Assert.notNull(dish, "Dish must be not null");
-        checkNotFoundWithId(repository.save(dish, restaurantId), dish.id());
+    public void update(DishTo dishTo) {
+        Assert.notNull(dishTo, "Dish must be not null");
+        Dish dish = createNewFromTo(dishTo);
+        checkNotFoundWithId(repository.save(dish, dishTo.getRestaurantId()), dish.id());
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
-    public void delete(int id, int restaurantId) {
-        checkNotFoundWithId(repository.delete(id, restaurantId), id);
+    public void delete(int id) {
+        checkNotFoundWithId(repository.delete(id), id);
     }
 }

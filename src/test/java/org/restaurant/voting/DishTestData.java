@@ -7,7 +7,6 @@ import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.to.DishWithRestaurantTo;
 
 import static java.time.LocalDate.now;
-import static java.time.LocalDate.of;
 import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.RestaurantTestData.SECOND_RESTAURANT;
 import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
@@ -32,7 +31,7 @@ public class DishTestData {
 
     public static final List<Dish> ALL_DISHES = List.of(DISH_1, DISH_2, DISH_3, DISH_4, DISH_5, DISH_6, DISH_7, DISH_8);
 
-    public static final List<Dish> FIRST_RESTAURANT_MENU = List.of(DISH_5, DISH_6, DISH_1, DISH_2);
+    public static final List<Dish> FIRST_RESTAURANT_DISHES = List.of(DISH_5, DISH_6, DISH_1, DISH_2);
 
     public static final List<Dish> TODAY_MENU = List.of(DISH_7, DISH_8, DISH_5, DISH_6);
     public static final List<Dish> TODAY_REST1_MENU = List.of(DISH_5, DISH_6);
@@ -40,11 +39,6 @@ public class DishTestData {
 
     public static Dish getNew() {
         return new Dish(null, "Sandwich", FIRST_RESTAURANT, 6, now());
-    }
-
-    public static List<Dish> getNewMenu() {
-        return List.of(new Dish(null, "Salad", FIRST_RESTAURANT, 4, of(2020, 12, 21)),
-                       new Dish(null, "Tea", FIRST_RESTAURANT, 2, of(2020, 12, 21)));
     }
 
     public static Dish getUpdated() {

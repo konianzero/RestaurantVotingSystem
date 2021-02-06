@@ -2,18 +2,18 @@ package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
 
-import org.restaurant.voting.model.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.restaurant.voting.model.Restaurant;
-import org.restaurant.voting.util.exception.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.restaurant.voting.model.Dish;
+import org.restaurant.voting.model.Restaurant;
+import org.restaurant.voting.util.exception.NotFoundException;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.TODAY_MENU;
-import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
+import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_DISHES;
 import static org.restaurant.voting.DishTestData.DISH_MATCHER;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.util.RestaurantUtil.createTo;
@@ -41,7 +41,7 @@ public class RestaurantServiceTest extends AbstractServiceTest  {
     @Test
     void getWithDishes() {
         Restaurant actual = service.getWithDishes(RESTAURANT_1_ID);
-        DISH_MATCHER.assertMatch(actual.getMenu(), FIRST_RESTAURANT_MENU);
+        DISH_MATCHER.assertMatch(actual.getMenu(), FIRST_RESTAURANT_DISHES);
     }
 
     @Test

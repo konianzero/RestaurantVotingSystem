@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.USER;
 import static org.restaurant.voting.RestaurantTestData.*;
-import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_MENU;
+import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_DISHES;
 import static org.restaurant.voting.DishTestData.TODAY_REST1_MENU;
 import static org.restaurant.voting.DishTestData.TODAY_REST2_MENU;
 import static org.restaurant.voting.util.RestaurantUtil.*;
@@ -89,7 +89,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getWith() throws Exception {
         initMenu();
-        FIRST_RESTAURANT.getMenu().addAll(FIRST_RESTAURANT_MENU);
+        FIRST_RESTAURANT.getMenu().addAll(FIRST_RESTAURANT_DISHES);
 
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_1_ID + "/with")
                                       .with(userHttpBasic(USER)))

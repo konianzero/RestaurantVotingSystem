@@ -58,15 +58,14 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 |            | GET    | Get all restaurants with today's dishes | {URL}/rest/restaurants/today                                | Authorized     |  
 |            | PUT    | Update restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
 |            | DELETE | Delete restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
-| Dish       | POST   | Create dish                             | {URL}/rest/dishes/{restaurantId}                            | Admin          |
-|            | POST   | Create menu                             | {URL}/rest/dishes/menu/{restaurantId}                       | Admin          |
-|            | GET    | Get dish                                | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Authorized     |
-|            | GET    | Get dish with restaurant                | {URL}/rest/dishes/with/{dishId}?restaurantId={restaurantId} | Authorized     |
+| Dish       | POST   | Create dish                             | {URL}/rest/dishes                                           | Admin          |
+|            | GET    | Get dish                                | {URL}/rest/dishes/{dishId}                                  | Authorized     |
+|            | GET    | Get dish with restaurant                | {URL}/rest/dishes/{dishId}/with                             | Authorized     |
 |            | GET    | Get all dishes                          | {URL}/rest/dishes                                           | Authorized     |
-|            | GET    | Get menu                                | {URL}/rest/dishes/menu/{restaurantId}                       | Authorized     |
-|            | GET    | Get menu by date                        | {URL}/rest/dishes/menu/{restaurantId}?date={date}           | Authorized     |
-|            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
-|            | DELETE | Delete dish                             | {URL}/rest/dishes/{dishId}?restaurantId={restaurantId}      | Admin          |
+|            | GET    | Get all dishes by restaurant            | {URL}/rest/dishes?restaurantId={restaurantId}               | Authorized     |
+|            | GET    | Get all dishes by restaurant and date   | {URL}/rest/dishes?restaurantId={restaurantId}&date={date}   | Authorized     |
+|            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
+|            | DELETE | Delete dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
 | Vote       | POST   | Create vote                             | {URL}/rest/votes                                            | Authorized     |
 |            | GET    | Get vote                                | {URL}/rest/votes/{voteId}                                   | Authorized     |
 |            | GET    | Get last vote of user                   | {URL}/rest/votes/last                                       | Authorized     |
@@ -111,39 +110,35 @@ curl -s -X DELETE http://localhost:8080/voting/rest/restaurants/100002 --user ad
 
 **Create dish**
 ```
-curl -s -X POST -d '{"name":"Sandwich","price":6,"date":"2020-12-21"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes/100002 --user admin@gmail.com:admin
-```
-**Create a menu**
-```
-curl -s -X POST -d '[{"name":"Salad","price":4,"date":"2020-12-21"},{"name":"Tea","price":2,"date":"2020-12-21"}]' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes/menu/100002 --user admin@gmail.com:admin
+curl -s -X POST -d '{"restaurantId":100002,"name":"Sandwich","price":6}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes --user admin@gmail.com:admin
 ```
 **Get dish**
 ```
-curl -s http://localhost:8080/voting/rest/dishes/100004?restaurantId=100002 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/dishes/100004 --user user@gmail.com:userpass
 ```
 **Get dish with a restaurant**
 ```
-curl -s http://localhost:8080/voting/rest/dishes/with/100004?restaurantId=100002 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/dishes/100004/with --user user@gmail.com:userpass
 ```
 **Get all dishes**
 ```
 curl -s http://localhost:8080/voting/rest/dishes --user user@gmail.com:userpass
 ```
-**Get menu**
+**Get all dishes by restaurant**
 ```
-curl -s http://localhost:8080/voting/rest/dishes/menu/100002 --user user@gmail.com:userpass
+curl -s http://localhost:8080/voting/rest/dishes?restaurantId=100002 --user user@gmail.com:userpass
 ```
-**Get menu by date**
+**Get all dishes by restaurant and date**
 ```
-curl -s http://localhost:8080/voting/rest/dishes/menu/100002?date=2020-12-21 --user user@gmail.com:userpass
+curl -s "http://localhost:8080/voting/rest/dishes?restaurantId=100002&date=2021-02-06" --user user@gmail.com:userpass
 ```
 **Update dish**
 ```
-curl -s -X PUT -d '{"id":100004,"name":"Sandwich with tune","price":8,"date":"2020-12-21"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100004?restaurantId=100002 --user admin@gmail.com:admin
+curl -s -X PUT -d '{"id":100004,"restaurantId":100002,"name":"Sandwich with tune","price":8}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
 ```
 **Delete dish**
 ```
-curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004?restaurantId=100002 --user admin@gmail.com:admin
+curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
 ```
 
 ### User

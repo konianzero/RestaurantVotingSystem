@@ -23,34 +23,24 @@ public class DishRepository {
 
     @Transactional
     public Dish save(Dish dish, int restaurantId) {
-        if (preSaveCheck(dish, restaurantId)) {
+        if (preSaveCheck(dish)) {
             return null;
         }
         dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId));
         return crudDishRepository.save(dish);
     }
 
-    @Transactional
-    public List<Dish> save(List<Dish> dishes, int restaurantId) {
-        if (dishes.stream().anyMatch(dish -> preSaveCheck(dish, restaurantId))) {
-            return null;
-        }
-        dishes.forEach(dish -> dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId)));
-        return crudDishRepository.saveAll(dishes);
+    private boolean preSaveCheck(Dish dish) {
+        return !dish.isNew() && get(dish.getId()) == null;
     }
 
-    private boolean preSaveCheck(Dish dish, int restaurantId) {
-        return !dish.isNew() && get(dish.getId(), restaurantId) == null;
-    }
-
-    public Dish get(int dishId, int restaurantId) {
+    public Dish get(int dishId) {
         return crudDishRepository.findById(dishId)
-                                 .filter(dish -> dish.getRestaurant().getId() == restaurantId)
                                  .orElse(null);
     }
 
-    public Dish getWithRestaurant(int id, int restaurantId) {
-        return crudDishRepository.getWithRestaurant(id, restaurantId);
+    public Dish getWithRestaurant(int id) {
+        return crudDishRepository.getWithRestaurant(id);
     }
 
     public List<Dish> getAll() {
@@ -65,7 +55,7 @@ public class DishRepository {
         return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);
     }
 
-    public boolean delete(int dishId, int restaurantId) {
-        return crudDishRepository.delete(dishId, restaurantId) != 0;
+    public boolean delete(int dishId) {
+        return crudDishRepository.delete(dishId) != 0;
     }
 }

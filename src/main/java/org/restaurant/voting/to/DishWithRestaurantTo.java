@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class DishWithRestaurantTo extends DishTo {
-    private int restaurantId;
     private String restaurantName;
 
     public DishWithRestaurantTo() {
@@ -13,17 +12,8 @@ public class DishWithRestaurantTo extends DishTo {
 
     @ConstructorProperties({"id", "name", "restaurantId", "restaurantName", "price", "date"})
     public DishWithRestaurantTo(Integer id, String name, int restaurantId, String restaurantName, int price, LocalDate date) {
-        super(id, name, price, date);
-        this.restaurantId = restaurantId;
+        super(id, restaurantId, name, price, date);
         this.restaurantName = restaurantName;
-    }
-
-    public int getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
     }
 
     @Override
