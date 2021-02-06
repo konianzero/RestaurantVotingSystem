@@ -22,7 +22,7 @@ Each restaurant provides new menu each day.
 mvn clean package org.codehaus.cargo:cargo-maven2-plugin:1.8.2:run
 ```
 
-URL: http://localhost:8080/voting
+URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
 ---
 
@@ -36,6 +36,8 @@ URL: http://localhost:8080/voting
 ---
 
 ## API documentation
+
+[Swagger Api Documentation](http://localhost:8080/voting/swagger-ui.html#/)
 
 | API        | Method | Description                             | URL                                                         | User           |
 |------------|--------|-----------------------------------------|-------------------------------------------------------------|----------------|

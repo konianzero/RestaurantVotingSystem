@@ -18,6 +18,10 @@
 
     <context:component-scan base-package="org.restaurant.voting.**.web"/>
 
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+
     <bean class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration"/>
     <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
 
