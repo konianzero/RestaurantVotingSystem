@@ -19,14 +19,14 @@ INSERT INTO restaurants (name) VALUES
     ('Restaurant2');
 
 INSERT INTO dishes (restaurant_id, name, price, date) VALUES
-    (100002, 'IceCream', 20, '2020-12-19'),
-    (100002, 'Orange fresh', 40, '2020-12-19'),
-    (100003, 'Soup', 8, '2020-12-19'),
-    (100003, 'Cheeseburger', 40, '2020-12-19'),
-    (100002, 'Salad', 5, '2020-12-20'),
-    (100002, 'Water', 1, '2020-12-20'),
-    (100003, 'Burger', 40, '2020-12-20'),
-    (100003, 'Potato', 10, '2020-12-20');
+    (100002, 'IceCream', 20, DATE_SUB(NOW, 1 DAY)),
+    (100002, 'Orange fresh', 40, DATE_SUB(NOW, 1 DAY)),
+    (100003, 'Soup', 8, DATE_SUB(NOW, 1 DAY)),
+    (100003, 'Cheeseburger', 40, DATE_SUB(NOW, 1 DAY)),
+    (100002, 'Salad', 5, NOW),
+    (100002, 'Water', 1, NOW),
+    (100003, 'Burger', 40, NOW),
+    (100003, 'Potato', 10, NOW);
 
 INSERT INTO votes (user_id, restaurant_id, voting_date) VALUES
     (100000, 100003, DATE_SUB(NOW, 1 DAY)),

@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -19,6 +18,7 @@ import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.TestUtil;
 
+import static java.time.LocalDate.now;
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
@@ -74,7 +74,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
         DISH_TO_MATCHER.assertMatch(created, getTos(newMenu));
         DISH_MATCHER.assertMatch(service.getAllByRestaurantAndDate(RESTAURANT_1_ID, of(2020, 12, 21)), newMenu);
-        DISH_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_1_ID), newMenu.get(0), newMenu.get(1), DISH_5, DISH_6, DISH_1, DISH_2);
+        DISH_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_1_ID), DISH_5, DISH_6, DISH_1, DISH_2, newMenu.get(0), newMenu.get(1));
     }
 
     @Test
@@ -138,7 +138,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void getMenuByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT_1_ID)
-                                      .queryParam("date", "2020-12-20")
+                                      .queryParam("date", now().toString())
                                       .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())

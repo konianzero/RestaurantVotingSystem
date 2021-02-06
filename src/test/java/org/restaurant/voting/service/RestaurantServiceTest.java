@@ -52,9 +52,9 @@ public class RestaurantServiceTest extends AbstractServiceTest  {
     @Test
     void getAllWithTodayMenu() {
         List<Dish> today = service.getAllWithTodayMenu()
-                                   .stream()
-                                   .flatMap(r -> r.getMenu().stream())
-                                   .collect(Collectors.toList());
+                                  .stream()
+                                  .flatMap(r -> r.getMenu().stream())
+                                  .collect(Collectors.toList());
         DISH_MATCHER.assertMatch(today, TODAY_MENU);
     }
 

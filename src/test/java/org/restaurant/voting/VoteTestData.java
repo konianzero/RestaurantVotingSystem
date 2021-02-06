@@ -1,7 +1,5 @@
 package org.restaurant.voting;
 
-import java.time.LocalDate;
-
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.to.VoteTo;
 
@@ -30,6 +28,6 @@ public class VoteTestData {
     }
 
     public static Vote getUpdated() {
-        return new Vote(VOTE_3_ID, ADMIN, FIRST_RESTAURANT, LocalDate.now());
+        return new Vote(VOTE_3_ID, ADMIN, FIRST_RESTAURANT, now());
     }
 }

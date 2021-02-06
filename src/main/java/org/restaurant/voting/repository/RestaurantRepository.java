@@ -45,7 +45,7 @@ public class RestaurantRepository {
                                        .stream()
                                        .peek(r ->
                                                r.setMenu(
-                                                       crudDishRepository.getAllByRestaurantAndDate(r.getId(), LocalDate.of(2020, 12, 20))
+                                                       crudDishRepository.getAllByRestaurantAndDate(r.getId(), LocalDate.now())
                                                )
                                        )
                                        .collect(Collectors.toList());

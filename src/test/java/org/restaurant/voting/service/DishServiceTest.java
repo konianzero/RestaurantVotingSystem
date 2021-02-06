@@ -9,7 +9,7 @@ import java.util.List;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.util.exception.NotFoundException;
 
-import static java.time.LocalDate.of;
+import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.*;
 import static org.restaurant.voting.DishTestData.NOT_FOUND;
@@ -27,7 +27,7 @@ public class DishServiceTest extends AbstractServiceTest {
         Dish created = service.create(newDish, RESTAURANT_1_ID);
         int newId = created.id();
         newDish.setId(newId);
-//        DISH_MATCHER.assertMatch(created, newDish);
+        DISH_MATCHER.assertMatch(created, newDish);
         DISH_MATCHER.assertMatch(service.get(newId, RESTAURANT_1_ID), newDish);
     }
 
@@ -39,7 +39,7 @@ public class DishServiceTest extends AbstractServiceTest {
         newMenu.get(0).setId(created.get(0).getId());
         newMenu.get(1).setId(created.get(1).getId());
 
-        DISH_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_1_ID), newMenu.get(0), newMenu.get(1), DISH_5, DISH_6, DISH_1, DISH_2);
+        DISH_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_1_ID), DISH_5, DISH_6, DISH_1, DISH_2, newMenu.get(0), newMenu.get(1));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class DishServiceTest extends AbstractServiceTest {
 
     @Test
     void getAllByRestaurantWithDate() {
-        DISH_MATCHER.assertMatch(service.getAllByRestaurantAndDate(RESTAURANT_1_ID, of(2020, 12, 19)), DISH_1, DISH_2);
+        DISH_MATCHER.assertMatch(service.getAllByRestaurantAndDate(RESTAURANT_1_ID, now()), DISH_5, DISH_6);
     }
 
     @Test
