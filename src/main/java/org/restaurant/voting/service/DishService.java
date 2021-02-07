@@ -58,11 +58,6 @@ public class DishService {
     }
 
     @Cacheable("dishes")
-    public List<Dish> getAll() {
-        return crudDishRepository.findAll(SORT_BY_NAME);
-    }
-
-    @Cacheable("dishes")
     public List<Dish> getAllByRestaurant(int restaurantId) {
         return crudDishRepository.getAllByRestaurant(restaurantId);
     }

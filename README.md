@@ -61,7 +61,6 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 | Dish       | POST   | Create dish                             | {URL}/rest/dishes                                           | Admin          |
 |            | GET    | Get dish                                | {URL}/rest/dishes/{dishId}                                  | Authorized     |
 |            | GET    | Get dish with restaurant                | {URL}/rest/dishes/{dishId}/with                             | Authorized     |
-|            | GET    | Get all dishes                          | {URL}/rest/dishes                                           | Authorized     |
 |            | GET    | Get all dishes by restaurant            | {URL}/rest/dishes?restaurantId={restaurantId}               | Authorized     |
 |            | GET    | Get all dishes by restaurant and date   | {URL}/rest/dishes?restaurantId={restaurantId}&date={date}   | Authorized     |
 |            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
@@ -119,10 +118,6 @@ curl -s http://localhost:8080/voting/rest/dishes/100004 --user user@gmail.com:us
 **Get dish with a restaurant**
 ```
 curl -s http://localhost:8080/voting/rest/dishes/100004/with --user user@gmail.com:userpass
-```
-**Get all dishes**
-```
-curl -s http://localhost:8080/voting/rest/dishes --user user@gmail.com:userpass
 ```
 **Get all dishes by restaurant**
 ```

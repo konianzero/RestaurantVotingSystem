@@ -65,18 +65,8 @@ public class DishRestController {
     }
 
     @GetMapping
-    public List<DishTo> getAll(@RequestParam Optional<Integer> restaurantId,
-                               @RequestParam @DateTimeFormat(iso = DATE) Optional<LocalDate> date) {
-        return restaurantId.map(id -> getAllBy(id, date))
-                           .orElse(getAll());
-    }
-
-    private List<DishTo> getAll() {
-        log.info("Get all dishes");
-        return getTos(service.getAll());
-    }
-
-    private List<DishTo> getAllBy(int restaurantId, Optional<LocalDate> date) {
+    private List<DishTo> getAllBy(@RequestParam int restaurantId,
+                                  @RequestParam @DateTimeFormat(iso = DATE) Optional<LocalDate> date) {
         log.info("Get all dishes from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
         return date.map(d -> getTos(service.getAllByRestaurantAndDate(restaurantId, d)))
                    .orElse(getTos(service.getAllByRestaurant(restaurantId)));

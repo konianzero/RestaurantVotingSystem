@@ -93,16 +93,6 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL)
-                                      .with(userHttpBasic(USER)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_TO_MATCHER.contentJson(getTos(ALL_DISHES)));
-    }
-
-    @Test
     void getAllByRestaurant() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
