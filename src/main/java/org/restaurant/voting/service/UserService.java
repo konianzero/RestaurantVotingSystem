@@ -1,9 +1,11 @@
 package org.restaurant.voting.service;
 
+import org.restaurant.voting.repository.CrudUserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,23 +16,24 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import org.restaurant.voting.model.User;
-import org.restaurant.voting.repository.UserRepository;
 import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.UserUtil;
 
 import static org.restaurant.voting.util.UserUtil.prepareToSave;
-import static org.restaurant.voting.util.ValidationUtil.*;
+import static org.restaurant.voting.util.ValidationUtil.checkNotFound;
+import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
 
 @Service("userService")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserService implements UserDetailsService {
+    private static final Sort SORT_BY_DATE = Sort.by(Sort.Direction.DESC, "registered");
 
-    private final UserRepository userRepository;
+    private final CrudUserRepository crudUserRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserService(CrudUserRepository crudUserRepository, PasswordEncoder passwordEncoder) {
+        this.crudUserRepository = crudUserRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,17 +44,17 @@ public class UserService implements UserDetailsService {
     }
 
     public User get(int id) {
-        return checkNotFoundWithId(userRepository.get(id), id);
+        return checkNotFoundWithId(crudUserRepository.findById(id, User.class), id);
     }
 
     public User getByEmail(String email) {
         Assert.notNull(email, "Email must be not null");
-        return checkNotFound(userRepository.getByEmail(email), "email=" + email);
+        return checkNotFound(crudUserRepository.getByEmail(email), "email=" + email);
     }
 
     @Cacheable("users")
     public List<User> getAll() {
-        return userRepository.getAll();
+        return crudUserRepository.findAll(SORT_BY_DATE);
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -59,7 +62,7 @@ public class UserService implements UserDetailsService {
     public void enable(int id, boolean enabled) {
         User user = get(id);
         user.setEnabled(enabled);
-        userRepository.save(user);
+        save(user);
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -79,16 +82,21 @@ public class UserService implements UserDetailsService {
 
     @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
-        checkNotFoundWithId(userRepository.delete(id), id);
+        checkNotFoundWithId(crudUserRepository.delete(id) != 0, id);
     }
 
     private User prepareAndSave(User user) {
-        return userRepository.save(prepareToSave(user, passwordEncoder));
+        return save(prepareToSave(user, passwordEncoder));
+    }
+
+    @Transactional
+    protected User save(User user) {
+        return crudUserRepository.save(user);
     }
 
     @Override
     public AuthorizedUser loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.getByEmail(email.toLowerCase());
+        User user = crudUserRepository.getByEmail(email.toLowerCase());
         if (user == null) {
             throw new UsernameNotFoundException("User " + email + " is not found");
         }

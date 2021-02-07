@@ -1,7 +1,10 @@
 package org.restaurant.voting.service;
 
+import org.restaurant.voting.repository.CrudDishRepository;
+import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -9,19 +12,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.repository.DishRepository;
 import org.restaurant.voting.to.DishTo;
 
+import javax.transaction.Transactional;
+
 import static org.restaurant.voting.util.DishUtil.createNewFromTo;
-import static org.restaurant.voting.util.ValidationUtil.*;
+import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class DishService {
+    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "date");
 
-    private final DishRepository repository;
+    private final CrudDishRepository crudDishRepository;
+    private final CrudRestaurantRepository crudRestaurantRepository;
 
-    public DishService(DishRepository repository) {
-        this.repository = repository;
+    public DishService(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository) {
+        this.crudDishRepository = crudDishRepository;
+        this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
@@ -29,42 +36,52 @@ public class DishService {
         Assert.notNull(dishTo, "Dish must be not null");
         dishTo.setDate(LocalDate.now());
         Dish dish = createNewFromTo(dishTo);
-        return repository.save(dish, dishTo.getRestaurantId());
+
+        return save(dish, dishTo.getRestaurantId());
+    }
+
+    @Transactional
+    protected Dish save(Dish dish, int restaurantId) {
+        if (!dish.isNew() && get(dish.getId()) == null) {
+            return null;
+        }
+        dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId));
+        return crudDishRepository.save(dish);
     }
 
     public Dish get(int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+        return checkNotFoundWithId(crudDishRepository.findById(id, Dish.class), id);
     }
 
     public Dish getWithRestaurant(int id) {
-        return checkNotFoundWithId(repository.getWithRestaurant(id), id);
+        return checkNotFoundWithId(crudDishRepository.getWithRestaurant(id), id);
     }
 
     @Cacheable("dishes")
     public List<Dish> getAll() {
-        return repository.getAll();
+        return crudDishRepository.findAll(SORT_BY_NAME);
     }
 
     @Cacheable("dishes")
     public List<Dish> getAllByRestaurant(int restaurantId) {
-        return repository.getAllByRestaurant(restaurantId);
+        return crudDishRepository.getAllByRestaurant(restaurantId);
     }
 
     @Cacheable("dishes")
     public List<Dish> getAllByRestaurantAndDate(int restaurantId, LocalDate date) {
         Assert.notNull(date, "Date must be not null");
-        return repository.getAllByRestaurantAndDate(restaurantId, date);
+        return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
     public void update(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
         Dish dish = createNewFromTo(dishTo);
-        checkNotFoundWithId(repository.save(dish, dishTo.getRestaurantId()), dish.id());
+        checkNotFoundWithId(save(dish, dishTo.getRestaurantId()), dish.id());
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
     public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(crudDishRepository.delete(id) != 0, id);
     }
 }

@@ -6,15 +6,15 @@ import org.springframework.validation.Errors;
 
 import org.restaurant.voting.HasIdAndEmail;
 import org.restaurant.voting.model.User;
-import org.restaurant.voting.repository.UserRepository;
+import org.restaurant.voting.repository.CrudUserRepository;
 
 @Component
 public class UniqueMailValidator implements org.springframework.validation.Validator {
 
-    private final UserRepository repository;
+    private final CrudUserRepository crudUserRepository;
 
-    public UniqueMailValidator(UserRepository repository) {
-        this.repository = repository;
+    public UniqueMailValidator(CrudUserRepository crudUserRepository) {
+        this.crudUserRepository = crudUserRepository;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class UniqueMailValidator implements org.springframework.validation.Valid
     public void validate(Object target, Errors errors) {
         HasIdAndEmail user = ((HasIdAndEmail) target);
         if (StringUtils.hasText(user.getEmail())) {
-            User dbUser = repository.getByEmail(user.getEmail().toLowerCase());
+            User dbUser = crudUserRepository.getByEmail(user.getEmail().toLowerCase());
             if (dbUser != null && !dbUser.getId().equals(user.getId())) {
                 errors.rejectValue("email", "User with this email already exists");
             }
