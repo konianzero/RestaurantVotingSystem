@@ -50,7 +50,7 @@ public class VoteServiceTest extends AbstractServiceTest {
     @Test
     void update() {
         Vote updated = getUpdated();
-        if (isVotingTimeOver.getAsBoolean()) {
+        if (isVotingTimeOver()) {
             assertThrows(VotingTimeOverException.class, () -> service.update(createTo(updated), ADMIN_ID));
         } else {
             service.update(createTo(updated), ADMIN_ID);

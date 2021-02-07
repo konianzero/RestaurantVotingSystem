@@ -16,6 +16,15 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+    <bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean" id="conversionService">
+        <property name="formatters">
+            <set>
+                <bean class="org.restaurant.voting.web.converter.DateTimeFormatters.LocalTimeFormatter"/>
+                <bean class="org.restaurant.voting.web.converter.DateTimeFormatters.LocalDateFormatter"/>
+            </set>
+        </property>
+    </bean>
+
     <context:component-scan base-package="org.restaurant.voting.**.web"/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>

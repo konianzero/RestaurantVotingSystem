@@ -94,7 +94,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         Vote updated = getUpdated();
-        if (isVotingTimeOver.getAsBoolean()) {
+        if (isVotingTimeOver()) {
             updateAfter(updated);
         } else {
             updateBefore(updated);
