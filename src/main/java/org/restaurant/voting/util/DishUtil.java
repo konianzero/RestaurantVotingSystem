@@ -6,11 +6,12 @@ import java.util.stream.Collectors;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.to.DishWithRestaurantTo;
 import org.restaurant.voting.to.DishTo;
+import org.restaurant.voting.util.mapper.DishMapper;
 
 public class DishUtil {
 
     public static DishTo createTo(Dish dish) {
-        return new DishTo(dish.getId(), dish.getRestaurant().getId(), dish.getName(), dish.getPrice(), dish.getDate());
+        return DishMapper.INSTANCE.toToFromEntity(dish);
     }
 
     public static List<DishTo> getTos(List<Dish> dishes) {
@@ -20,17 +21,10 @@ public class DishUtil {
     }
 
     public static Dish createNewFromTo(DishTo dishTo) {
-        return new Dish(dishTo.getId(), dishTo.getName(), null, dishTo.getPrice(), dishTo.getDate());
+        return DishMapper.INSTANCE.toEntityFromTo(dishTo);
     }
 
     public static DishWithRestaurantTo createWithRestTo(Dish dish) {
-        return new DishWithRestaurantTo(
-                dish.getId(),
-                dish.getName(),
-                dish.getRestaurant().getId(),
-                dish.getRestaurant().getName(),
-                dish.getPrice(),
-                dish.getDate()
-        );
+        return DishMapper.INSTANCE.toToWithFromEntity(dish);
     }
 }

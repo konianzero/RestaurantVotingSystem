@@ -16,6 +16,14 @@ public class DishWithRestaurantTo extends DishTo {
         this.restaurantName = restaurantName;
     }
 
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

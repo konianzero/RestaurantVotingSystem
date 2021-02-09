@@ -20,6 +20,7 @@
         <spring-data-jpa.version>2.4.0</spring-data-jpa.version>
         <spring.security.version>5.4.1</spring.security.version>
         <jackson-json.version>2.11.3</jackson-json.version>
+        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <tomcat.version>9.0.39</tomcat.version>
 
         <!-- ORM -->
@@ -53,6 +54,13 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -142,6 +150,12 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
+        </dependency>
+        <!-- MapStruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
         </dependency>
 
         <!-- Security -->

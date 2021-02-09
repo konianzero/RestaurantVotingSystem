@@ -1,6 +1,5 @@
 package org.restaurant.voting.service;
 
-import org.restaurant.voting.repository.CrudUserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
@@ -16,6 +15,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import org.restaurant.voting.model.User;
+import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.UserUtil;

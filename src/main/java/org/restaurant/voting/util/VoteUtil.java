@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.to.VoteTo;
+import org.restaurant.voting.util.mapper.VoteMapper;
 
 public class VoteUtil {
 
     public static VoteTo createTo(Vote vote) {
-        return new VoteTo(vote.getId(), vote.getVotingDate(), vote.getUser().getId(), vote.getRestaurant().getId());
+        return VoteMapper.INSTANCE.toToFromEntity(vote);
     }
 
     public static List<VoteTo> getTos(List<Vote> votes) {
@@ -19,6 +20,6 @@ public class VoteUtil {
     }
 
     public static Vote createNewFromTo(VoteTo voteTo) {
-        return new Vote(voteTo.getId(), null, null, voteTo.getVotingDate());
+        return VoteMapper.INSTANCE.toEntityFromTo(voteTo);
     }
 }

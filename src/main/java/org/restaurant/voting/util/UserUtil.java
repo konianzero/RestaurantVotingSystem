@@ -1,25 +1,23 @@
 package org.restaurant.voting.util;
 
-import org.restaurant.voting.model.Role;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.to.UserTo;
+import org.restaurant.voting.util.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
 public class UserUtil {
 
     public static User createNewFromTo(UserTo userTo) {
-        return new User(null, userTo.getName(), userTo.getEmail().toLowerCase(), userTo.getPassword(), true, Role.USER);
+        return UserMapper.INSTANCE.toEntityFromTo(userTo);
     }
 
     public static UserTo createTo(User user) {
-        return new UserTo(user.getId(), user.getName(), user.getEmail().toLowerCase(), user.getPassword());
+        return UserMapper.INSTANCE.toToFromEntity(user);
     }
 
     public static User updateFromTo(User user, UserTo userTo) {
-        user.setName(userTo.getName());
-        user.setEmail(userTo.getEmail().toLowerCase());
-        user.setPassword(userTo.getPassword());
+        UserMapper.INSTANCE.updateFromTo(user, userTo);
         return user;
     }
 

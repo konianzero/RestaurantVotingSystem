@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.model.Role;
@@ -14,8 +16,6 @@ import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.restaurant.voting.TestUtil;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
