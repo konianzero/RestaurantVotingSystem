@@ -52,7 +52,6 @@ public class UserService implements UserDetailsService {
         return checkNotFound(crudUserRepository.getByEmail(email), "email=" + email);
     }
 
-    @Cacheable("users")
     public List<User> getAll() {
         return crudUserRepository.findAll(SORT_BY_DATE);
     }

@@ -30,7 +30,6 @@ public class RestaurantService {
         this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
-    @CacheEvict(value = "dishes", allEntries = true)
     public Restaurant create(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
         return save(restaurantTo);
