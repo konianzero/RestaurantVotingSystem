@@ -47,6 +47,7 @@ public class UserService implements UserDetailsService {
         return checkNotFoundWithId(crudUserRepository.findById(id, User.class), id);
     }
 
+    @Cacheable("users")
     public User getByEmail(String email) {
         Assert.notNull(email, "Email must be not null");
         return checkNotFound(crudUserRepository.getByEmail(email), "email=" + email);

@@ -21,7 +21,6 @@ import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class DishService {
-    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "date");
 
     private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
@@ -57,12 +56,10 @@ public class DishService {
         return checkNotFoundWithId(crudDishRepository.getWithRestaurant(id), id);
     }
 
-    @Cacheable("dishes")
     public List<Dish> getAllByRestaurant(int restaurantId) {
         return crudDishRepository.getAllByRestaurant(restaurantId);
     }
 
-    @Cacheable("dishes")
     public List<Dish> getAllByRestaurantAndDate(int restaurantId, LocalDate date) {
         Assert.notNull(date, "Date must be not null");
         return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);

@@ -21,7 +21,6 @@ import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class RestaurantService {
-    private static final Sort SORT_BY_ID = Sort.by(Sort.Direction.ASC, "id");
 
     private final CrudRestaurantRepository crudRestaurantRepository;
 
@@ -51,6 +50,7 @@ public class RestaurantService {
         return crudRestaurantRepository.findAll();
     }
 
+    @Cacheable("dishes")
     public List<Restaurant> getAllWithTodayMenu() {
         return crudRestaurantRepository.getAllWithDishes()
                                        .stream()
