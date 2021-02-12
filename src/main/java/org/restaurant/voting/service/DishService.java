@@ -44,12 +44,12 @@ public class DishService {
         if (!dish.isNew() && get(dish.getId()) == null) {
             return null;
         }
-        dish.setRestaurant(crudRestaurantRepository.getOne(restaurantId));
+        dish.setRestaurant(checkNotFoundWithId(crudRestaurantRepository.findById(restaurantId), restaurantId));
         return crudDishRepository.save(dish);
     }
 
     public Dish get(int id) {
-        return checkNotFoundWithId(crudDishRepository.findById(id, Dish.class), id);
+        return checkNotFoundWithId(crudDishRepository.findById(id), id);
     }
 
     public Dish getWithRestaurant(int id) {

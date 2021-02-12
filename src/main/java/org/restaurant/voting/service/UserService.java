@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User get(int id) {
-        return checkNotFoundWithId(crudUserRepository.findById(id, User.class), id);
+        return checkNotFoundWithId(crudUserRepository.findById(id), id);
     }
 
     @Cacheable("users")

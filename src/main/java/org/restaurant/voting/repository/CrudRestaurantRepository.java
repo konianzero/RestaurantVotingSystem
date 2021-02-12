@@ -10,7 +10,7 @@ import java.util.List;
 import org.restaurant.voting.model.Restaurant;
 
 @Repository
-public interface CrudRestaurantRepository extends JpaRepository<Restaurant, Integer>, FindById {
+public interface CrudRestaurantRepository extends JpaRepository<Restaurant, Integer> {
 
     @EntityGraph(attributePaths = {"menu"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Restaurant r WHERE r.id=?1")

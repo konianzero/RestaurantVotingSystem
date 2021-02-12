@@ -39,7 +39,7 @@ public class RestaurantService {
     }
 
     public Restaurant get(int id) {
-        return checkNotFoundWithId(crudRestaurantRepository.findById(id, Restaurant.class), id);
+        return checkNotFoundWithId(crudRestaurantRepository.findById(id), id);
     }
 
     public Restaurant getWithDishes(int id) {

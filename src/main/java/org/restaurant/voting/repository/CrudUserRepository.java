@@ -11,7 +11,7 @@ import org.restaurant.voting.model.User;
 
 @Repository
 @Transactional(readOnly = true)
-public interface CrudUserRepository extends JpaRepository<User, Integer>, FindById {
+public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM User u WHERE u.email=:email")
     User getByEmail(@Param("email") String email);
