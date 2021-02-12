@@ -1,27 +1,26 @@
 package org.restaurant.voting.config;
 
-import javax.cache.expiry.Duration;
-import javax.cache.expiry.ExpiryPolicy;
+import org.ehcache.expiry.ExpiryPolicy;
+
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
-import static org.restaurant.voting.util.ValidationUtil.END_VOTING_TIME;
-
-public class ExpiryUntilMidnight implements ExpiryPolicy {
+public class ExpiryUntilMidnight implements ExpiryPolicy<Object, Object> {
     @Override
-    public Duration getExpiryForCreation() {
-        long msUntilMidnight = LocalTime.now().until(END_VOTING_TIME, ChronoUnit.MILLIS);
-        return new Duration(TimeUnit.MILLISECONDS, msUntilMidnight);
+    public Duration getExpiryForCreation(Object o, Object o2) {
+        long msUntilMidnight = LocalTime.now().until(LocalTime.MAX, ChronoUnit.MILLIS);
+        return Duration.of(msUntilMidnight, ChronoUnit.MILLIS);
     }
 
     @Override
-    public Duration getExpiryForAccess() {
+    public Duration getExpiryForAccess(Object o, Supplier supplier) {
         return null;
     }
 
     @Override
-    public Duration getExpiryForUpdate() {
+    public Duration getExpiryForUpdate(Object o, Supplier supplier, Object o2) {
         return null;
     }
 }
