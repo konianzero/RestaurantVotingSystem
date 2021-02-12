@@ -65,10 +65,10 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 |            | GET    | Get all dishes by restaurant and date   | {URL}/rest/dishes?restaurantId={restaurantId}&date={date}   | Authorized     |
 |            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
 |            | DELETE | Delete dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
-| Vote       | POST   | Create vote                             | {URL}/rest/votes                                            | Authorized     |
+| Vote       | PUT    | Create vote                             | {URL}/rest/votes?restaurantId={restaurantId}                | Authorized     |
 |            | GET    | Get vote                                | {URL}/rest/votes/{voteId}                                   | Authorized     |
 |            | GET    | Get last vote of user                   | {URL}/rest/votes/last                                       | Authorized     |
-|            | PUT    | Update vote                             | {URL}/rest/votes/{voteId}                                   | Authorized     |
+|            | PATCH  | Update vote                             | {URL}/rest/votes?restaurantId={restaurantId}                | Authorized     |
 
 ---
 
@@ -188,7 +188,7 @@ curl -s -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.co
 
 **Create vote**
 ```
-curl -s -X POST -d '{"restaurantId":100002}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/votes --user user@gmail.com:userpass
+curl -s -X PUT -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes?restaurantId=100002 --user user@gmail.com:userpass
 ```
 **Get vote**
 ```
@@ -200,5 +200,6 @@ curl -s http://localhost:8080/voting/rest/votes/last --user admin@gmail.com:admi
 ```
 **Update vote**
 ```
-curl -s -X PUT -d '{"id":100015,"restaurantId":100003}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes/100015 --user user@gmail.com:userpass
+curl -s -X PATCH http://localhost:8080/voting/rest/votes?restaurantId=100002 --user admin@gmail.com:admin
+
 ```

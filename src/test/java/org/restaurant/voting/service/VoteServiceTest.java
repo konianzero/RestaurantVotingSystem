@@ -14,7 +14,6 @@ import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.getUpdated;
 import static org.restaurant.voting.VoteTestData.getNew;
 import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
-import static org.restaurant.voting.util.VoteUtil.createTo;
 
 public class VoteServiceTest extends AbstractServiceTest {
     @Autowired
@@ -23,7 +22,7 @@ public class VoteServiceTest extends AbstractServiceTest {
     @Test
     void create() {
         Vote newVote = getNew();
-        Vote created = service.create(createTo(newVote), USER_ID);
+        Vote created = service.create(newVote.getRestaurant().getId(), USER_ID);
         int newId = created.id();
         newVote.setId(newId);
         VOTE_MATCHER.assertMatch(created, newVote);
@@ -51,9 +50,9 @@ public class VoteServiceTest extends AbstractServiceTest {
     void update() {
         Vote updated = getUpdated();
         if (isVotingTimeOver()) {
-            assertThrows(VotingTimeOverException.class, () -> service.update(createTo(updated), ADMIN_ID));
+            assertThrows(VotingTimeOverException.class, () -> service.update(updated.getRestaurant().getId(), ADMIN_ID));
         } else {
-            service.update(createTo(updated), ADMIN_ID);
+            service.update(updated.getRestaurant().getId(), ADMIN_ID);
             VOTE_MATCHER.assertMatch(service.get(VOTE_3_ID, ADMIN_ID), updated);
         }
     }

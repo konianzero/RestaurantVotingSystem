@@ -10,10 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.service.VoteService;
 import org.restaurant.voting.to.VoteTo;
-import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.TestUtil;
-
-import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -23,13 +20,11 @@ import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.ADMIN_ID;
 import static org.restaurant.voting.UserTestData.USER;
 import static org.restaurant.voting.UserTestData.USER_ID;
-import static org.restaurant.voting.RestaurantTestData.RESTAURANT_MATCHER;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.NOT_FOUND;
 import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
-import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
 import static org.restaurant.voting.util.VoteUtil.createTo;
+import static org.restaurant.voting.util.exception.ErrorType.*;
 
 class VoteRestControllerTest extends AbstractControllerTest {
 
@@ -41,20 +36,18 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void createWithLocation() throws Exception {
         Vote newVote = getNew();
-        VoteTo newVoteTo = createTo(newVote);
         ResultActions action = perform(
-                MockMvcRequestBuilders.post(REST_URL)
+                MockMvcRequestBuilders.put(REST_URL)
+                                      .queryParam("restaurantId", String.valueOf(newVote.getRestaurant().getId()))
                                       .with(userHttpBasic(USER))
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(newVoteTo))
         ).andExpect(status().isCreated());
 
         VoteTo created = TestUtil.readFromJson(action, VoteTo.class);
         int newId = created.getId();
-        newVoteTo.setId(newId);
         newVote.setId(newId);
 
-        VOTE_TO_MATCHER.assertMatch(created, newVoteTo);
+        VOTE_TO_MATCHER.assertMatch(created, createTo(newVote));
         VOTE_MATCHER.assertMatch(service.get(newId, USER_ID), newVote);
     }
 
@@ -95,55 +88,53 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         Vote updated = getUpdated();
         if (isVotingTimeOver()) {
-            updateAfter(updated);
+            updateAfter(updated.getRestaurant().getId());
         } else {
             updateBefore(updated);
         }
     }
 
-    void updateAfter(Vote updated) throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_3_ID)
+    void updateAfter(int restaurantId) throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL)
+                                      .queryParam("restaurantId", String.valueOf(restaurantId))
                                       .with(userHttpBasic(ADMIN))
-                                      .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(updated))))
+                                      .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(errorType(TIME_OVER));
     }
 
     void updateBefore(Vote updated) throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_3_ID)
+        perform(MockMvcRequestBuilders.patch(REST_URL)
+                                      .queryParam("restaurantId", String.valueOf(updated.getRestaurant().getId()))
                                       .with(userHttpBasic(ADMIN))
-                                      .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(updated))))
+                                      .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isNoContent());
 
         Vote actual = service.get(VOTE_3_ID, ADMIN_ID);
-        VOTE_MATCHER.assertMatch(actual, updated);
-        RESTAURANT_MATCHER.assertMatch(actual.getRestaurant(), updated.getRestaurant());
+        VOTE_TO_MATCHER.assertMatch(createTo(actual), createTo(updated));
     }
 
     @Test
     void createInvalid() throws Exception {
-        VoteTo newVoteTo = new VoteTo(null, LocalDate.now(), ADMIN_ID, 1000);
-        perform(MockMvcRequestBuilders.post(REST_URL)
-                        .with(userHttpBasic(ADMIN))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(newVoteTo)))
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                                      .queryParam("restaurantId", String.valueOf(1000))
+                                      .with(userHttpBasic(ADMIN))
+                                      .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(errorType(DATA_NOT_FOUND));
     }
 
     @Test
     void updateInvalid() throws Exception {
-        VoteTo updateTo = new VoteTo(VOTE_1_ID, LocalDate.now(), ADMIN_ID, 1000);
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_1_ID)
+        perform(MockMvcRequestBuilders.patch(REST_URL)
+                                      .queryParam("restaurantId", String.valueOf(1000))
                                       .with(userHttpBasic(ADMIN))
-                                      .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(updateTo)))
+                                      .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(errorType(DATA_NOT_FOUND));
     }
 }

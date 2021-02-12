@@ -5,16 +5,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import org.restaurant.voting.model.Vote;
-import org.restaurant.voting.model.Restaurant;
-import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.repository.CrudVoteRepository;
-import org.restaurant.voting.to.VoteTo;
 
 import static java.time.LocalDate.now;
 import static org.restaurant.voting.util.ValidationUtil.*;
-import static org.restaurant.voting.util.VoteUtil.createNewFromTo;
+import static org.restaurant.voting.util.VoteUtil.createNew;
 
 @Service
 public class VoteService {
@@ -30,11 +27,10 @@ public class VoteService {
         this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
-    public Vote create(VoteTo voteTo, int userId) {
-        Assert.notNull(voteTo, "Vote must be not null");
-        voteTo.setVotingDate(now());
-        Vote vote = createNewFromTo(voteTo);
-        return save(vote, voteTo.getRestaurantId(), userId);
+    public Vote create(int restaurantId, int userId) {
+        Assert.notNull(restaurantId, "Restaurant Id must be not null");
+        Vote vote = createNew();
+        return save(vote, restaurantId, userId);
     }
 
     @Transactional
@@ -42,15 +38,14 @@ public class VoteService {
         if (!vote.isNew() && get(vote.getId(), userId) == null) {
             return null;
         }
-        vote.setUser(crudUserRepository.findById(userId, User.class));
-        vote.setRestaurant(crudRestaurantRepository.findById(restaurantId, Restaurant.class));
+        vote.setUser(checkNotFoundWithId(crudUserRepository.findById(userId), userId));
+        vote.setRestaurant(checkNotFoundWithId(crudRestaurantRepository.findById(restaurantId), restaurantId));
         return crudVoteRepository.save(vote);
     }
 
     public Vote get(int id, int userId) {
         return checkNotFoundWithId(crudVoteRepository.findById(id)
-                                                     .filter(vote -> vote.getUser().getId() == userId)
-                                                     .orElse(null),
+                                                     .filter(vote -> vote.getUser().getId() == userId),
                                    id);
     }
 
@@ -58,12 +53,11 @@ public class VoteService {
         return crudVoteRepository.getByDate(now(), userId);
     }
 
-    public void update(VoteTo voteTo, int userId) {
-        Assert.notNull(voteTo, "Vote must be not null");
-        voteTo.setVotingDate(now());
+    public void update(int restaurantId, int userId) {
+        Assert.notNull(restaurantId, "Restaurant Id must be not null");
         checkTimeOver();
-        Vote vote = get(voteTo.getId(), userId);
-        vote.setVotingDate(voteTo.getVotingDate());
-        checkNotFoundWithId(save(vote, voteTo.getRestaurantId(), userId), voteTo.getId());
+        Vote vote = getLast(userId);
+        vote.setVotingDate(now());
+        save(vote, restaurantId, userId);
     }
 }

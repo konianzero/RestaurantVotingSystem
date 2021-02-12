@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.ErrorType;
@@ -31,6 +32,11 @@ public class ValidationUtil {
         } else if (bean.getId() != id) {
             throw new IllegalRequestDataException(bean + " must be with id=" + id);
         }
+    }
+
+    public static <T> T checkNotFoundWithId(Optional<T> object, int id) {
+        checkNotFound(object.isPresent(), "id=" + id);
+        return object.get();
     }
 
     public static <T> T checkNotFoundWithId(T object, int id) {

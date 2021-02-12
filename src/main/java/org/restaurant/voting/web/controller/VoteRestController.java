@@ -1,13 +1,11 @@
 package org.restaurant.voting.web.controller;
 
-import org.restaurant.voting.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -16,10 +14,8 @@ import java.net.URI;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.to.VoteTo;
 import org.restaurant.voting.service.VoteService;
-import org.restaurant.voting.View;
+import org.restaurant.voting.util.SecurityUtil;
 
-import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
-import static org.restaurant.voting.util.ValidationUtil.checkNew;
 import static org.restaurant.voting.util.VoteUtil.createTo;
 
 @RestController
@@ -34,12 +30,11 @@ public class VoteRestController {
         this.service = service;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VoteTo> createWithLocation(@Validated(View.Web.class) @RequestBody VoteTo voteTo) {
-        checkNew(voteTo);
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<VoteTo> createWithLocation(@RequestParam int restaurantId) {
         int userId = SecurityUtil.authUserId();
-        log.info("Create {} of user {}", voteTo, userId);
-        Vote created = service.create(voteTo, userId);
+        log.info("Vote of user {} for restaurant {}", userId, restaurantId);
+        Vote created = service.create(restaurantId, userId);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                           .path(REST_URL + "/{id}")
                                                           .buildAndExpand(created.getId())
@@ -62,12 +57,11 @@ public class VoteRestController {
         return createTo(service.getLast(userId));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody VoteTo voteTo, @PathVariable int id) {
-        assureIdConsistent(voteTo, id);
+    public void update(@RequestParam int restaurantId) {
         int userId = SecurityUtil.authUserId();
-        log.info("Update {} of user {}", voteTo, userId);
-        service.update(voteTo, userId);
+        log.info("Update vote of user {} for restaurant {}", userId, restaurantId);
+        service.update(restaurantId, userId);
     }
 }

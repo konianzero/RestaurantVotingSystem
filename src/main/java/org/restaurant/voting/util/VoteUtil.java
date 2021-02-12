@@ -1,5 +1,6 @@
 package org.restaurant.voting.util;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class VoteUtil {
                     .collect(Collectors.toList());
     }
 
-    public static Vote createNewFromTo(VoteTo voteTo) {
-        return VoteMapper.INSTANCE.toEntityFromTo(voteTo);
+    public static Vote createNew() {
+        return new Vote(null, null, null, LocalDate.now());
     }
 }
