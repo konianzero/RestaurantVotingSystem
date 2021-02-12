@@ -21,7 +21,7 @@ public class RestaurantTestData {
     public static final Restaurant FIRST_RESTAURANT = new Restaurant(RESTAURANT_1_ID, "Restaurant1");
     public static final Restaurant SECOND_RESTAURANT = new Restaurant(RESTAURANT_2_ID, "Restaurant2");
 
-    public static final List<Restaurant> ALL_RESTAURANTS = List.of(SECOND_RESTAURANT, FIRST_RESTAURANT);
+    public static final List<Restaurant> ALL_RESTAURANTS = List.of(FIRST_RESTAURANT, SECOND_RESTAURANT);
 
     public static void initMenu() {
         FIRST_RESTAURANT.setMenu(new ArrayList<>());

@@ -4,6 +4,7 @@ import org.restaurant.voting.repository.CrudDishRepository;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.to.RestaurantTo;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +21,11 @@ import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class RestaurantService {
-    private static final Sort SORT_BY_NAME = Sort.by(Sort.Direction.DESC, "name");
+    private static final Sort SORT_BY_ID = Sort.by(Sort.Direction.ASC, "id");
 
-    private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
 
-    public RestaurantService(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository) {
-        this.crudDishRepository = crudDishRepository;
+    public RestaurantService(CrudRestaurantRepository crudRestaurantRepository) {
         this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
@@ -49,16 +48,17 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getAll() {
-        return crudRestaurantRepository.findAll(SORT_BY_NAME);
+        return crudRestaurantRepository.findAll();
     }
 
     public List<Restaurant> getAllWithTodayMenu() {
-        return crudRestaurantRepository.findAll(SORT_BY_NAME)
+        return crudRestaurantRepository.getAllWithDishes()
                                        .stream()
-                                       .peek(r ->
-                                               r.setMenu(
-                                                       crudDishRepository.getAllByRestaurantAndDate(r.getId(), LocalDate.now())
-                                               )
+                                       .peek(
+                                               r -> r.setMenu(
+                                                       r.getMenu().stream()
+                                                                  .filter(d -> d.getDate().equals(LocalDate.now()))
+                                                                  .collect(Collectors.toList()))
                                        )
                                        .collect(Collectors.toList());
     }

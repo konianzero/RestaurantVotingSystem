@@ -46,7 +46,7 @@ public class RestaurantServiceTest extends AbstractServiceTest  {
 
     @Test
     void getAll() {
-        RESTAURANT_MATCHER.assertMatch(service.getAll(), SECOND_RESTAURANT, FIRST_RESTAURANT);
+        RESTAURANT_MATCHER.assertMatch(service.getAll(), FIRST_RESTAURANT, SECOND_RESTAURANT);
     }
 
     @Test

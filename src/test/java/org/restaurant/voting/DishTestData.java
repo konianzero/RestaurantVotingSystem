@@ -33,7 +33,7 @@ public class DishTestData {
 
     public static final List<Dish> FIRST_RESTAURANT_DISHES = List.of(DISH_5, DISH_6, DISH_1, DISH_2);
 
-    public static final List<Dish> TODAY_MENU = List.of(DISH_7, DISH_8, DISH_5, DISH_6);
+    public static final List<Dish> TODAY_MENU = List.of(DISH_5, DISH_6, DISH_7, DISH_8);
     public static final List<Dish> TODAY_REST1_MENU = List.of(DISH_5, DISH_6);
     public static final List<Dish> TODAY_REST2_MENU = List.of(DISH_7, DISH_8);
 
