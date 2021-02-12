@@ -10,6 +10,6 @@ public class RootController {
 
     @GetMapping("/")
     public String root() {
-        return "redirect:rest/restaurants/today";
+        return "redirect:swagger-ui.html";
     }
 }
