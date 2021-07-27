@@ -18,8 +18,19 @@ Each restaurant provides new menu each day.
 ---
 
 **Launch**
-```
+
+Local
+``` bash
 mvn clean package org.codehaus.cargo:cargo-maven2-plugin:1.8.2:run
+```
+
+In container
+
+``` bash
+docker build -t restaurant/voting_system .
+```
+``` bash
+docker run --name votingSystem -d --rm -p 8080:8080 restaurant/voting_system:latest
 ```
 
 URL: [http://localhost:8080/voting](http://localhost:8080/voting)
@@ -77,62 +88,62 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 ### Restaurant
 
 **Create restaurant**
-```
+``` bash
 curl -s -X POST -d '{"name":"Restaurant3"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/restaurants --user admin@gmail.com:admin
 ```
 **Get restaurant**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/restaurants/100002 --user user@gmail.com:userpass
 ```
 **Get restaurant with dishes**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/restaurants/100002/with --user user@gmail.com:userpass
 ```
 **Get all restaurants**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/restaurants/ --user user@gmail.com:userpass
 ```
 **Get all restaurants with today's dishes**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/restaurants/today --user user@gmail.com:userpass
 ```
 **Update restaurant**
-```
+``` bash
 curl -s -X PUT -d '{"id":100002,"name":"RestThree"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
 ```
 **Delete restaurant**
-```
+``` bash
 curl -s -X DELETE http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
 ```
 
 ### Dish
 
 **Create dish**
-```
+``` bash
 curl -s -X POST -d '{"restaurantId":100002,"name":"Sandwich","price":6}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes --user admin@gmail.com:admin
 ```
 **Get dish**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/dishes/100004 --user user@gmail.com:userpass
 ```
 **Get dish with a restaurant**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/dishes/100004/with --user user@gmail.com:userpass
 ```
 **Get all dishes by restaurant**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/dishes?restaurantId=100002 --user user@gmail.com:userpass
 ```
 **Get all dishes by restaurant and date**
-```
+``` bash
 curl -s "http://localhost:8080/voting/rest/dishes?restaurantId=100002&date=2021-02-06" --user user@gmail.com:userpass
 ```
 **Update dish**
-```
+``` bash
 curl -s -X PUT -d '{"id":100004,"restaurantId":100002,"name":"Sandwich with tune","price":8}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
 ```
 **Delete dish**
-```
+``` bash
 curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
 ```
 
@@ -141,65 +152,65 @@ curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@g
 #### Admin
 
 **Create user**
-```
+``` bash
 curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password","enabled":true,"roles":["USER"]}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
 ```
 **Get user**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
 ```
 **Get user by Email**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/admin/users/by?email=user@gmail.com --user admin@gmail.com:admin
 ```
 **Get all users**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
 ```
 **Update user**
-```
+``` bash
 curl -s -X PUT -d '{"id":100001,"name":"NewAdmin","email":"newadmin@gmail.com","password":"password","enabled":true,"roles":["USER","ADMIN"]}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
 ```
 **Delete user**
-```
+``` bash
 curl -s -X DELETE http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
 ```
 
 #### User
 
 **Register user**
-```
+``` bash
 curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/profile/register
 ```
 **Get user**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
 ```
 **Update user**
-```
+``` bash
 curl -s -X PUT -d '{"name":"UpdatedUser","email":"updated@gmail.com","password":"passupdate"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
 ```
 **Delete user**
-```
+``` bash
 curl -s -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
 ```
 
 ### Vote
 
 **Create vote**
-```
+``` bash
 curl -s -X PUT -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes?restaurantId=100002 --user user@gmail.com:userpass
 ```
 **Get vote**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/votes/100013 --user user@gmail.com:userpass
 ```
 **Get last vote of user**
-```
+``` bash
 curl -s http://localhost:8080/voting/rest/votes/last --user admin@gmail.com:admin
 ```
 **Update vote**
-```
+``` bash
 curl -s -X PATCH http://localhost:8080/voting/rest/votes?restaurantId=100002 --user admin@gmail.com:admin
 
 ```
