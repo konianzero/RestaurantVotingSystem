@@ -1,8 +1,9 @@
-# Restaurant Voting System
+Restaurant Voting System
+------------------------
 
-_A restaurant voting system REST API using Hibernate/Spring/SpringMVC_.
+_**Hibernate/Spring/SpringMVC**_.
 
-Voting system for deciding where to have lunch.
+A restaurant voting system (REST API) for deciding where to have lunch.
 
  * 2 types of users: admin and regular users
  * Admin can input a restaurant, and it's lunch menu of the day (2-5 items usually, just a dish name and price)
@@ -30,7 +31,16 @@ The project uses:
    - _Swagger2_ for API documentation
 ---
 
-**Launch**
+### Requirements
+
+- JDK 15+
+- maven 3
+- Tomcat 9
+- Docker 20
+
+---
+
+### Launch
 
 Local
 ```shell
@@ -50,7 +60,7 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
 ---
 
-## Users
+### Users
 
 | Name  | Email             | Password  | Roles         |
 |-------|-------------------|-----------|---------------|
@@ -59,7 +69,7 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
 ---
 
-## API documentation
+### API documentation
 
 [Swagger Api Documentation](http://localhost:8080/voting/swagger-ui.html#/)
 
@@ -96,9 +106,9 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
 ---
 
-## CURL commands for the restaurant voting system REST API.
+### CURL commands for the restaurant voting system REST API.
 
-### Restaurant
+##### Restaurant
 
 **Create restaurant**
 ```shell
@@ -129,7 +139,7 @@ curl -s -X PUT -d '{"id":100002,"name":"RestThree"}' -H 'Content-Type: applicati
 curl -s -X DELETE http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
 ```
 
-### Dish
+##### Dish
 
 **Create dish**
 ```shell
@@ -160,9 +170,9 @@ curl -s -X PUT -d '{"id":100004,"restaurantId":100002,"name":"Sandwich with tune
 curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
 ```
 
-### User
+##### User
 
-#### Admin
+####### Admin
 
 **Create user**
 ```shell
@@ -189,7 +199,7 @@ curl -s -X PUT -d '{"id":100001,"name":"NewAdmin","email":"newadmin@gmail.com","
 curl -s -X DELETE http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
 ```
 
-#### User
+####### User
 
 **Register user**
 ```shell
@@ -208,7 +218,7 @@ curl -s -X PUT -d '{"name":"UpdatedUser","email":"updated@gmail.com","password":
 curl -s -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
 ```
 
-### Vote
+##### Vote
 
 **Create vote**
 ```shell
