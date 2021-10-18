@@ -4,27 +4,28 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import org.restaurant.voting.TestUtil;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.service.VoteService;
 import org.restaurant.voting.to.VoteTo;
-import org.restaurant.voting.TestUtil;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.restaurant.voting.TestUtil.userHttpBasic;
-import static org.restaurant.voting.UserTestData.ADMIN;
-import static org.restaurant.voting.UserTestData.ADMIN_ID;
-import static org.restaurant.voting.UserTestData.USER;
-import static org.restaurant.voting.UserTestData.USER_ID;
-import static org.restaurant.voting.VoteTestData.*;
+
+import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.VoteTestData.NOT_FOUND;
-import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
+import static org.restaurant.voting.VoteTestData.getNew;
+import static org.restaurant.voting.VoteTestData.getUpdated;
+import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.util.VoteUtil.createTo;
-import static org.restaurant.voting.util.exception.ErrorType.*;
+import static org.restaurant.voting.util.exception.ErrorType.DATA_NOT_FOUND;
+import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
+import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 
 class VoteRestControllerTest extends AbstractControllerTest {
 
@@ -34,12 +35,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
     private VoteService service;
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void createWithLocation() throws Exception {
         Vote newVote = getNew();
         ResultActions action = perform(
                 MockMvcRequestBuilders.put(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(newVote.getRestaurant().getId()))
-                                      .with(userHttpBasic(USER))
                                       .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated());
 
@@ -52,9 +53,9 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_2_ID)
-                                      .with(userHttpBasic(USER)))
+        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_2_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(createTo(VOTE_2)));
@@ -68,23 +69,24 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
-                                      .with(userHttpBasic(USER)))
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void getLastVote() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_3_ID)
-                                      .with(userHttpBasic(ADMIN)))
+        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_3_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(createTo(VOTE_3)));
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
         Vote updated = getUpdated();
         if (isVotingTimeOver()) {
@@ -97,7 +99,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void updateAfter(int restaurantId) throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(restaurantId))
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isConflict())
@@ -107,7 +108,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void updateBefore(Vote updated) throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(updated.getRestaurant().getId()))
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -117,10 +117,10 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void createInvalid() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(1000))
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -128,10 +128,10 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void updateInvalid() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(1000))
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
