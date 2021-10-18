@@ -1,6 +1,6 @@
 package org.restaurant.voting.to;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.restaurant.voting.util.validation.SafeHtml;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -8,15 +8,11 @@ import java.beans.ConstructorProperties;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import org.restaurant.voting.View;
-
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
-
 public class DishTo extends BaseTo {
     protected int restaurantId;
 
     @Size(min = 2, max = 100)
-    @SafeHtml(groups = {View.Web.class}, whitelistType = NONE)
+    @SafeHtml
     protected String name;
 
     @Positive

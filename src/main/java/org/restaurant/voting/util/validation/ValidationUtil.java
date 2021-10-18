@@ -1,16 +1,15 @@
-package org.restaurant.voting.util;
-
-import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalTime;
-import java.util.Optional;
+package org.restaurant.voting.util.validation;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.ErrorType;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
 import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.slf4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalTime;
+import java.util.Optional;
 
 import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
 

@@ -1,5 +1,10 @@
 package org.restaurant.voting.service;
 
+import org.restaurant.voting.AuthorizedUser;
+import org.restaurant.voting.model.User;
+import org.restaurant.voting.repository.CrudUserRepository;
+import org.restaurant.voting.to.UserTo;
+import org.restaurant.voting.util.UserUtil;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
@@ -14,15 +19,9 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import org.restaurant.voting.model.User;
-import org.restaurant.voting.repository.CrudUserRepository;
-import org.restaurant.voting.AuthorizedUser;
-import org.restaurant.voting.to.UserTo;
-import org.restaurant.voting.util.UserUtil;
-
 import static org.restaurant.voting.util.UserUtil.prepareToSave;
-import static org.restaurant.voting.util.ValidationUtil.checkNotFound;
-import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFound;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service("userService")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)

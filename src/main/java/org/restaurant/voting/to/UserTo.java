@@ -1,28 +1,26 @@
 package org.restaurant.voting.to;
 
+import org.restaurant.voting.HasIdAndEmail;
+import org.restaurant.voting.util.validation.SafeHtml;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.hibernate.validator.constraints.SafeHtml;
-import org.restaurant.voting.HasIdAndEmail;
-
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
-
 public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Size(min = 2, max = 100)
     @NotBlank
-    @SafeHtml(whitelistType = NONE)
+    @SafeHtml
     private String name;
 
     @Email
     @NotBlank
     @Size(min = 5, max = 50)
-    @SafeHtml(whitelistType = NONE)
+    @SafeHtml
     private String email;
 
     @NotBlank

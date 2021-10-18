@@ -10,7 +10,7 @@ import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.repository.CrudVoteRepository;
 
 import static java.time.LocalDate.now;
-import static org.restaurant.voting.util.ValidationUtil.*;
+import static org.restaurant.voting.util.validation.ValidationUtil.*;
 import static org.restaurant.voting.util.VoteUtil.createNew;
 
 @Service

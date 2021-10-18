@@ -2,15 +2,12 @@ package org.restaurant.voting.web.controller.user;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
@@ -18,9 +15,11 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
+import java.util.List;
+
 import static org.restaurant.voting.util.UserUtil.createNewFromTo;
-import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
-import static org.restaurant.voting.util.ValidationUtil.checkNew;
+import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
 public abstract class AbstractUserController {
 

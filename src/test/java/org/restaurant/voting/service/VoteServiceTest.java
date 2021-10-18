@@ -13,7 +13,7 @@ import static org.restaurant.voting.UserTestData.*;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.VoteTestData.getUpdated;
 import static org.restaurant.voting.VoteTestData.getNew;
-import static org.restaurant.voting.util.ValidationUtil.isVotingTimeOver;
+import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 
 public class VoteServiceTest extends AbstractServiceTest {
     @Autowired

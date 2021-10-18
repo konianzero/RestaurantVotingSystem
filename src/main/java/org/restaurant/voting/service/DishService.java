@@ -1,23 +1,19 @@
 package org.restaurant.voting.service;
 
+import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.repository.CrudDishRepository;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
+import org.restaurant.voting.to.DishTo;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.to.DishTo;
-
-import javax.transaction.Transactional;
-
 import static org.restaurant.voting.util.DishUtil.createNewFromTo;
-import static org.restaurant.voting.util.ValidationUtil.checkNotFoundWithId;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class DishService {

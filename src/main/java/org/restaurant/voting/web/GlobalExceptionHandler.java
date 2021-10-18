@@ -1,8 +1,9 @@
 package org.restaurant.voting.web;
 
+import org.restaurant.voting.util.validation.ValidationUtil;
+import org.restaurant.voting.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.restaurant.voting.util.ValidationUtil;
-import org.restaurant.voting.util.exception.*;
 
 import static org.restaurant.voting.util.exception.ErrorType.*;
 
