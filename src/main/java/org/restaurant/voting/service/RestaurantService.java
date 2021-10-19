@@ -11,7 +11,6 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.restaurant.voting.util.RestaurantUtil.createNewFromTo;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
@@ -20,6 +19,7 @@ import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFound
 public class RestaurantService {
 
     private final CrudRestaurantRepository crudRestaurantRepository;
+    private final LocalDate TODAY = LocalDate.now();
 
     public RestaurantService(CrudRestaurantRepository crudRestaurantRepository) {
         this.crudRestaurantRepository = crudRestaurantRepository;
@@ -39,8 +39,8 @@ public class RestaurantService {
         return checkNotFoundWithId(crudRestaurantRepository.findById(id), id);
     }
 
-    public Restaurant getWithDishes(int id) {
-        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id), id);
+    public Restaurant getWithTodayMenu(int id) {
+        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id, TODAY), id);
     }
 
     public List<Restaurant> getAll() {
@@ -49,15 +49,7 @@ public class RestaurantService {
 
     @Cacheable("dishes")
     public List<Restaurant> getAllWithTodayMenu() {
-        return crudRestaurantRepository.getAllWithDishes()
-                                       .stream()
-                                       .peek(
-                                               r -> r.setMenu(
-                                                       r.getMenu().stream()
-                                                                  .filter(d -> d.getDate().equals(LocalDate.now()))
-                                                                  .collect(Collectors.toList()))
-                                       )
-                                       .collect(Collectors.toList());
+        return crudRestaurantRepository.getAllWithDishes(TODAY);
     }
 
     @CacheEvict(value = "dishes", allEntries = true)

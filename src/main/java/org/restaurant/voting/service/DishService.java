@@ -48,10 +48,6 @@ public class DishService {
         return checkNotFoundWithId(crudDishRepository.findById(id), id);
     }
 
-    public Dish getWithRestaurant(int id) {
-        return checkNotFoundWithId(crudDishRepository.getWithRestaurant(id), id);
-    }
-
     public List<Dish> getAllByRestaurant(int restaurantId) {
         return crudDishRepository.getAllByRestaurant(restaurantId);
     }

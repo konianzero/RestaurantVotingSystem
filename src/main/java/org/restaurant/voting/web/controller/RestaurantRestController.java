@@ -51,10 +51,10 @@ public class RestaurantRestController {
         return createTo(service.get(id));
     }
 
-    @GetMapping("/{id}/with")
-    public RestaurantWithMenuTo getWith(@PathVariable int id) {
+    @GetMapping("/{id}/today")
+    public RestaurantWithMenuTo getForToday(@PathVariable int id) {
         log.info("Get restaurant {} with menu", id);
-        return createWithMenuTo(service.getWithDishes(id));
+        return createWithMenuTo(service.getWithTodayMenu(id));
     }
 
     @GetMapping

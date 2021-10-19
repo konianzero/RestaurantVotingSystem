@@ -93,9 +93,9 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_EMAIL)
     void getWith() throws Exception {
         initMenu();
-        FIRST_RESTAURANT.getMenu().addAll(FIRST_RESTAURANT_DISHES);
+        FIRST_RESTAURANT.getMenu().addAll(TODAY_REST1_MENU);
 
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_1_ID + "/with"))
+        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT_1_ID + "/today"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
