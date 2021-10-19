@@ -153,7 +153,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void createInvalid() throws Exception {
-        Restaurant newRestaurant = new Restaurant(null, "");
+        Restaurant newRestaurant = new Restaurant(null, "", "");
         perform(MockMvcRequestBuilders.post(REST_URL)
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newRestaurant)))
@@ -166,7 +166,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void updateInvalid() throws Exception {
-        Restaurant updated = new Restaurant(RESTAURANT_1_ID, "1");
+        Restaurant updated = new Restaurant(RESTAURANT_1_ID, "1", "ул. Бумажная, д.1");
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT_1_ID)
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(updated)))
@@ -179,7 +179,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void updateHtmlUnsafe() throws Exception {
-        Restaurant newRestaurant = new Restaurant(null, "<script>alert(123)</script>");
+        Restaurant newRestaurant = new Restaurant(null, "<script>alert(123)</script>", "ул. Бумажная, д.1");
         perform(MockMvcRequestBuilders.post(REST_URL)
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newRestaurant)))

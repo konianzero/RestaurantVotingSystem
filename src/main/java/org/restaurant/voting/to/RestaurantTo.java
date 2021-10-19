@@ -2,6 +2,7 @@ package org.restaurant.voting.to;
 
 
 import org.restaurant.voting.util.validation.SafeHtml;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -14,13 +15,19 @@ public class RestaurantTo extends BaseTo {
     @SafeHtml
     protected String name;
 
+    @Size(max = 1024)
+    @SafeHtml
+    @Nullable
+    private String address;
+
     public RestaurantTo() {
     }
 
-    @ConstructorProperties({"id", "name"})
-    public RestaurantTo(Integer id, String name) {
+    @ConstructorProperties({"id", "name", "address"})
+    public RestaurantTo(Integer id, String name, @Nullable String address) {
         super(id);
         this.name = name;
+        this.address = address;
     }
 
     public String getName() {
@@ -29,6 +36,15 @@ public class RestaurantTo extends BaseTo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Nullable
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(@Nullable String address) {
+        this.address = address;
     }
 
     @Override

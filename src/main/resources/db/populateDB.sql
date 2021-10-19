@@ -14,9 +14,9 @@ INSERT INTO user_roles (user_id, role) VALUES
 (100000, 'USER'),
 (100001, 'USER');
 
-INSERT INTO restaurants (name) VALUES
-    ('Restaurant1'),
-    ('Restaurant2');
+INSERT INTO restaurants (name, address) VALUES
+    ('Restaurant1', 'ул. Мира, 67'),
+    ('Restaurant2', 'ул. Бумажная, д.20');
 
 INSERT INTO dishes (restaurant_id, name, price, date) VALUES
     (100002, 'IceCream', 20, DATE_SUB(NOW, 1 DAY)),
