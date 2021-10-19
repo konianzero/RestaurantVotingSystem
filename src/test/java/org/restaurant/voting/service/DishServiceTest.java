@@ -42,12 +42,6 @@ public class DishServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void getWithRestaurant() {
-        Dish actual = service.getWithRestaurant(DISH_1_ID);
-        RESTAURANT_MATCHER.assertMatch(actual.getRestaurant(), FIRST_RESTAURANT);
-    }
-
-    @Test
     void getAllByRestaurant() {
         DISH_MATCHER.assertMatch(service.getAllByRestaurant(RESTAURANT_1_ID), FIRST_RESTAURANT_DISHES);
     }

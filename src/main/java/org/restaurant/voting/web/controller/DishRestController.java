@@ -3,7 +3,6 @@ package org.restaurant.voting.web.controller;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
-import org.restaurant.voting.to.DishWithRestaurantTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.restaurant.voting.util.DishUtil.*;
+import static org.restaurant.voting.util.DishUtil.createTo;
+import static org.restaurant.voting.util.DishUtil.getTos;
 import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
@@ -51,12 +51,6 @@ public class DishRestController {
     public DishTo get(@PathVariable int id) {
         log.info("Get {}", id);
         return createTo(service.get(id));
-    }
-
-    @GetMapping("/{id}/with")
-    public DishWithRestaurantTo getWith(@PathVariable int id) {
-        log.info("Get dish {} with restaurant", id);
-        return createWithRestTo(service.getWithRestaurant(id));
     }
 
     @GetMapping
