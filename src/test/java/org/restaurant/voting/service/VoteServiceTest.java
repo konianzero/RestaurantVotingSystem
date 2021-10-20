@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.UserTestData.ADMIN_ID;
 import static org.restaurant.voting.UserTestData.USER_ID;
 import static org.restaurant.voting.VoteTestData.*;
-import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 
 class VoteServiceTest extends AbstractServiceTest {
     @Autowired
@@ -45,7 +44,7 @@ class VoteServiceTest extends AbstractServiceTest {
     @Test
     void update() {
         Vote updated = getUpdated();
-        if (isVotingTimeOver()) {
+        if (service.isVotingTimeOver()) {
             assertThrows(VotingTimeOverException.class, () -> service.update(updated.getRestaurant().getId(), ADMIN_ID));
         } else {
             service.update(updated.getRestaurant().getId(), ADMIN_ID);

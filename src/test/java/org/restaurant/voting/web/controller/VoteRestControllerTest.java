@@ -21,7 +21,6 @@ import static org.restaurant.voting.util.VoteUtil.createTo;
 import static org.restaurant.voting.util.VoteUtil.getTos;
 import static org.restaurant.voting.util.exception.ErrorType.DATA_NOT_FOUND;
 import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
-import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,7 +81,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_EMAIL)
     void revoteToday() throws Exception {
         Vote updated = getUpdated();
-        if (isVotingTimeOver()) {
+        if (service.isVotingTimeOver()) {
             revoteTodayAfter(updated.getRestaurant().getId());
         } else {
             revoteTodayBefore(updated);

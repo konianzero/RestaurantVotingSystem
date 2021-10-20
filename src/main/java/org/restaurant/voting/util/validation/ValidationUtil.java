@@ -4,17 +4,12 @@ import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.ErrorType;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
 import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalTime;
 import java.util.Optional;
 
-import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
-
 public class ValidationUtil {
-    public static final LocalTime END_VOTING_TIME =  LocalTime.of(23, 0);
 
     private ValidationUtil() {
     }
@@ -55,16 +50,6 @@ public class ValidationUtil {
         if (!isFound) {
             throw new NotFoundException("Not found entity with " + message);
         }
-    }
-
-    public static void checkTimeOver() {
-        if (isVotingTimeOver()) {
-            throw new VotingTimeOverException("It's " + format(LocalTime.now()) + ". Time for voting is over!");
-        }
-    }
-
-    public static boolean isVotingTimeOver() {
-        return LocalTime.now().isAfter(END_VOTING_TIME);
     }
 
     public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {
