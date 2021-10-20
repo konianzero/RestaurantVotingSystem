@@ -89,7 +89,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    protected User save(User user) {
+    public User save(User user) {
         return crudUserRepository.save(user);
     }
 

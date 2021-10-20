@@ -22,19 +22,18 @@ public class VoteService {
 
     public VoteService(CrudVoteRepository crudVoteRepository, CrudUserRepository crudUserRepository, CrudRestaurantRepository crudRestaurantRepository) {
         this.crudVoteRepository = crudVoteRepository;
-
         this.crudUserRepository = crudUserRepository;
         this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
+    @Transactional
     public Vote create(int restaurantId, int userId) {
         Assert.notNull(restaurantId, "Restaurant Id must be not null");
         Vote vote = createNew();
         return save(vote, restaurantId, userId);
     }
 
-    @Transactional
-    protected Vote save(Vote vote, int restaurantId, int userId) {
+    public Vote save(Vote vote, int restaurantId, int userId) {
         if (!vote.isNew() && get(vote.getId(), userId) == null) {
             return null;
         }
@@ -53,8 +52,9 @@ public class VoteService {
         return crudVoteRepository.getByDate(now(), userId);
     }
 
+    @Transactional
     public void update(int restaurantId, int userId) {
-        Assert.notNull(restaurantId, "Restaurant Id must be not null");
+        Assert.isTrue(restaurantId != 0, "Restaurant Id must be not null");
         checkTimeOver();
         Vote vote = getLast(userId);
         vote.setVotingDate(now());

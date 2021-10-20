@@ -25,13 +25,13 @@ public class RestaurantService {
         this.crudRestaurantRepository = crudRestaurantRepository;
     }
 
+    @Transactional
     public Restaurant create(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
         return save(restaurantTo);
     }
 
-    @Transactional
-    protected Restaurant save(RestaurantTo restaurantTo) {
+    public Restaurant save(RestaurantTo restaurantTo) {
         return crudRestaurantRepository.save(createNewFromTo(restaurantTo));
     }
 
@@ -53,6 +53,7 @@ public class RestaurantService {
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
+    @Transactional
     public void update(RestaurantTo restaurantTo) {
         Assert.notNull(restaurantTo, "Restaurant must be not null");
         checkNotFoundWithId(save(restaurantTo), restaurantTo.getId());

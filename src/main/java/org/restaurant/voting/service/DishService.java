@@ -27,6 +27,7 @@ public class DishService {
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
+    @Transactional
     public Dish create(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
         dishTo.setDate(LocalDate.now());
@@ -35,8 +36,7 @@ public class DishService {
         return save(dish, dishTo.getRestaurantId());
     }
 
-    @Transactional
-    protected Dish save(Dish dish, int restaurantId) {
+    public Dish save(Dish dish, int restaurantId) {
         if (!dish.isNew() && get(dish.getId()) == null) {
             return null;
         }
@@ -58,6 +58,7 @@ public class DishService {
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
+    @Transactional
     public void update(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
         Dish dish = createNewFromTo(dishTo);
