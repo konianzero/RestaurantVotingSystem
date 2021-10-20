@@ -1,23 +1,24 @@
 package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
-
+import org.restaurant.voting.model.Vote;
+import org.restaurant.voting.repository.CrudVoteRepository;
+import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.restaurant.voting.model.Vote;
-import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.util.exception.VotingTimeOverException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.restaurant.voting.UserTestData.*;
+import static org.restaurant.voting.UserTestData.ADMIN_ID;
+import static org.restaurant.voting.UserTestData.USER_ID;
 import static org.restaurant.voting.VoteTestData.*;
-import static org.restaurant.voting.VoteTestData.getUpdated;
-import static org.restaurant.voting.VoteTestData.getNew;
 import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 
 public class VoteServiceTest extends AbstractServiceTest {
     @Autowired
     private VoteService service;
+    @Autowired
+    private CrudVoteRepository repository;
 
     @Test
     void create() {
@@ -26,18 +27,13 @@ public class VoteServiceTest extends AbstractServiceTest {
         int newId = created.id();
         newVote.setId(newId);
         VOTE_MATCHER.assertMatch(created, newVote);
-        VOTE_MATCHER.assertMatch(service.get(newId, USER_ID), newVote);
+        VOTE_MATCHER.assertMatch(repository.findById(newId).get(), newVote);
     }
 
     @Test
     void get() {
-        Vote actual = service.get(VOTE_1_ID, ADMIN_ID);
-        VOTE_MATCHER.assertMatch(actual, VOTE_1);
-    }
-
-    @Test
-    void getNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.get(VOTE_1_ID, USER_ID));
+        List<Vote> actual = service.get(ADMIN_ID);
+        VOTE_MATCHER.assertMatch(actual, VOTE_1, VOTE_3);
     }
 
     @Test
@@ -53,7 +49,7 @@ public class VoteServiceTest extends AbstractServiceTest {
             assertThrows(VotingTimeOverException.class, () -> service.update(updated.getRestaurant().getId(), ADMIN_ID));
         } else {
             service.update(updated.getRestaurant().getId(), ADMIN_ID);
-            VOTE_MATCHER.assertMatch(service.get(VOTE_3_ID, ADMIN_ID), updated);
+            VOTE_MATCHER.assertMatch(repository.findById(VOTE_3_ID).get(), updated);
         }
     }
 }

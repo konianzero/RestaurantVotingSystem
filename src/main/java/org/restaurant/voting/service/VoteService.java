@@ -1,17 +1,19 @@
 package org.restaurant.voting.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.repository.CrudVoteRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.util.List;
 
 import static java.time.LocalDate.now;
-import static org.restaurant.voting.util.validation.ValidationUtil.*;
 import static org.restaurant.voting.util.VoteUtil.createNew;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkTimeOver;
 
 @Service
 public class VoteService {
@@ -28,13 +30,13 @@ public class VoteService {
 
     @Transactional
     public Vote create(int restaurantId, int userId) {
-        Assert.notNull(restaurantId, "Restaurant Id must be not null");
+        Assert.isTrue(restaurantId != 0, "Restaurant Id must be not null");
         Vote vote = createNew();
         return save(vote, restaurantId, userId);
     }
 
     public Vote save(Vote vote, int restaurantId, int userId) {
-        if (!vote.isNew() && get(vote.getId(), userId) == null) {
+        if (!vote.isNew() && get(userId) == null) {
             return null;
         }
         vote.setUser(checkNotFoundWithId(crudUserRepository.findById(userId), userId));
@@ -42,14 +44,12 @@ public class VoteService {
         return crudVoteRepository.save(vote);
     }
 
-    public Vote get(int id, int userId) {
-        return checkNotFoundWithId(crudVoteRepository.findById(id)
-                                                     .filter(vote -> vote.getUser().getId() == userId),
-                                   id);
+    public List<Vote> get(int userId) {
+        return crudVoteRepository.getByUserId(userId);
     }
 
     public Vote getLast(int userId) {
-        return crudVoteRepository.getByDate(now(), userId);
+        return crudVoteRepository.getByUserIdAndDate(now(), userId);
     }
 
     @Transactional
