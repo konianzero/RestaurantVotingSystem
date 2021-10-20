@@ -16,7 +16,7 @@ import static org.restaurant.voting.RestaurantTestData.getUpdated;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.util.RestaurantUtil.createTo;
 
-public class RestaurantServiceTest extends AbstractServiceTest  {
+class RestaurantServiceTest extends AbstractServiceTest  {
 
     @Autowired
     private RestaurantService service;

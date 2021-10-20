@@ -14,7 +14,7 @@ import static org.restaurant.voting.UserTestData.USER_ID;
 import static org.restaurant.voting.VoteTestData.*;
 import static org.restaurant.voting.util.validation.ValidationUtil.isVotingTimeOver;
 
-public class VoteServiceTest extends AbstractServiceTest {
+class VoteServiceTest extends AbstractServiceTest {
     @Autowired
     private VoteService service;
     @Autowired
