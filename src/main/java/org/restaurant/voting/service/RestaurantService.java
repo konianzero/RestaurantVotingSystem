@@ -61,6 +61,6 @@ public class RestaurantService {
 
     @CacheEvict(value = "dishes", allEntries = true)
     public void delete(int id) {
-        checkNotFoundWithId(crudRestaurantRepository.delete(id) != 0, id);
+        crudRestaurantRepository.deleteExisted(id);
     }
 }

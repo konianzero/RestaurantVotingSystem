@@ -28,6 +28,12 @@ public class ValidationUtil {
         }
     }
 
+    public static void checkModification(int count, int id) {
+        if (count == 0) {
+            throw new IllegalRequestDataException("Operation on entity with id=" + id + " not succeeded");
+        }
+    }
+
     public static <T> T checkNotFoundWithId(Optional<T> object, int id) {
         checkNotFound(object.isPresent(), "id=" + id);
         return object.get();

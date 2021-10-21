@@ -81,7 +81,7 @@ public class UserService implements UserDetailsService {
 
     @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
-        checkNotFoundWithId(crudUserRepository.delete(id) != 0, id);
+        crudUserRepository.deleteExisted(id);
     }
 
     private User prepareAndSave(User user) {

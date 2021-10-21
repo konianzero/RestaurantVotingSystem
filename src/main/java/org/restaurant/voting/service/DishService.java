@@ -67,6 +67,6 @@ public class DishService {
 
     @CacheEvict(value = "dishes", allEntries = true)
     public void delete(int id) {
-        checkNotFoundWithId(crudDishRepository.delete(id) != 0, id);
+        crudDishRepository.deleteExisted(id);
     }
 }
