@@ -5,8 +5,6 @@ import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.UserUtil;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
@@ -36,7 +34,6 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public User create(User user) {
         Assert.notNull(user, "User must be not null");
         return prepareAndSave(user);
@@ -46,7 +43,6 @@ public class UserService implements UserDetailsService {
         return checkNotFoundWithId(crudUserRepository.findById(id), id);
     }
 
-    @Cacheable("users")
     public User getByEmail(String email) {
         Assert.notNull(email, "Email must be not null");
         return checkNotFound(crudUserRepository.getByEmail(email), "email=" + email);
@@ -56,7 +52,6 @@ public class UserService implements UserDetailsService {
         return crudUserRepository.findAll(SORT_BY_DATE);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void enable(int id, boolean enabled) {
         User user = get(id);
@@ -64,13 +59,11 @@ public class UserService implements UserDetailsService {
         save(user);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void update(User user) {
         Assert.notNull(user, "User must be not null");
         prepareAndSave(user);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void update(UserTo userTo) {
         Assert.notNull(userTo, "UserTo must be not null");
@@ -79,7 +72,6 @@ public class UserService implements UserDetailsService {
         prepareAndSave(updated);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
         crudUserRepository.deleteExisted(id);
     }

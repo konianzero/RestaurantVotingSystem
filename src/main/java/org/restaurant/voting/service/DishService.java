@@ -5,6 +5,7 @@ import org.restaurant.voting.repository.CrudDishRepository;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.to.DishTo;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -52,6 +53,7 @@ public class DishService {
         return crudDishRepository.getAllByRestaurant(restaurantId);
     }
 
+    @Cacheable("dishes")
     public List<Dish> getAllByRestaurantAndDate(int restaurantId, LocalDate date) {
         Assert.notNull(date, "Date must be not null");
         return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);
