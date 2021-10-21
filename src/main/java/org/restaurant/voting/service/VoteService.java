@@ -4,6 +4,7 @@ import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.repository.CrudVoteRepository;
+import org.restaurant.voting.util.exception.DataConflictException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,27 +41,26 @@ public class VoteService {
     }
 
     public Vote save(Vote vote, int restaurantId, int userId) {
-        if (!vote.isNew() && get(userId) == null) {
-            return null;
-        }
         vote.setUser(checkNotFoundWithId(crudUserRepository.findById(userId), userId));
         vote.setRestaurant(checkNotFoundWithId(crudRestaurantRepository.findById(restaurantId), restaurantId));
         return crudVoteRepository.save(vote);
     }
 
-    public List<Vote> get(int userId) {
+    public List<Vote> getAllByUserId(int userId) {
         return crudVoteRepository.getByUserId(userId);
     }
 
     public Vote getLast(int userId) {
-        return crudVoteRepository.getByUserIdAndDate(now(), userId);
+        return checkNotFoundWithId(crudVoteRepository.getByUserIdAndDate(now(), userId), userId);
     }
 
     @Transactional
     public void update(int restaurantId, int userId) {
         Assert.isTrue(restaurantId != 0, "Restaurant Id must be not null");
         checkTimeOver();
-        Vote vote = getLast(userId);
+
+        Vote vote = crudVoteRepository.getByUserIdAndDate(now(), userId)
+                                      .orElseThrow(() -> new DataConflictException("Have not voted today"));
         vote.setVotingDate(now());
         save(vote, restaurantId, userId);
     }

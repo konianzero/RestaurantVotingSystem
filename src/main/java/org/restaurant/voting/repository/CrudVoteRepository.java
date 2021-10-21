@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -18,5 +19,5 @@ public interface CrudVoteRepository extends JpaRepository<Vote, Integer> {
     List<Vote> getByUserId(@Param("userId")  int userId);
 
     @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.votingDate=:votingDate")
-    Vote getByUserIdAndDate(@Param("votingDate") LocalDate now, @Param("userId")  int userId);
+    Optional<Vote> getByUserIdAndDate(@Param("votingDate") LocalDate now, @Param("userId")  int userId);
 }

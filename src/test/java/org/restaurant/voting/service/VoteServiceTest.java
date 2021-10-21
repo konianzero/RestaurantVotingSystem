@@ -31,7 +31,7 @@ class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void get() {
-        List<Vote> actual = service.get(ADMIN_ID);
+        List<Vote> actual = service.getAllByUserId(ADMIN_ID);
         VOTE_MATCHER.assertMatch(actual, VOTE_1, VOTE_3);
     }
 

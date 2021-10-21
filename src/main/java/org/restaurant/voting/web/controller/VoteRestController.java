@@ -47,7 +47,7 @@ public class VoteRestController {
     public List<VoteTo> getOwnVotes() {
         int userId = SecurityUtil.authUserId();
         log.info("Get vote of user {}", userId);
-        return getTos(service.get(userId));
+        return getTos(service.getAllByUserId(userId));
     }
 
     @GetMapping("/last")

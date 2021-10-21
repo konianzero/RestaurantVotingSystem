@@ -46,13 +46,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorInfo> handleError(HttpServletRequest req, NotFoundException e) {
+    public ResponseEntity<ErrorInfo> notFoundError(HttpServletRequest req, NotFoundException e) {
         return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
     }
 
     @ExceptionHandler(VotingTimeOverException.class)
-    public ResponseEntity<ErrorInfo> handleError(HttpServletRequest req, VotingTimeOverException e) {
+    public ResponseEntity<ErrorInfo> votingTimeOverError(HttpServletRequest req, VotingTimeOverException e) {
         return logAndGetErrorInfo(req, e, false, TIME_OVER);
+    }
+
+    @ExceptionHandler(DataConflictException.class)
+    public ResponseEntity<ErrorInfo> dataConflictError(HttpServletRequest req, DataConflictException e) {
+        return logAndGetErrorInfo(req, e, false, DATA_CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
