@@ -6,6 +6,7 @@ import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.repository.CrudVoteRepository;
 import org.restaurant.voting.util.exception.DataConflictException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -21,7 +22,8 @@ import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
 @Service
 public class VoteService {
 
-    public static final LocalTime END_VOTING_TIME =  LocalTime.of(23, 0);
+    @Value("#{T(java.time.LocalTime).parse('${app.vote_endtime}')}")
+    private LocalTime voteEndtime;
 
     private final CrudVoteRepository crudVoteRepository;
     private final CrudUserRepository crudUserRepository;
@@ -72,6 +74,6 @@ public class VoteService {
     }
 
     public boolean isVotingTimeOver() {
-        return LocalTime.now().isAfter(END_VOTING_TIME);
+        return LocalTime.now().isAfter(voteEndtime);
     }
 }
