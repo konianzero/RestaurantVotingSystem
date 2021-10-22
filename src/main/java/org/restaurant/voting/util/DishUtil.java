@@ -1,14 +1,17 @@
 package org.restaurant.voting.util;
 
+import org.restaurant.voting.model.Dish;
+import org.restaurant.voting.to.DishTo;
+import org.restaurant.voting.to.DishWithRestaurantTo;
+import org.restaurant.voting.util.mapper.DishMapper;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.to.DishWithRestaurantTo;
-import org.restaurant.voting.to.DishTo;
-import org.restaurant.voting.util.mapper.DishMapper;
-
 public class DishUtil {
+
+    private DishUtil() {
+    }
 
     public static DishTo createTo(Dish dish) {
         return DishMapper.INSTANCE.toToFromEntity(dish);

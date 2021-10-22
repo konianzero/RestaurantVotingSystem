@@ -11,6 +11,8 @@ import java.util.Locale;
 
 public class DateTimeFormatters {
 
+    private DateTimeFormatters() {}
+
     public static class LocalDateFormatter implements Formatter<LocalDate> {
 
         @Override
