@@ -30,7 +30,7 @@ public class ValidationUtil {
 
     public static void checkModification(int count, int id) {
         if (count == 0) {
-            throw new IllegalRequestDataException("Operation on entity with id=" + id + " not succeeded");
+            throw new NotFoundException("Operation on entity with id=" + id + " not succeeded");
         }
     }
 
