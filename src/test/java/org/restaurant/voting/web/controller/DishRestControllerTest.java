@@ -1,35 +1,32 @@
 package org.restaurant.voting.web.controller;
 
 import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.time.LocalDate;
-
+import org.restaurant.voting.TestUtil;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.TestUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.LocalDate;
 
 import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.restaurant.voting.DishTestData.*;
+import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
+import static org.restaurant.voting.RestaurantTestData.RESTAURANT_1_ID;
+import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
+import static org.restaurant.voting.UserTestData.USER_EMAIL;
+import static org.restaurant.voting.util.DishUtil.*;
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
-import static org.restaurant.voting.RestaurantTestData.RESTAURANT_1_ID;
-import static org.restaurant.voting.DishTestData.*;
-import static org.restaurant.voting.UserTestData.ADMIN;
-import static org.restaurant.voting.UserTestData.USER;
-import static org.restaurant.voting.TestUtil.userHttpBasic;
-import static org.restaurant.voting.util.DishUtil.createTo;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
-import static org.restaurant.voting.util.DishUtil.*;
 
 class DishRestControllerTest extends AbstractControllerTest {
 
@@ -39,12 +36,12 @@ class DishRestControllerTest extends AbstractControllerTest {
     private DishService service;
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void createWithLocation() throws Exception {
         Dish newDish = getNew();
         DishTo newDishTo = createTo(newDish);
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL)
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newDishTo))
         ).andExpect(status().isCreated());
@@ -59,9 +56,9 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + DISH_1_ID)
-                                      .with(userHttpBasic(USER)))
+        perform(MockMvcRequestBuilders.get(REST_URL + DISH_1_ID))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -75,28 +72,18 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
-                                      .with(userHttpBasic(USER)))
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void getWith() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + DISH_1_ID + "/with")
-                                      .with(userHttpBasic(USER)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_RESTA_TO_MATCHER.contentJson(createWithRestTo(DISH_1)));
-    }
-
-    @Test
+    @WithUserDetails(value = USER_EMAIL)
     void getAllByRestaurant() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
-                                      .with(userHttpBasic(USER)))
+                                      .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -104,11 +91,11 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_EMAIL)
     void getAllByRestaurantAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
                                       .queryParam("restaurantId", String.valueOf(RESTAURANT_1_ID))
-                                      .queryParam("date", now().toString())
-                                      .with(userHttpBasic(USER)))
+                                      .queryParam("date", now().toString()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -116,10 +103,10 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
         Dish updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(updated))))
                 .andExpect(status().isNoContent());
@@ -128,18 +115,18 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + DISH_1_ID)
-                                      .with(userHttpBasic(ADMIN)))
+        perform(MockMvcRequestBuilders.delete(REST_URL + DISH_1_ID))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID));
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void createInvalid() throws Exception {
         Dish invalid = new Dish(null, "Sandwich", FIRST_RESTAURANT, 0, null);
         perform(MockMvcRequestBuilders.post(REST_URL)
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(invalid))))
                 .andDo(print())
@@ -148,10 +135,10 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void updateInvalid() throws Exception {
         Dish invalid = new Dish(DISH_1_ID, "Miso soup", FIRST_RESTAURANT, 0, null);
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(invalid))))
                 .andDo(print())
@@ -160,10 +147,10 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
     void updateHtmlUnsafe() throws Exception {
         Dish invalid = new Dish(DISH_1_ID, "<script>alert(123)</script>", FIRST_RESTAURANT, 6, LocalDate.now());
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
-                                      .with(userHttpBasic(ADMIN))
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(createTo(invalid))))
                 .andDo(print())

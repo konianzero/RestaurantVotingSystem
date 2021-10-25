@@ -10,15 +10,12 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "votes", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "voting_date"}, name = "votes_unique_idx"))
 public class Vote extends AbstractBaseEntity {
-//    @OneToOne(fetch = FetchType.EAGER)
-    // https://stackoverflow.com/questions/17987638/hibernate-one-to-one-lazy-loading-optional-false
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "global_seq", foreignKeyDefinition = "START WITH 100000"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-//    @OneToOne(fetch = FetchType.EAGER)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", foreignKey = @ForeignKey(name = "global_seq", foreignKeyDefinition = "START WITH 100000"))
     private Restaurant restaurant;
 

@@ -1,27 +1,24 @@
 package org.restaurant.voting.web.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
-
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.service.RestaurantService;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.to.RestaurantWithMenuTo;
-import org.restaurant.voting.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
 
 import static org.restaurant.voting.util.RestaurantUtil.*;
-import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
-import static org.restaurant.voting.util.ValidationUtil.checkNew;
+import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = RestaurantRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,7 +33,7 @@ public class RestaurantRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantTo restaurantTo) {
+    public ResponseEntity<RestaurantTo> createWithLocation(@Valid @RequestBody RestaurantTo restaurantTo) {
         checkNew(restaurantTo);
         log.info("Create {}", restaurantTo);
         Restaurant created = service.create(restaurantTo);
@@ -54,10 +51,10 @@ public class RestaurantRestController {
         return createTo(service.get(id));
     }
 
-    @GetMapping("/{id}/with")
-    public RestaurantWithMenuTo getWith(@PathVariable int id) {
+    @GetMapping("/{id}/today")
+    public RestaurantWithMenuTo getForToday(@PathVariable int id) {
         log.info("Get restaurant {} with menu", id);
-        return createWithMenuTo(service.getWithDishes(id));
+        return createWithMenuTo(service.getWithTodayMenu(id));
     }
 
     @GetMapping
@@ -74,7 +71,7 @@ public class RestaurantRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
+    public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         assureIdConsistent(restaurantTo, id);
         log.info("Update {}", restaurantTo);
         service.update(restaurantTo);

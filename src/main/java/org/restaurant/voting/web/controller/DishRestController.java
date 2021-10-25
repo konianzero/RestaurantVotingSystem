@@ -1,31 +1,26 @@
 package org.restaurant.voting.web.controller;
 
+import org.restaurant.voting.model.Dish;
+import org.restaurant.voting.service.DishService;
+import org.restaurant.voting.to.DishTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.service.DishService;
-import org.restaurant.voting.to.DishTo;
-import org.restaurant.voting.to.DishWithRestaurantTo;
-import org.restaurant.voting.View;
-
-import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
-import static org.restaurant.voting.util.ValidationUtil.checkNew;
-import static org.restaurant.voting.util.DishUtil.*;
-import static org.restaurant.voting.util.ValidationUtil.assureIdConsistent;
+import static org.restaurant.voting.util.DishUtil.createTo;
+import static org.restaurant.voting.util.DishUtil.getTos;
+import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
+import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = DishRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +35,7 @@ public class DishRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DishTo> createWithLocation(@Validated(View.Web.class) @RequestBody DishTo dishTo) {
+    public ResponseEntity<DishTo> createWithLocation(@Valid @RequestBody DishTo dishTo) {
         checkNew(dishTo);
         log.info("Create {}", dishTo);
         Dish created = service.create(dishTo);
@@ -58,15 +53,9 @@ public class DishRestController {
         return createTo(service.get(id));
     }
 
-    @GetMapping("/{id}/with")
-    public DishWithRestaurantTo getWith(@PathVariable int id) {
-        log.info("Get dish {} with restaurant", id);
-        return createWithRestTo(service.getWithRestaurant(id));
-    }
-
     @GetMapping
     private List<DishTo> getAllBy(@RequestParam int restaurantId,
-                                  @RequestParam @DateTimeFormat(iso = DATE) Optional<LocalDate> date) {
+                                  @RequestParam Optional<LocalDate> date) {
         log.info("Get all dishes from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
         return date.map(d -> getTos(service.getAllByRestaurantAndDate(restaurantId, d)))
                    .orElse(getTos(service.getAllByRestaurant(restaurantId)));
@@ -74,7 +63,7 @@ public class DishRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody DishTo dishTo, @PathVariable int id) {
+    public void update(@Valid @RequestBody DishTo dishTo, @PathVariable int id) {
         assureIdConsistent(dishTo, id);
         log.info("Update {}", dishTo);
         service.update(dishTo);

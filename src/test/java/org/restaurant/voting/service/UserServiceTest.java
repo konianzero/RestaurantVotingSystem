@@ -12,7 +12,7 @@ import org.restaurant.voting.util.exception.NotFoundException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.UserTestData.*;
 
-public class UserServiceTest extends AbstractServiceTest {
+class UserServiceTest extends AbstractServiceTest {
     @Autowired
     private UserService service;
 

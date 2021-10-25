@@ -1,18 +1,16 @@
 package org.restaurant.voting.web.controller.user;
 
+import org.restaurant.voting.model.User;
+import org.restaurant.voting.to.UserTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
-
-import org.restaurant.voting.model.User;
-import org.restaurant.voting.to.UserTo;
-import org.restaurant.voting.View;
 
 import static org.restaurant.voting.util.SecurityUtil.authUserId;
 
@@ -24,7 +22,7 @@ public class ProfileRestController extends AbstractUserController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> register(@Validated(View.Web.class) @RequestBody UserTo userTo) {
+    public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
         User created = super.create(userTo);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                           .path(REST_URL + "/{id}")

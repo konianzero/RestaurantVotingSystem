@@ -14,7 +14,6 @@ public class VoteTestData {
     public static final TestMatcher<Vote> VOTE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Vote.class, "user", "restaurant");
     public static final TestMatcher<VoteTo> VOTE_TO_MATCHER = TestMatcher.usingEqualsComparator(VoteTo.class);
 
-    public static final int NOT_FOUND = 1000;
     public static final int VOTE_1_ID = START_SEQ + 12;
     public static final int VOTE_2_ID = VOTE_1_ID + 1;
     public static final int VOTE_3_ID = VOTE_1_ID + 2;

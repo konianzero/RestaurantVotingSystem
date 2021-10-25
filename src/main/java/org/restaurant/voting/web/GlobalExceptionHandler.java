@@ -1,8 +1,9 @@
 package org.restaurant.voting.web;
 
+import org.restaurant.voting.util.validation.ValidationUtil;
+import org.restaurant.voting.util.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.restaurant.voting.util.ValidationUtil;
-import org.restaurant.voting.util.exception.*;
 
 import static org.restaurant.voting.util.exception.ErrorType.*;
 
@@ -48,13 +46,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorInfo> handleError(HttpServletRequest req, NotFoundException e) {
+    public ResponseEntity<ErrorInfo> notFoundError(HttpServletRequest req, NotFoundException e) {
         return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
     }
 
     @ExceptionHandler(VotingTimeOverException.class)
-    public ResponseEntity<ErrorInfo> handleError(HttpServletRequest req, VotingTimeOverException e) {
+    public ResponseEntity<ErrorInfo> votingTimeOverError(HttpServletRequest req, VotingTimeOverException e) {
         return logAndGetErrorInfo(req, e, false, TIME_OVER);
+    }
+
+    @ExceptionHandler(DataConflictException.class)
+    public ResponseEntity<ErrorInfo> dataConflictError(HttpServletRequest req, DataConflictException e) {
+        return logAndGetErrorInfo(req, e, false, DATA_CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)

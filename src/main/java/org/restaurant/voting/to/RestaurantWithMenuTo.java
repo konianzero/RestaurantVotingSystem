@@ -1,11 +1,11 @@
 package org.restaurant.voting.to;
 
+import org.restaurant.voting.model.Dish;
+import org.springframework.lang.Nullable;
+
 import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.IntStream;
-
-import org.restaurant.voting.model.Dish;
 
 public class RestaurantWithMenuTo extends RestaurantTo {
     private List<Dish> menu;
@@ -13,9 +13,9 @@ public class RestaurantWithMenuTo extends RestaurantTo {
     public RestaurantWithMenuTo() {
     }
 
-    @ConstructorProperties({"id", "name", "menu"})
-    public RestaurantWithMenuTo(Integer id, String name, List<Dish> menu) {
-        super(id, name);
+    @ConstructorProperties({"id", "name", "address", "menu"})
+    public RestaurantWithMenuTo(Integer id, String name, @Nullable String address, List<Dish> menu) {
+        super(id, name, address);
         this.menu = menu;
     }
 

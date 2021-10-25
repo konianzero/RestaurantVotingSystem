@@ -8,6 +8,9 @@ import org.springframework.util.StringUtils;
 
 public class UserUtil {
 
+    private UserUtil() {
+    }
+
     public static User createNewFromTo(UserTo userTo) {
         return UserMapper.INSTANCE.toEntityFromTo(userTo);
     }

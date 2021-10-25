@@ -1,26 +1,20 @@
 package org.restaurant.voting.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.restaurant.voting.HasId;
+import org.restaurant.voting.HasIdAndEmail;
+import org.restaurant.voting.util.validation.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.restaurant.voting.HasIdAndEmail;
-import org.restaurant.voting.HasId;
-import org.restaurant.voting.View;
-
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -31,7 +25,7 @@ public class User extends AbstractNamedEntity implements HasId, HasIdAndEmail {
     @Email
     @NotBlank
     @Size(min = 5, max = 50)
-    @SafeHtml(groups = {View.Web.class}, whitelistType = NONE)
+    @SafeHtml
     private String email;
 
     @Column(name = "password", nullable = false)

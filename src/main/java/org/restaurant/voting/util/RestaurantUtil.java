@@ -1,14 +1,17 @@
 package org.restaurant.voting.util;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.to.RestaurantWithMenuTo;
 import org.restaurant.voting.util.mapper.RestaurantMapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RestaurantUtil {
+
+    private RestaurantUtil() {
+    }
 
     public static Restaurant createNewFromTo(RestaurantTo restaurantTo) {
         return RestaurantMapper.INSTANCE.toEntityFromTo(restaurantTo);

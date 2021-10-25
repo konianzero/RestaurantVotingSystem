@@ -1,21 +1,15 @@
-package org.restaurant.voting.util;
-
-import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalTime;
-import java.util.Optional;
+package org.restaurant.voting.util.validation;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.ErrorType;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
 import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.slf4j.Logger;
 
-import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public class ValidationUtil {
-    public static final LocalTime END_VOTING_TIME =  LocalTime.of(23, 0);
 
     private ValidationUtil() {
     }
@@ -31,6 +25,12 @@ public class ValidationUtil {
             bean.setId(id);
         } else if (bean.getId() != id) {
             throw new IllegalRequestDataException(bean + " must be with id=" + id);
+        }
+    }
+
+    public static void checkModification(int count, int id) {
+        if (count == 0) {
+            throw new NotFoundException("Operation on entity with id=" + id + " not succeeded");
         }
     }
 
@@ -56,16 +56,6 @@ public class ValidationUtil {
         if (!isFound) {
             throw new NotFoundException("Not found entity with " + message);
         }
-    }
-
-    public static void checkTimeOver() {
-        if (isVotingTimeOver()) {
-            throw new VotingTimeOverException("It's " + format(LocalTime.now()) + ". Time for voting is over!");
-        }
-    }
-
-    public static boolean isVotingTimeOver() {
-        return LocalTime.now().isAfter(END_VOTING_TIME);
     }
 
     public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {

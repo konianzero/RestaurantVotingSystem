@@ -1,8 +1,11 @@
 package org.restaurant.voting.web.controller;
 
+import org.restaurant.voting.model.Vote;
+import org.restaurant.voting.service.VoteService;
+import org.restaurant.voting.to.VoteTo;
+import org.restaurant.voting.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,13 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-
-import org.restaurant.voting.model.Vote;
-import org.restaurant.voting.to.VoteTo;
-import org.restaurant.voting.service.VoteService;
-import org.restaurant.voting.util.SecurityUtil;
+import java.util.List;
 
 import static org.restaurant.voting.util.VoteUtil.createTo;
+import static org.restaurant.voting.util.VoteUtil.getTos;
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,8 +30,8 @@ public class VoteRestController {
         this.service = service;
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VoteTo> createWithLocation(@RequestParam int restaurantId) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<VoteTo> voteToday(@RequestParam int restaurantId) {
         int userId = SecurityUtil.authUserId();
         log.info("Vote of user {} for restaurant {}", userId, restaurantId);
         Vote created = service.create(restaurantId, userId);
@@ -43,11 +43,11 @@ public class VoteRestController {
                              .body(createTo(created));
     }
 
-    @GetMapping("/{id}")
-    public VoteTo get(@PathVariable int id) {
+    @GetMapping()
+    public List<VoteTo> getOwnVotes() {
         int userId = SecurityUtil.authUserId();
-        log.info("Get vote {} of user {}", id, userId);
-        return createTo(service.get(id, userId));
+        log.info("Get vote of user {}", userId);
+        return getTos(service.getAllByUserId(userId));
     }
 
     @GetMapping("/last")
@@ -57,9 +57,9 @@ public class VoteRestController {
         return createTo(service.getLast(userId));
     }
 
-    @PatchMapping
+    @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestParam int restaurantId) {
+    public void revoteToday(@RequestParam int restaurantId) {
         int userId = SecurityUtil.authUserId();
         log.info("Update vote of user {} for restaurant {}", userId, restaurantId);
         service.update(restaurantId, userId);

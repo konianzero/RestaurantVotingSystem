@@ -16,7 +16,7 @@ import static org.restaurant.voting.DishTestData.getNew;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.util.DishUtil.createTo;
 
-public class DishServiceTest extends AbstractServiceTest {
+class DishServiceTest extends AbstractServiceTest {
     @Autowired
     private DishService service;
 
@@ -39,12 +39,6 @@ public class DishServiceTest extends AbstractServiceTest {
     @Test
     void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND));
-    }
-
-    @Test
-    void getWithRestaurant() {
-        Dish actual = service.getWithRestaurant(DISH_1_ID);
-        RESTAURANT_MATCHER.assertMatch(actual.getRestaurant(), FIRST_RESTAURANT);
     }
 
     @Test

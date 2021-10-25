@@ -1,24 +1,22 @@
 package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
-
+import org.restaurant.voting.model.Dish;
+import org.restaurant.voting.model.Restaurant;
+import org.restaurant.voting.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.model.Restaurant;
-import org.restaurant.voting.util.exception.NotFoundException;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.restaurant.voting.DishTestData.TODAY_MENU;
-import static org.restaurant.voting.DishTestData.FIRST_RESTAURANT_DISHES;
-import static org.restaurant.voting.DishTestData.DISH_MATCHER;
+import static org.restaurant.voting.DishTestData.*;
+import static org.restaurant.voting.RestaurantTestData.getNew;
+import static org.restaurant.voting.RestaurantTestData.getUpdated;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.util.RestaurantUtil.createTo;
 
-public class RestaurantServiceTest extends AbstractServiceTest  {
+class RestaurantServiceTest extends AbstractServiceTest  {
 
     @Autowired
     private RestaurantService service;
@@ -40,8 +38,8 @@ public class RestaurantServiceTest extends AbstractServiceTest  {
 
     @Test
     void getWithDishes() {
-        Restaurant actual = service.getWithDishes(RESTAURANT_1_ID);
-        DISH_MATCHER.assertMatch(actual.getMenu(), FIRST_RESTAURANT_DISHES);
+        Restaurant actual = service.getWithTodayMenu(RESTAURANT_1_ID);
+        DISH_MATCHER.assertMatch(actual.getMenu(), TODAY_REST1_MENU);
     }
 
     @Test

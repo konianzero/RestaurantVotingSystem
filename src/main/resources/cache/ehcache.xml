@@ -9,13 +9,5 @@
         <heap unit="entries">5000</heap>
     </cache-template>
 
-    <cache-template name="singleNonExpiryCache">
-        <expiry>
-            <none/>
-        </expiry>
-        <heap>1</heap>
-    </cache-template>
-
-    <cache alias="users" uses-template="singleNonExpiryCache"/>
     <cache alias="dishes" uses-template="expiryCache"/>
 </config>

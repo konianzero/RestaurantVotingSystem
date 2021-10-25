@@ -1,10 +1,10 @@
 package org.restaurant.voting;
 
-import java.util.List;
-
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.to.DishWithRestaurantTo;
+
+import java.util.List;
 
 import static java.time.LocalDate.now;
 import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
@@ -13,12 +13,11 @@ import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
 
 public class DishTestData {
     public static final TestMatcher<Dish> DISH_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Dish.class, "restaurant");
-    public static TestMatcher<DishTo> DISH_TO_MATCHER = TestMatcher.usingEqualsComparator(DishTo.class);
-    public static TestMatcher<DishWithRestaurantTo> DISH_RESTA_TO_MATCHER = TestMatcher.usingEqualsComparator(DishWithRestaurantTo.class);
+    public static final TestMatcher<DishTo> DISH_TO_MATCHER = TestMatcher.usingEqualsComparator(DishTo.class);
+    public static final TestMatcher<DishWithRestaurantTo> DISH_RESTA_TO_MATCHER = TestMatcher.usingEqualsComparator(DishWithRestaurantTo.class);
 
     public static final int NOT_FOUND = 100;
     public static final int DISH_1_ID = START_SEQ + 4;
-
 
     public static final Dish DISH_1 = new Dish(DISH_1_ID, "IceCream", FIRST_RESTAURANT, 20, now().minusDays(1));
     public static final Dish DISH_2 = new Dish(DISH_1_ID + 1, "Orange fresh", FIRST_RESTAURANT, 40, now().minusDays(1));

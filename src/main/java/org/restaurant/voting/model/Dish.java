@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dishes", uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "name"}, name = "dishes_unique_idx"))
+@Table(name = "dishes", uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "date", "name"}, name = "dishes_unique_idx"))
 public class Dish extends AbstractNamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,7 +24,7 @@ public class Dish extends AbstractNamedEntity {
     private Restaurant restaurant;
 
     @Column(name = "price", nullable = false)
-    @Range(min = 1, max = 1000)
+    @Range(min = 1)
     private int price;
 
     @Column(name = "date", nullable = false, columnDefinition = "DATE DEFAULT now()")

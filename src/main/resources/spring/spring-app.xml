@@ -5,6 +5,8 @@
     <import resource="spring-cache.xml"/>
     <import resource="spring-security.xml"/>
 
+    <context:property-placeholder location="classpath:application.properties"
+                                  system-properties-mode="OVERRIDE"/>
     <context:component-scan base-package="org.restaurant.voting.**.service"/>
 
 </beans>
