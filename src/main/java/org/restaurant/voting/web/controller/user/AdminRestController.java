@@ -47,6 +47,7 @@ public class AdminRestController extends AbstractUserController {
         return super.getAll();
     }
 
+    @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody User user, @PathVariable int id) throws BindException {

@@ -1,7 +1,6 @@
 package org.restaurant.voting.web.controller.user;
 
 import org.restaurant.voting.HasId;
-import org.restaurant.voting.View;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
@@ -93,7 +92,7 @@ public abstract class AbstractUserController {
         assureIdConsistent(user, id);
         DataBinder binder = new DataBinder(user);
         binder.addValidators(emailValidator, validator);
-        binder.validate(View.Web.class);
+        binder.validate();
         if (binder.getBindingResult().hasErrors()) {
             throw new BindException(binder.getBindingResult());
         }
