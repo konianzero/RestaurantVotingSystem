@@ -31,9 +31,7 @@ public class DishService {
     @Transactional
     public Dish create(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
-        dishTo.setDate(LocalDate.now());
         Dish dish = createNewFromTo(dishTo);
-
         return save(dish, dishTo.getRestaurantId());
     }
 
@@ -41,6 +39,7 @@ public class DishService {
         if (!dish.isNew() && get(dish.getId()) == null) {
             return null;
         }
+        dish.setDate(LocalDate.now());
         dish.setRestaurant(checkNotFoundWithId(crudRestaurantRepository.findById(restaurantId), restaurantId));
         return crudDishRepository.save(dish);
     }

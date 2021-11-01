@@ -87,14 +87,13 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 |            | DELETE | Delete user                             | {URL}/rest/profile                                          | Authorized     |
 | Restaurant | POST   | Create restaurant                       | {URL}/rest/restaurants                                      | Admin          |
 |            | GET    | Get restaurant                          | {URL}/rest/restaurants/{restaurantId}                       | Authorized     |
-|            | GET    | Get restaurant with dishes              | {URL}/rest/restaurants/{restaurantId}/with                  | Authorized     |
+|            | GET    | Get restaurant with today's dishes      | {URL}/rest/restaurants/{restaurantId}/today                 | Authorized     |
 |            | GET    | Get all restaurants                     | {URL}/rest/restaurants/                                     | Authorized     |
 |            | GET    | Get all restaurants with today's dishes | {URL}/rest/restaurants/today                                | Authorized     |  
 |            | PUT    | Update restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
 |            | DELETE | Delete restaurant                       | {URL}/rest/restaurants/{restaurantId}                       | Admin          |
 | Dish       | POST   | Create dish                             | {URL}/rest/dishes                                           | Admin          |
 |            | GET    | Get dish                                | {URL}/rest/dishes/{dishId}                                  | Authorized     |
-|            | GET    | Get dish with restaurant                | {URL}/rest/dishes/{dishId}/with                             | Authorized     |
 |            | GET    | Get all dishes by restaurant            | {URL}/rest/dishes?restaurantId={restaurantId}               | Authorized     |
 |            | GET    | Get all dishes by restaurant and date   | {URL}/rest/dishes?restaurantId={restaurantId}&date={date}   | Authorized     |
 |            | PUT    | Update dish                             | {URL}/rest/dishes/{dishId}                                  | Admin          |
@@ -112,62 +111,58 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
    **Create restaurant**
    ```shell
-   curl -s -X POST -d '{"name":"Restaurant3"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/restaurants --user admin@gmail.com:admin
+   curl -X POST -d '{"name":"Restaurant3","address":"ул. Зеленая, д.20"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/restaurants --user admin@gmail.com:admin
    ```
    **Get restaurant**
    ```shell
-   curl -s http://localhost:8080/voting/rest/restaurants/100002 --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/restaurants/100002 --user user@gmail.com:userpass
    ```
-   **Get restaurant with dishes**
+   **Get restaurant with today's dishes**
    ```shell
-   curl -s http://localhost:8080/voting/rest/restaurants/100002/with --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/restaurants/100002/today --user user@gmail.com:userpass
    ```
    **Get all restaurants**
    ```shell
-   curl -s http://localhost:8080/voting/rest/restaurants/ --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/restaurants/ --user user@gmail.com:userpass
    ```
    **Get all restaurants with today's dishes**
    ```shell
-   curl -s http://localhost:8080/voting/rest/restaurants/today --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/restaurants/today --user user@gmail.com:userpass
    ```
    **Update restaurant**
    ```shell
-   curl -s -X PUT -d '{"id":100002,"name":"RestThree"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
+   curl -X PUT -d '{"id":100002,"name":"RestOne","address":"ул. Мира, 67"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
    ```
    **Delete restaurant**
    ```shell
-   curl -s -X DELETE http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
+   curl -X DELETE http://localhost:8080/voting/rest/restaurants/100002 --user admin@gmail.com:admin
    ```
 
 2. **Dish**
 
    **Create dish**
    ```shell
-   curl -s -X POST -d '{"restaurantId":100002,"name":"Sandwich","price":6}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes --user admin@gmail.com:admin
+   curl -X POST -d '{"restaurantId":100002,"name":"Sandwich","price":6}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/dishes --user admin@gmail.com:admin
    ```
    **Get dish**
    ```shell
-   curl -s http://localhost:8080/voting/rest/dishes/100004 --user user@gmail.com:userpass
-   ```
-   **Get dish with a restaurant**
-   ```shell
-   curl -s http://localhost:8080/voting/rest/dishes/100004/with --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/dishes/100016 --user user@gmail.com:userpass
    ```
    **Get all dishes by restaurant**
    ```shell
-   curl -s http://localhost:8080/voting/rest/dishes?restaurantId=100002 --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/dishes?restaurantId=100003 --user user@gmail.com:userpass
    ```
    **Get all dishes by restaurant and date**
    ```shell
-   curl -s "http://localhost:8080/voting/rest/dishes?restaurantId=100002&date=2021-02-06" --user user@gmail.com:userpass
+   curl -X GET "http://localhost:8080/voting/rest/dishes?restaurantId=100003&date=2021-10-31" --user user@gmail.com:userpass
    ```
    **Update dish**
    ```shell
-   curl -s -X PUT -d '{"id":100004,"restaurantId":100002,"name":"Sandwich with tune","price":8}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
+   curl -X PUT -d '{"id":100016,"restaurantId":100003,"name":"Sandwich with tune","price":8}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
    ```
    **Delete dish**
    ```shell
-   curl -s -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
+   curl -X DELETE http://localhost:8080/voting/rest/dishes/100004 --user admin@gmail.com:admin
    ```
 
 3. **User**  
@@ -176,63 +171,63 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
       **Create user**
       ```shell
-      curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password","enabled":true,"roles":["USER"]}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
+      curl -X POST -d '{"name":"New","email":"new@gmail.com","password":"password","enabled":true,"roles":["USER"]}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
       ```
       **Get user**
       ```shell
-      curl -s http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
+      curl -X GET http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
       ```
       **Get user by Email**
       ```shell
-      curl -s http://localhost:8080/voting/rest/admin/users/by?email=user@gmail.com --user admin@gmail.com:admin
+      curl -X GET http://localhost:8080/voting/rest/admin/users/by?email=user@gmail.com --user admin@gmail.com:admin
       ```
       **Get all users**
       ```shell
-      curl -s http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
+      curl -X GET http://localhost:8080/voting/rest/admin/users --user admin@gmail.com:admin
       ```
       **Update user**
       ```shell
-      curl -s -X PUT -d '{"id":100001,"name":"NewAdmin","email":"newadmin@gmail.com","password":"password","enabled":true,"roles":["USER","ADMIN"]}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
+      curl -X PUT -d '{"id":100001,"name":"NewAdmin","email":"newadmin@gmail.com","password":"password","enabled":true,"roles":["USER","ADMIN"]}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
       ```
       **Delete user**
       ```shell
-      curl -s -X DELETE http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
+      curl -X DELETE http://localhost:8080/voting/rest/admin/users/100001 --user admin@gmail.com:admin
       ```
 
    3.2 **User**
 
       **Register user**
       ```shell
-      curl -s -X POST -d '{"name":"New","email":"new@gmail.com","password":"password"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/profile/register
+      curl -X POST -d '{"name":"Other","email":"other@gmail.com","password":"password"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/voting/rest/profile/register
       ```
       **Get user**
       ```shell
-      curl -s http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+      curl -X GET http://localhost:8080/voting/rest/profile --user other@gmail.com:password
       ```
       **Update user**
       ```shell
-      curl -s -X PUT -d '{"name":"UpdatedUser","email":"updated@gmail.com","password":"passupdate"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+      curl -X PUT -d '{"name":"UpdatedUser","email":"updated@gmail.com","password":"passupdate"}' -H 'Content-Type: application/json' http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
       ```
       **Delete user**
       ```shell
-      curl -s -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
+      curl -X DELETE http://localhost:8080/voting/rest/profile --user user@gmail.com:userpass
       ```
 
 4. **Vote**
 
    **Create vote**
    ```shell
-   curl -s -X PUT -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes?restaurantId=100002 --user user@gmail.com:userpass
+   curl -X POST -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes?restaurantId=100002 --user new@gmail.com:password
    ```
-   **Get vote**
+   **Get own votes**
    ```shell
-   curl -s http://localhost:8080/voting/rest/votes/100013 --user user@gmail.com:userpass
+   curl -X GET http://localhost:8080/voting/rest/votes --user new@gmail.com:password
    ```
    **Get last vote of user**
    ```shell
-   curl -s http://localhost:8080/voting/rest/votes/last --user admin@gmail.com:admin
+   curl -X GET http://localhost:8080/voting/rest/votes/last --user new@gmail.com:password
    ```
    **Update vote**
    ```shell
-   curl -s -X PATCH http://localhost:8080/voting/rest/votes?restaurantId=100002 --user admin@gmail.com:admin
+   curl -X PUT -H 'Content-Type: application/json' http://localhost:8080/voting/rest/votes?restaurantId=100003 --user new@gmail.com:password
    ```
