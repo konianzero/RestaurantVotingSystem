@@ -4,6 +4,7 @@ import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.repository.CrudDishRepository;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.to.DishTo;
+import org.restaurant.voting.util.mapper.DishMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.util.Assert;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.restaurant.voting.util.DishUtil.createNewFromTo;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -21,17 +21,19 @@ public class DishService {
 
     private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
+    private final DishMapper mapper;
 
-    public DishService(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository) {
+    public DishService(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository, DishMapper mapper) {
         this.crudDishRepository = crudDishRepository;
         this.crudRestaurantRepository = crudRestaurantRepository;
+        this.mapper = mapper;
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
     @Transactional
     public Dish create(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
-        Dish dish = createNewFromTo(dishTo);
+        Dish dish = mapper.toEntity(dishTo);
         return save(dish, dishTo.getRestaurantId());
     }
 
@@ -62,7 +64,7 @@ public class DishService {
     @Transactional
     public void update(DishTo dishTo) {
         Assert.notNull(dishTo, "Dish must be not null");
-        Dish dish = createNewFromTo(dishTo);
+        Dish dish = mapper.toEntity(dishTo);
         checkNotFoundWithId(save(dish, dishTo.getRestaurantId()), dish.id());
     }
 

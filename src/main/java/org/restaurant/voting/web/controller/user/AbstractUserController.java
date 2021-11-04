@@ -4,6 +4,7 @@ import org.restaurant.voting.HasId;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
+import org.restaurant.voting.util.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 
 import java.util.List;
 
-import static org.restaurant.voting.util.UserUtil.createNewFromTo;
 import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
@@ -26,7 +26,8 @@ public abstract class AbstractUserController {
 
     @Autowired
     protected UserService service;
-
+    @Autowired
+    private UserMapper mapper;
     @Autowired
     private UniqueMailValidator emailValidator;
 
@@ -42,7 +43,7 @@ public abstract class AbstractUserController {
     public User create(UserTo userTo) {
         log.info("Create {}", userTo);
         checkNew(userTo);
-        return service.create(createNewFromTo(userTo));
+        return service.create(mapper.toEntity(userTo));
     }
 
     public User create(User user) {

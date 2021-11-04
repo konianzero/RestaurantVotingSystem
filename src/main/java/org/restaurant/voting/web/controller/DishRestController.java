@@ -3,6 +3,7 @@ package org.restaurant.voting.web.controller;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
+import org.restaurant.voting.util.mapper.DishMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.restaurant.voting.util.DishUtil.createTo;
-import static org.restaurant.voting.util.DishUtil.getTos;
 import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
@@ -29,10 +28,12 @@ public class DishRestController {
     private static final Logger log = LoggerFactory.getLogger(DishRestController.class);
 
     private final DishService service;
+    private final DishMapper mapper;
 
     public DishRestController(DishService service) {
         this.service = service;
-    }
+         this.mapper = mapper;
+     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DishTo> createWithLocation(@Valid @RequestBody DishTo dishTo) {
@@ -44,21 +45,21 @@ public class DishRestController {
                                                           .buildAndExpand(created.getId())
                                                           .toUri();
         return ResponseEntity.created(uriOfNewResource)
-                             .body(createTo(created));
+                             .body(mapper.toTo(created));
     }
 
     @GetMapping("/{id}")
     public DishTo get(@PathVariable int id) {
         log.info("Get {}", id);
-        return createTo(service.get(id));
+        return mapper.toTo(service.get(id));
     }
 
     @GetMapping
     private List<DishTo> getAllBy(@RequestParam int restaurantId,
                                   @RequestParam Optional<LocalDate> date) {
         log.info("Get all dishes from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
-        return date.map(d -> getTos(service.getAllByRestaurantAndDate(restaurantId, d)))
-                   .orElse(getTos(service.getAllByRestaurant(restaurantId)));
+        return date.map(d -> mapper.getEntityList(service.getAllByRestaurantAndDate(restaurantId, d)))
+                   .orElse(mapper.getEntityList(service.getAllByRestaurant(restaurantId)));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

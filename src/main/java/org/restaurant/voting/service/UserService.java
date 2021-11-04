@@ -4,7 +4,7 @@ import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.CrudUserRepository;
 import org.restaurant.voting.to.UserTo;
-import org.restaurant.voting.util.UserUtil;
+import org.restaurant.voting.util.mapper.UserMapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
@@ -28,10 +28,12 @@ public class UserService implements UserDetailsService {
 
     private final CrudUserRepository crudUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper mapper;
 
-    public UserService(CrudUserRepository crudUserRepository, PasswordEncoder passwordEncoder) {
+    public UserService(CrudUserRepository crudUserRepository, PasswordEncoder passwordEncoder, UserMapper mapper) {
         this.crudUserRepository = crudUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     public User create(User user) {
@@ -68,8 +70,8 @@ public class UserService implements UserDetailsService {
     public void update(UserTo userTo) {
         Assert.notNull(userTo, "UserTo must be not null");
         User user = get(userTo.getId());
-        User updated = UserUtil.updateFromTo(user, userTo);
-        prepareAndSave(updated);
+        mapper.updateEntity(user, userTo);
+        prepareAndSave(user);
     }
 
     public void delete(int id) {
@@ -91,6 +93,6 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User " + email + " is not found");
         }
-        return new AuthorizedUser(user);
+        return new AuthorizedUser(mapper, user);
     }
 }

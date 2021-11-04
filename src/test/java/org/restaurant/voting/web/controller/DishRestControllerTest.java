@@ -7,6 +7,7 @@ import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
+import org.restaurant.voting.util.mapper.DishMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -22,7 +23,6 @@ import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.RestaurantTestData.RESTAURANT_1_ID;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
-import static org.restaurant.voting.util.DishUtil.*;
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,12 +34,14 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private DishService service;
+    @Autowired
+    private DishMapper mapper;
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void createWithLocation() throws Exception {
         Dish newDish = getNew();
-        DishTo newDishTo = createTo(newDish);
+        DishTo newDishTo = mapper.toTo(newDish);
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL)
                                       .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +64,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_TO_MATCHER.contentJson(createTo(DISH_1)));
+                .andExpect(DISH_TO_MATCHER.contentJson(mapper.toTo(DISH_1)));
     }
 
     @Test
@@ -87,7 +89,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_TO_MATCHER.contentJson(getTos(FIRST_RESTAURANT_DISHES)));
+                .andExpect(DISH_TO_MATCHER.contentJson(mapper.getEntityList(FIRST_RESTAURANT_DISHES)));
     }
 
     @Test
@@ -99,7 +101,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_TO_MATCHER.contentJson(getTos(TODAY_REST1_MENU)));
+                .andExpect(DISH_TO_MATCHER.contentJson(mapper.getEntityList(TODAY_REST1_MENU)));
     }
 
     @Test
@@ -108,7 +110,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(updated))))
+                                      .content(JsonUtil.writeValue(mapper.toTo(updated))))
                 .andExpect(status().isNoContent());
 
         DISH_MATCHER.assertMatch(service.get(DISH_1_ID), updated);
@@ -128,7 +130,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish invalid = new Dish(null, "Sandwich", FIRST_RESTAURANT, 0, null);
         perform(MockMvcRequestBuilders.post(REST_URL)
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(invalid))))
+                                      .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));
@@ -140,7 +142,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish invalid = new Dish(DISH_1_ID, "Miso soup", FIRST_RESTAURANT, 0, null);
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(invalid))))
+                                      .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));
@@ -152,7 +154,7 @@ class DishRestControllerTest extends AbstractControllerTest {
         Dish invalid = new Dish(DISH_1_ID, "<script>alert(123)</script>", FIRST_RESTAURANT, 6, LocalDate.now());
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_1_ID)
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(invalid))))
+                                      .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));

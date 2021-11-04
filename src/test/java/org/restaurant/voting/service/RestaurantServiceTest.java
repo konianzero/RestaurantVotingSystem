@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.util.exception.NotFoundException;
+import org.restaurant.voting.util.mapper.RestaurantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -14,17 +15,18 @@ import static org.restaurant.voting.DishTestData.*;
 import static org.restaurant.voting.RestaurantTestData.getNew;
 import static org.restaurant.voting.RestaurantTestData.getUpdated;
 import static org.restaurant.voting.RestaurantTestData.*;
-import static org.restaurant.voting.util.RestaurantUtil.createTo;
 
 class RestaurantServiceTest extends AbstractServiceTest  {
 
     @Autowired
     private RestaurantService service;
+    @Autowired
+    private RestaurantMapper mapper;
 
     @Test
     void create() {
         Restaurant newRestaurant = getNew();
-        Restaurant created = service.create(createTo(newRestaurant));
+        Restaurant created = service.create(mapper.toTo(newRestaurant));
         int newId = created.getId();
         newRestaurant.setId(newId);
         RESTAURANT_MATCHER.assertMatch(service.get(newId), newRestaurant);
@@ -59,7 +61,7 @@ class RestaurantServiceTest extends AbstractServiceTest  {
     @Test
     void update() {
         Restaurant updated = getUpdated();
-        service.update(createTo(updated));
+        service.update(mapper.toTo(updated));
         RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
     }
 

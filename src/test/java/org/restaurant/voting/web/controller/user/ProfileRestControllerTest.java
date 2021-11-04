@@ -7,6 +7,7 @@ import org.restaurant.voting.model.User;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.JsonUtil;
+import org.restaurant.voting.util.mapper.UserMapper;
 import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.restaurant.voting.UserTestData.*;
-import static org.restaurant.voting.util.UserUtil.createTo;
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,11 +29,13 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService service;
+    @Autowired
+    private UserMapper mapper;
 
     @Test
     void register() throws Exception {
         User newUser = getNew();
-        UserTo newTo = createTo(newUser);
+        UserTo newTo = mapper.toTo(newUser);
         ResultActions action = perform(
                 MockMvcRequestBuilders.post(REST_URL + "/register")
                                       .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +72,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         User updated = new User(USER_ID, "Nickolas", "u@gmail.com", "password", true, Role.USER);
         perform(MockMvcRequestBuilders.put(REST_URL)
                                       .contentType(MediaType.APPLICATION_JSON)
-                                      .content(JsonUtil.writeValue(createTo(updated))))
+                                      .content(JsonUtil.writeValue(mapper.toTo(updated))))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 

@@ -4,35 +4,29 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import org.restaurant.voting.TestUtil;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.service.RestaurantService;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.util.JsonUtil;
 import org.restaurant.voting.util.exception.NotFoundException;
+import org.restaurant.voting.util.mapper.RestaurantMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.restaurant.voting.DishTestData.*;
-import static org.restaurant.voting.RestaurantTestData.NOT_FOUND;
-import static org.restaurant.voting.RestaurantTestData.getNew;
-import static org.restaurant.voting.RestaurantTestData.getUpdated;
+import static org.restaurant.voting.DishTestData.TODAY_REST1_MENU;
+import static org.restaurant.voting.DishTestData.TODAY_REST2_MENU;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
-import static org.restaurant.voting.util.RestaurantUtil.*;
 import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RestaurantRestControllerTest extends AbstractControllerTest {
@@ -41,6 +35,8 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private RestaurantService service;
+    @Autowired
+    private RestaurantMapper mapper;
 
     @Order(1)
     @Test
@@ -57,7 +53,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         int newId = created.getId();
         newRestaurant.setId(newId);
 
-        RESTAURANT_TO_MATCHER.assertMatch(created, createTo(newRestaurant));
+        RESTAURANT_TO_MATCHER.assertMatch(created, mapper.toTo(newRestaurant));
         RESTAURANT_MATCHER.assertMatch(service.get(newId), newRestaurant);
     }
 
@@ -69,7 +65,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_TO_MATCHER.contentJson(createTo(SECOND_RESTAURANT)));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(mapper.toTo(SECOND_RESTAURANT)));
     }
 
     @Order(3)
@@ -99,7 +95,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(createWithMenuTo(FIRST_RESTAURANT)));
+                .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(mapper.toToWithMenu(FIRST_RESTAURANT)));
     }
 
     @Order(6)
@@ -110,7 +106,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_TO_MATCHER.contentJson(getTos(ALL_RESTAURANTS)));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(mapper.getToList(ALL_RESTAURANTS)));
     }
 
     @Order(7)
@@ -125,7 +121,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(getTosWithMenu(ALL_RESTAURANTS)));
+                .andExpect(RESTAURANT_WITH_MENU_MATCHER.contentJson(mapper.getToWithMenuList(ALL_RESTAURANTS)));
     }
 
     @Order(8)

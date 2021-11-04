@@ -6,6 +6,7 @@ import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudVoteRepository;
 import org.restaurant.voting.service.VoteService;
 import org.restaurant.voting.to.VoteTo;
+import org.restaurant.voting.util.mapper.VoteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -17,8 +18,6 @@ import java.util.List;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
 import static org.restaurant.voting.VoteTestData.*;
-import static org.restaurant.voting.util.VoteUtil.createTo;
-import static org.restaurant.voting.util.VoteUtil.getTos;
 import static org.restaurant.voting.util.exception.ErrorType.DATA_NOT_FOUND;
 import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,6 +32,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
     private VoteService service;
     @Autowired
     private CrudVoteRepository repository;
+    @Autowired
+    private VoteMapper mapper;
 
     @Test
     @WithUserDetails(value = USER_EMAIL)
@@ -48,7 +49,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         int newId = created.getId();
         newVote.setId(newId);
 
-        VOTE_TO_MATCHER.assertMatch(created, createTo(newVote));
+        VOTE_TO_MATCHER.assertMatch(created, mapper.toTo(newVote));
         VOTE_MATCHER.assertMatch(repository.findById(newId).get(), newVote);
     }
 
@@ -58,7 +59,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(getTos(List.of(VOTE_2))));
+                .andExpect(VOTE_TO_MATCHER.contentJson(mapper.getToList(List.of(VOTE_2))));
     }
 
     @Test
@@ -74,7 +75,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + "/last"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(createTo(VOTE_3)));
+                .andExpect(VOTE_TO_MATCHER.contentJson(mapper.toTo(VOTE_3)));
     }
 
     @Test
@@ -105,7 +106,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         Vote actual = repository.findById(VOTE_3_ID).get();
-        VOTE_TO_MATCHER.assertMatch(createTo(actual), createTo(updated));
+        VOTE_TO_MATCHER.assertMatch(mapper.toTo(actual), mapper.toTo(updated));
     }
 
     @Test

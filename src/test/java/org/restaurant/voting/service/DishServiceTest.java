@@ -1,29 +1,26 @@
 package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.util.exception.NotFoundException;
+import org.restaurant.voting.util.mapper.DishMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.*;
-import static org.restaurant.voting.DishTestData.NOT_FOUND;
-import static org.restaurant.voting.DishTestData.getUpdated;
-import static org.restaurant.voting.DishTestData.getNew;
-import static org.restaurant.voting.RestaurantTestData.*;
-import static org.restaurant.voting.util.DishUtil.createTo;
+import static org.restaurant.voting.RestaurantTestData.RESTAURANT_1_ID;
 
 class DishServiceTest extends AbstractServiceTest {
     @Autowired
     private DishService service;
+    @Autowired
+    private DishMapper mapper;
 
     @Test
     void create() {
         Dish newDish = getNew();
-        Dish created = service.create(createTo(newDish));
+        Dish created = service.create(mapper.toTo(newDish));
         int newId = created.id();
         newDish.setId(newId);
         DISH_MATCHER.assertMatch(created, newDish);
@@ -54,7 +51,7 @@ class DishServiceTest extends AbstractServiceTest {
     @Test
     void update() {
         Dish updated = getUpdated();
-        service.update(createTo(updated));
+        service.update(mapper.toTo(updated));
         DISH_MATCHER.assertMatch(service.get(DISH_1_ID), getUpdated());
     }
 

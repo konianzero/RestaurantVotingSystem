@@ -3,6 +3,7 @@ package org.restaurant.voting.service;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.to.RestaurantTo;
+import org.restaurant.voting.util.mapper.RestaurantMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -12,17 +13,18 @@ import org.springframework.util.Assert;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.restaurant.voting.util.RestaurantUtil.createNewFromTo;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class RestaurantService {
 
+    private final LocalDate today = LocalDate.now();
     private final CrudRestaurantRepository crudRestaurantRepository;
-    private final LocalDate TODAY = LocalDate.now();
+    private final RestaurantMapper mapper;
 
-    public RestaurantService(CrudRestaurantRepository crudRestaurantRepository) {
+    public RestaurantService(CrudRestaurantRepository crudRestaurantRepository, RestaurantMapper mapper) {
         this.crudRestaurantRepository = crudRestaurantRepository;
+        this.mapper = mapper;
     }
 
     @Transactional
@@ -32,7 +34,7 @@ public class RestaurantService {
     }
 
     public Restaurant save(RestaurantTo restaurantTo) {
-        return crudRestaurantRepository.save(createNewFromTo(restaurantTo));
+        return crudRestaurantRepository.save(mapper.toEntity(restaurantTo));
     }
 
     public Restaurant get(int id) {
@@ -40,7 +42,7 @@ public class RestaurantService {
     }
 
     public Restaurant getWithTodayMenu(int id) {
-        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id, TODAY), id);
+        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id, today), id);
     }
 
     public List<Restaurant> getAll() {
@@ -49,7 +51,7 @@ public class RestaurantService {
 
     @Cacheable("dishes")
     public List<Restaurant> getAllWithTodayMenu() {
-        return crudRestaurantRepository.getAllWithDishes(TODAY);
+        return crudRestaurantRepository.getAllWithDishes(today);
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
