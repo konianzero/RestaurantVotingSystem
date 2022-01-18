@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import static java.time.LocalDate.now;
-import static org.restaurant.voting.util.VoteUtil.createNew;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
 
@@ -38,7 +38,7 @@ public class VoteService {
     @Transactional
     public Vote create(int restaurantId, int userId) {
         Assert.isTrue(restaurantId != 0, "Restaurant Id must be not null");
-        Vote vote = createNew();
+        Vote vote = new Vote(null, null, null, LocalDate.now());
         return save(vote, restaurantId, userId);
     }
 
