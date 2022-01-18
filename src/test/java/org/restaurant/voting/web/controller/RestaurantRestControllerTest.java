@@ -9,13 +9,14 @@ import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.service.RestaurantService;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.util.JsonUtil;
-import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.RestaurantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.TODAY_REST1_MENU;
@@ -142,7 +143,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_1_ID))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(RESTAURANT_1_ID));
     }
 
     @Order(10)

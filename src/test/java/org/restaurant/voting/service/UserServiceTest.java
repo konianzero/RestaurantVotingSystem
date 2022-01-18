@@ -1,13 +1,11 @@
 package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
-
+import org.restaurant.voting.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-
-import org.restaurant.voting.model.User;
-import org.restaurant.voting.util.exception.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.UserTestData.*;
@@ -29,12 +27,12 @@ class UserServiceTest extends AbstractServiceTest {
     @Test
     void delete() {
         service.delete(USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(USER_ID));
     }
 
     @Test
     void deletedNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND));
+        assertThrows(EntityNotFoundException.class, () -> service.delete(NOT_FOUND));
     }
 
     @Test
@@ -45,7 +43,7 @@ class UserServiceTest extends AbstractServiceTest {
 
     @Test
     void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND));
+        assertThrows(EntityNotFoundException.class, () -> service.get(NOT_FOUND));
     }
 
     @Test

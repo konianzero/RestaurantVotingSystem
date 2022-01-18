@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -27,12 +26,10 @@ public class UserService implements UserDetailsService {
     private static final Sort SORT_BY_DATE = Sort.by(Sort.Direction.DESC, "registered");
 
     private final CrudUserRepository crudUserRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
-    public UserService(CrudUserRepository crudUserRepository, PasswordEncoder passwordEncoder, UserMapper mapper) {
+    public UserService(CrudUserRepository crudUserRepository, UserMapper mapper) {
         this.crudUserRepository = crudUserRepository;
-        this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
     }
 
@@ -79,7 +76,7 @@ public class UserService implements UserDetailsService {
     }
 
     private User prepareAndSave(User user) {
-        return save(prepareToSave(user, passwordEncoder));
+        return save(prepareToSave(user));
     }
 
     @Transactional

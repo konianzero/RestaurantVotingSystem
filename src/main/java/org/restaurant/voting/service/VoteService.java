@@ -7,23 +7,25 @@ import org.restaurant.voting.repository.CrudVoteRepository;
 import org.restaurant.voting.util.exception.DataConflictException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.time.LocalDate.now;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
-import static org.restaurant.voting.web.converter.DateTimeFormatters.format;
 
 @Service
 public class VoteService {
 
-    @Value("#{T(java.time.LocalTime).parse('${app.vote_endtime}')}")
-    private LocalTime voteEndtime;
+    @Value("${app.vote_endtime}")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    private LocalTime voteEndTime;
 
     private final CrudVoteRepository crudVoteRepository;
     private final CrudUserRepository crudUserRepository;
@@ -69,11 +71,11 @@ public class VoteService {
 
     public void checkTimeOver() {
         if (isVotingTimeOver()) {
-            throw new VotingTimeOverException("It's " + format(LocalTime.now()) + ". Time for voting is over!");
+            throw new VotingTimeOverException("It's " + LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME) + ". Time for voting is over!");
         }
     }
 
     public boolean isVotingTimeOver() {
-        return LocalTime.now().isAfter(voteEndtime);
+        return LocalTime.now().isAfter(voteEndTime);
     }
 }

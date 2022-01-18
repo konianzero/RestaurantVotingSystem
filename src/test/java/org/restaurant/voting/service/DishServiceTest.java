@@ -2,9 +2,10 @@ package org.restaurant.voting.service;
 
 import org.junit.jupiter.api.Test;
 import org.restaurant.voting.model.Dish;
-import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.DishMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityNotFoundException;
 
 import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,7 +36,7 @@ class DishServiceTest extends AbstractServiceTest {
 
     @Test
     void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND));
+        assertThrows(EntityNotFoundException.class, () -> service.get(NOT_FOUND));
     }
 
     @Test
@@ -58,11 +59,11 @@ class DishServiceTest extends AbstractServiceTest {
     @Test
     void delete() {
         service.delete(DISH_1_ID);
-        assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(DISH_1_ID));
     }
 
     @Test
     void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND));
+        assertThrows(EntityNotFoundException.class, () -> service.delete(NOT_FOUND));
     }
 }

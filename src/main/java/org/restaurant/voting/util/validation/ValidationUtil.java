@@ -1,12 +1,9 @@
 package org.restaurant.voting.util.validation;
 
 import org.restaurant.voting.HasId;
-import org.restaurant.voting.util.exception.ErrorType;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
-import org.restaurant.voting.util.exception.NotFoundException;
-import org.slf4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 public class ValidationUtil {
@@ -30,7 +27,7 @@ public class ValidationUtil {
 
     public static void checkModification(int count, int id) {
         if (count == 0) {
-            throw new NotFoundException("Operation on entity with id=" + id + " not succeeded");
+            throw new EntityNotFoundException("Operation on entity with id=" + id + " not succeeded");
         }
     }
 
@@ -54,31 +51,7 @@ public class ValidationUtil {
 
     public static void checkNotFound(boolean isFound, String message) {
         if (!isFound) {
-            throw new NotFoundException("Not found entity with " + message);
+            throw new EntityNotFoundException("Not found entity with " + message);
         }
-    }
-
-    public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {
-        Throwable rootCause = ValidationUtil.getRootCause(e);
-        if (logStackTrace) {
-            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
-        } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
-        }
-        return rootCause;
-    }
-
-    public static Throwable getRootCause(Throwable t) {
-        Throwable result = t;
-        Throwable cause;
-
-        while (null != (cause = result.getCause()) && (result != cause)) {
-            result = cause;
-        }
-        return result;
-    }
-
-    public static String getMessage(Throwable e) {
-        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
     }
 }
