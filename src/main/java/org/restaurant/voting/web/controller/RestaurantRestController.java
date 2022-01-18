@@ -29,7 +29,7 @@ public class RestaurantRestController {
     private final RestaurantService service;
     private final RestaurantMapper mapper;
 
-    public RestaurantRestController(RestaurantService service) {
+    public RestaurantRestController(RestaurantService service, RestaurantMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
