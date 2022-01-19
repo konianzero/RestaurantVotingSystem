@@ -1,7 +1,11 @@
 package org.restaurant.voting.web.controller.user;
 
 import org.junit.jupiter.api.Test;
-
+import org.restaurant.voting.TestUtil;
+import org.restaurant.voting.model.Role;
+import org.restaurant.voting.model.User;
+import org.restaurant.voting.service.UserService;
+import org.restaurant.voting.web.controller.AbstractControllerTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -10,22 +14,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.restaurant.voting.TestUtil;
-import org.restaurant.voting.model.Role;
-import org.restaurant.voting.model.User;
-import org.restaurant.voting.service.UserService;
-import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.web.controller.AbstractControllerTest;
+import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static org.restaurant.voting.UserTestData.*;
+import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.restaurant.voting.UserTestData.*;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 
 
 class AdminRestControllerTest extends AbstractControllerTest {
@@ -122,7 +119,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + USER_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(USER_ID));
     }
 
     @Test

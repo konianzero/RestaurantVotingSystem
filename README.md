@@ -1,7 +1,7 @@
 Restaurant Voting System
 ------------------------
 
-_**Hibernate/Spring/SpringMVC**_.
+_**Spring Boot 2.5**_.
 
 A restaurant voting system (REST API) for deciding where to have lunch.
 
@@ -24,18 +24,17 @@ Project uses:
    - _Spring Security_ for separate access for regular users and admins
    - _HSQLDB_ for storing data
    - _Hibernate_ and _Spring Data JPA_ for working with DB
-   - _Ehcache_ as second level cache for Hibernate
+   - _Ehcache_ for caching
    - _MapStruct_ for mapping entities from/to transfer objects
    - _Jackson_ for processing JSON
    - _JUnit_ for testing
-   - _Swagger2_ for API documentation
+   - _Swagger/OpenAPI 3.0_ for API documentation
 ---
 
 ### Requirements
 
 - JDK 15+
 - maven 3
-- Tomcat 9
 - Docker 20
 
 ---
@@ -44,11 +43,14 @@ Project uses:
 
 Local
 ```shell
-mvn clean package org.codehaus.cargo:cargo-maven2-plugin:1.8.2:run
+mvn spring-boot:run
 ```
 
 In container
 
+```shell
+mvn clean package -DskipTests
+```
 ```shell
 docker build -t restaurant/voting_system .
 ```

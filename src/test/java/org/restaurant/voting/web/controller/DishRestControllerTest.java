@@ -6,7 +6,6 @@ import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.util.JsonUtil;
-import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.DishMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -14,6 +13,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 
 import static java.time.LocalDate.now;
@@ -121,7 +121,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH_1_ID))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID));
+        assertThrows(EntityNotFoundException.class, () -> service.get(DISH_1_ID));
     }
 
     @Test

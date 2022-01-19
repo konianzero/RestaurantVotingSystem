@@ -1,82 +1,133 @@
 package org.restaurant.voting.web;
 
-import org.restaurant.voting.util.validation.ValidationUtil;
-import org.restaurant.voting.util.exception.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.restaurant.voting.util.exception.AppException;
+import org.restaurant.voting.util.exception.DataConflictException;
+import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNull;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.persistence.EntityNotFoundException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static org.restaurant.voting.util.exception.ErrorType.*;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.MESSAGE;
 
-@RestControllerAdvice(annotations = RestController.class)
-@Order(Ordered.HIGHEST_PRECEDENCE + 5)
-public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+@RestControllerAdvice
+@AllArgsConstructor
+@Slf4j
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ErrorInfo> wrongRequest(HttpServletRequest req, NoHandlerFoundException e) {
-        return logAndGetErrorInfo(req, e, false, WRONG_REQUEST);
+    private final ErrorAttributes errorAttributes;
+
+    /**
+     * Handle exception when the DispatcherServlet can't find a handler for a request
+     * (when property {@code spring.mvc.throw-exception-if-no-handler-found: true}).
+     */
+    @NonNull
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(@NonNull NoHandlerFoundException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        log.error("NoHandlerFoundException", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(), ex.getMessage()), status);
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorInfo> bindValidationError(HttpServletRequest req, BindException e) {
-        String[] details = e.getBindingResult()
-                            .getFieldErrors()
-                            .stream()
-                            .map(FieldError::toString)
-                            .toArray(String[]::new);
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, details);
+    /**
+     * Handle exception when validation on an argument annotated with @Valid fails.
+     */
+    @NonNull
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        log.error("MethodArgumentNotValidException", ex);
+        return handleBindingErrors(ex.getBindingResult(), request);
     }
 
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
-    public ResponseEntity<ErrorInfo> illegalRequestDataError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    @NonNull
+    @Override
+    protected ResponseEntity<Object> handleBindException(@NonNull BindException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        log.error("BindException", ex);
+        return handleBindingErrors(ex.getBindingResult(), request);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorInfo> notFoundError(HttpServletRequest req, NotFoundException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
+    /**
+     * Customize the response body of all exception types.
+     * @return ResponseEntity with custom response body
+     */
+    @NonNull
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception ex, Object body, @NonNull HttpHeaders headers,@NonNull HttpStatus status, @NonNull WebRequest request) {
+        log.error("Internal Exception", ex);
+        super.handleExceptionInternal(ex, body, headers, status, request);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(), getRootCause(ex).getMessage()), status);
     }
 
-    @ExceptionHandler(VotingTimeOverException.class)
-    public ResponseEntity<ErrorInfo> votingTimeOverError(HttpServletRequest req, VotingTimeOverException e) {
-        return logAndGetErrorInfo(req, e, false, TIME_OVER);
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> persistException(WebRequest request, EntityNotFoundException ex) {
+        log.error("EntityNotFoundException: {}", ex.getMessage());
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(DataConflictException.class)
-    public ResponseEntity<ErrorInfo> dataConflictError(HttpServletRequest req, DataConflictException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_CONFLICT);
+    @ExceptionHandler({DataConflictException.class, VotingTimeOverException.class})
+    public ResponseEntity<Object> dataConflictException(WebRequest request, RuntimeException ex) {
+        log.error("Conflict Exception: {}", ex.getMessage());
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorInfo> handleError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, true, APP_ERROR);
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleAllUncaughtException(WebRequest request, RuntimeException ex) {
+        log.error("Internal Error", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(), ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<ErrorInfo> logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType, String... details) {
-        Throwable rootCause = ValidationUtil.logAndGetRootCause(log, req, e, logStackTrace, errorType);
-        return ResponseEntity.status(errorType.getStatus())
-                             .body(
-                                     new ErrorInfo(
-                                             req.getRequestURL(),
-                                             errorType,
-                                             errorType.getErrorCode(),
-                                             details.length != 0
-                                                     ? details
-                                                     : new String[]{ValidationUtil.getMessage(rootCause)}
-                                     )
-                             );
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<Map<String, Object>> handleAppException(WebRequest request, AppException ex) {
+        log.error("AppException: {}", ex.getMessage());
+        return createResponseEntity(getDefaultBody(request, ex.getOptions(), ex.getMessage()), ex.getStatus());
+    }
+
+    // *** Helper functions ***
+
+    /**
+     * Make message with name of invalid fields and their error messages.
+     * @return ResponseEntity with custom response body.
+     */
+    private ResponseEntity<Object> handleBindingErrors(BindingResult result, WebRequest request) {
+        String msg = result.getFieldErrors().stream()
+                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.joining("\n"));
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), msg), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> ResponseEntity<T> createResponseEntity(Map<String, Object> body, HttpStatus status) {
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        return (ResponseEntity<T>) ResponseEntity.status(status).body(body);
+    }
+
+    private Map<String, Object> getDefaultBody(WebRequest request, ErrorAttributeOptions options, String msg) {
+        Map<String, Object> body = errorAttributes.getErrorAttributes(request, options);
+        if (msg != null) {
+            body.put("message", msg);
+        }
+        return body;
+    }
+
+    private Throwable getRootCause(@NonNull Throwable t) {
+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
+        return rootCause != null ? rootCause : t;
     }
 }

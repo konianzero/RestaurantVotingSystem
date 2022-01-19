@@ -30,7 +30,7 @@ public class DishRestController {
     private final DishService service;
     private final DishMapper mapper;
 
-    public DishRestController(DishService service) {
+    public DishRestController(DishService service, DishMapper mapper) {
         this.service = service;
          this.mapper = mapper;
      }
