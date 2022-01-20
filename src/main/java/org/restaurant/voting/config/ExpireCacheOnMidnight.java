@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Supplier;
 
-public class ExpiryUntilMidnight implements ExpiryPolicy<Object, Object> {
+public class ExpireCacheOnMidnight implements ExpiryPolicy<Object, Object> {
     @Override
     public Duration getExpiryForCreation(Object o, Object o2) {
         long msUntilMidnight = LocalTime.now().until(LocalTime.MAX, ChronoUnit.MILLIS);

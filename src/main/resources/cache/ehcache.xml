@@ -4,7 +4,7 @@
 
     <cache-template name="expiryCache">
         <expiry>
-            <class>org.restaurant.voting.config.ExpiryUntilMidnight</class>
+            <class>org.restaurant.voting.config.ExpireCacheOnMidnight</class>
         </expiry>
         <heap unit="entries">5000</heap>
     </cache-template>
