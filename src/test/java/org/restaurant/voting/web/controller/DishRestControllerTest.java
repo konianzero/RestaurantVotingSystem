@@ -6,6 +6,7 @@ import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.util.JsonUtil;
+import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.DishMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +14,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 
 import static java.time.LocalDate.now;
@@ -23,7 +23,6 @@ import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.RestaurantTestData.RESTAURANT_1_ID;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -121,7 +120,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH_1_ID))
                 .andExpect(status().isNoContent());
-        assertThrows(EntityNotFoundException.class, () -> service.get(DISH_1_ID));
+        assertThrows(NotFoundException.class, () -> service.get(DISH_1_ID));
     }
 
     @Test
@@ -132,8 +131,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -144,8 +142,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -156,7 +153,6 @@ class DishRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(mapper.toTo(invalid))))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 }

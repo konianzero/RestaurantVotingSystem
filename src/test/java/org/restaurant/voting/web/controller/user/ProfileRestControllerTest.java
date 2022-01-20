@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.restaurant.voting.UserTestData.*;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -94,8 +93,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -106,8 +104,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -119,7 +116,6 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 }

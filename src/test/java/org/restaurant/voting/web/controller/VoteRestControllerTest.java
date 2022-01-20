@@ -18,7 +18,6 @@ import java.util.List;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
 import static org.restaurant.voting.VoteTestData.*;
-import static org.restaurant.voting.util.exception.ErrorType.DATA_NOT_FOUND;
 import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -116,8 +115,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                                       .queryParam("restaurantId", String.valueOf(1000))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(DATA_NOT_FOUND));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -127,7 +125,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
                                       .queryParam("restaurantId", String.valueOf(1000))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(DATA_NOT_FOUND));
+                .andExpect(status().isUnprocessableEntity());
     }
 }

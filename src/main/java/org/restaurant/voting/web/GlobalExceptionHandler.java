@@ -2,10 +2,7 @@ package org.restaurant.voting.web;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.restaurant.voting.util.exception.AppException;
-import org.restaurant.voting.util.exception.DataConflictException;
-import org.restaurant.voting.util.exception.NotFoundException;
-import org.restaurant.voting.util.exception.VotingTimeOverException;
+import org.restaurant.voting.util.exception.*;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.core.NestedExceptionUtils;
@@ -84,6 +81,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> dataConflictException(WebRequest request, RuntimeException ex) {
         log.error("Conflict Exception: {}", ex.getMessage());
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(IllegalRequestDataException.class)
+    public ResponseEntity<Object> illegalRequestException(WebRequest request, IllegalRequestDataException ex) {
+        log.error("IllegalRequestDataException: {}", ex.getMessage());
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(RuntimeException.class)

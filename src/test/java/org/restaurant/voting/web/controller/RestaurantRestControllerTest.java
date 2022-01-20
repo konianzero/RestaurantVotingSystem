@@ -9,6 +9,7 @@ import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.service.RestaurantService;
 import org.restaurant.voting.to.RestaurantTo;
 import org.restaurant.voting.util.JsonUtil;
+import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.RestaurantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,15 +17,12 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.persistence.EntityNotFoundException;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.restaurant.voting.DishTestData.TODAY_REST1_MENU;
 import static org.restaurant.voting.DishTestData.TODAY_REST2_MENU;
 import static org.restaurant.voting.RestaurantTestData.*;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
-import static org.restaurant.voting.util.exception.ErrorType.VALIDATION_ERROR;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -143,7 +141,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT_1_ID))
                 .andExpect(status().isNoContent());
-        assertThrows(EntityNotFoundException.class, () -> service.get(RESTAURANT_1_ID));
+        assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
     }
 
     @Order(10)
@@ -155,8 +153,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newRestaurant)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Order(11)
@@ -168,8 +165,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Order(12)
@@ -181,7 +177,6 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                                       .contentType(MediaType.APPLICATION_JSON)
                                       .content(JsonUtil.writeValue(newRestaurant)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 }
