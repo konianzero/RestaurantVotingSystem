@@ -85,6 +85,7 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsql.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- DB migration -->

@@ -35,7 +35,7 @@ spring:
       data-locations: classpath:db/schema.sql, classpath:db/data.sql
 
   datasource:
-    driver-class-name: org.hsqldb.jdbcDriver
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
     url: jdbc:hsqldb:mem:voting;DB_CLOSE_DELAY=-1
     username: sa
     password:
@@ -49,7 +49,7 @@ spring:
       is-getter: none
 
   cache:
-    ehcache:
+    jcache:
       config: classpath:cache/ehcache.xml
 
 logging:

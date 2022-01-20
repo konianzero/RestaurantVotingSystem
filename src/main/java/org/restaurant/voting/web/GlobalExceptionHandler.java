@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.restaurant.voting.util.exception.AppException;
 import org.restaurant.voting.util.exception.DataConflictException;
+import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.exception.VotingTimeOverException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -21,7 +22,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -74,9 +74,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(), getRootCause(ex).getMessage()), status);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> persistException(WebRequest request, EntityNotFoundException ex) {
-        log.error("EntityNotFoundException: {}", ex.getMessage());
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> persistException(WebRequest request, NotFoundException ex) {
+        log.error("NotFoundException: {}", ex.getMessage());
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 

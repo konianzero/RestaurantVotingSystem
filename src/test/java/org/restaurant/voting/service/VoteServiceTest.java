@@ -1,5 +1,6 @@
 package org.restaurant.voting.service;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudVoteRepository;
@@ -19,28 +20,21 @@ class VoteServiceTest extends AbstractServiceTest {
     @Autowired
     private CrudVoteRepository repository;
 
-    @Test
-    void create() {
-        Vote newVote = getNew();
-        Vote created = service.create(newVote.getRestaurant().getId(), USER_ID);
-        int newId = created.id();
-        newVote.setId(newId);
-        VOTE_MATCHER.assertMatch(created, newVote);
-        VOTE_MATCHER.assertMatch(repository.findById(newId).get(), newVote);
-    }
-
+    @Order(1)
     @Test
     void get() {
         List<Vote> actual = service.getAllByUserId(ADMIN_ID);
         VOTE_MATCHER.assertMatch(actual, VOTE_1, VOTE_3);
     }
 
+    @Order(2)
     @Test
     void getLast() {
         Vote last = service.getLast(ADMIN_ID);
         VOTE_MATCHER.assertMatch(last, VOTE_3);
     }
 
+    @Order(3)
     @Test
     void update() {
         Vote updated = getUpdated();
@@ -50,5 +44,16 @@ class VoteServiceTest extends AbstractServiceTest {
             service.update(updated.getRestaurant().getId(), ADMIN_ID);
             VOTE_MATCHER.assertMatch(repository.findById(VOTE_3_ID).get(), updated);
         }
+    }
+
+    @Order(4)
+    @Test
+    void create() {
+        Vote newVote = getNew();
+        Vote created = service.create(newVote.getRestaurant().getId(), USER_ID);
+        int newId = created.id();
+        newVote.setId(newId);
+        VOTE_MATCHER.assertMatch(created, newVote);
+        VOTE_MATCHER.assertMatch(repository.findById(newId).get(), newVote);
     }
 }

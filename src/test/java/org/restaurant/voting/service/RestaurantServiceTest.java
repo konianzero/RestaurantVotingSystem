@@ -1,12 +1,13 @@
 package org.restaurant.voting.service;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.model.Restaurant;
+import org.restaurant.voting.util.exception.NotFoundException;
 import org.restaurant.voting.util.mapper.RestaurantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,32 +24,27 @@ class RestaurantServiceTest extends AbstractServiceTest  {
     @Autowired
     private RestaurantMapper mapper;
 
-    @Test
-    void create() {
-        Restaurant newRestaurant = getNew();
-        Restaurant created = service.create(mapper.toTo(newRestaurant));
-        int newId = created.getId();
-        newRestaurant.setId(newId);
-        RESTAURANT_MATCHER.assertMatch(service.get(newId), newRestaurant);
-    }
-
+    @Order(1)
     @Test
     void get() {
         Restaurant actual = service.get(RESTAURANT_1_ID);
         RESTAURANT_MATCHER.assertMatch(actual, FIRST_RESTAURANT);
     }
 
+    @Order(2)
     @Test
     void getWithDishes() {
         Restaurant actual = service.getWithTodayMenu(RESTAURANT_1_ID);
         DISH_MATCHER.assertMatch(actual.getMenu(), TODAY_REST1_MENU);
     }
 
+    @Order(3)
     @Test
     void getAll() {
         RESTAURANT_MATCHER.assertMatch(service.getAll(), FIRST_RESTAURANT, SECOND_RESTAURANT);
     }
 
+    @Order(4)
     @Test
     void getAllWithTodayMenu() {
         List<Dish> today = service.getAllWithTodayMenu()
@@ -58,6 +54,7 @@ class RestaurantServiceTest extends AbstractServiceTest  {
         DISH_MATCHER.assertMatch(today, TODAY_MENU);
     }
 
+    @Order(5)
     @Test
     void update() {
         Restaurant updated = getUpdated();
@@ -65,9 +62,20 @@ class RestaurantServiceTest extends AbstractServiceTest  {
         RESTAURANT_MATCHER.assertMatch(service.get(RESTAURANT_1_ID), updated);
     }
 
+    @Order(6)
+    @Test
+    void create() {
+        Restaurant newRestaurant = getNew();
+        Restaurant created = service.create(mapper.toTo(newRestaurant));
+        int newId = created.getId();
+        newRestaurant.setId(newId);
+        RESTAURANT_MATCHER.assertMatch(service.get(newId), newRestaurant);
+    }
+
+    @Order(7)
     @Test
     void delete() {
         service.delete(RESTAURANT_1_ID);
-        assertThrows(EntityNotFoundException.class, () -> service.get(RESTAURANT_1_ID));
+        assertThrows(NotFoundException.class, () -> service.get(RESTAURANT_1_ID));
     }
 }

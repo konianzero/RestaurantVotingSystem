@@ -2,8 +2,8 @@ package org.restaurant.voting.util.validation;
 
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.util.exception.IllegalRequestDataException;
+import org.restaurant.voting.util.exception.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 public class ValidationUtil {
@@ -27,7 +27,7 @@ public class ValidationUtil {
 
     public static void checkModification(int count, int id) {
         if (count == 0) {
-            throw new EntityNotFoundException("Operation on entity with id=" + id + " not succeeded");
+            throw new NotFoundException("Operation on entity with id=" + id + " not succeeded");
         }
     }
 
@@ -51,7 +51,7 @@ public class ValidationUtil {
 
     public static void checkNotFound(boolean isFound, String message) {
         if (!isFound) {
-            throw new EntityNotFoundException("Not found entity with " + message);
+            throw new NotFoundException("Not found entity with " + message);
         }
     }
 }
