@@ -54,7 +54,7 @@ public class DishService {
         return crudDishRepository.getAllByRestaurant(restaurantId);
     }
 
-    @Cacheable("dishes")
+    @Cacheable(value = "dishes", key = "T(java.lang.String).valueOf(\"all\".toCharArray())")
     public List<Dish> getAllByRestaurantAndDate(int restaurantId, LocalDate date) {
         Assert.notNull(date, "Date must be not null");
         return crudDishRepository.getAllByRestaurantAndDate(restaurantId, date);

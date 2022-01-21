@@ -49,7 +49,7 @@ public class RestaurantService {
         return crudRestaurantRepository.findAll();
     }
 
-    @Cacheable("dishes")
+    @Cacheable(value = "dishes", key = "T(java.lang.String).valueOf(\"all\".toCharArray())")
     public List<Restaurant> getAllWithTodayMenu() {
         return crudRestaurantRepository.getAllWithDishes(today);
     }
