@@ -18,7 +18,6 @@ import java.util.List;
 import static org.restaurant.voting.UserTestData.ADMIN_EMAIL;
 import static org.restaurant.voting.UserTestData.USER_EMAIL;
 import static org.restaurant.voting.VoteTestData.*;
-import static org.restaurant.voting.util.exception.ErrorType.TIME_OVER;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,8 +92,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                                       .queryParam("restaurantId", String.valueOf(restaurantId))
                                       .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isConflict())
-                .andExpect(errorType(TIME_OVER));
+                .andExpect(status().isConflict());
     }
 
     void revoteTodayBefore(Vote updated) throws Exception {

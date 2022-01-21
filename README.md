@@ -49,7 +49,7 @@ mvn spring-boot:run
 In container
 
 ```shell
-mvn clean package -DskipTests
+mvn clean package
 ```
 ```shell
 docker build -t restaurant/voting_system .
