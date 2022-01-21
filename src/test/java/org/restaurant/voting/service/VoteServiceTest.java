@@ -1,6 +1,5 @@
 package org.restaurant.voting.service;
 
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudVoteRepository;
@@ -20,21 +19,21 @@ class VoteServiceTest extends AbstractServiceTest {
     @Autowired
     private CrudVoteRepository repository;
 
-    @Order(1)
+//    @Order(1)
     @Test
     void get() {
         List<Vote> actual = service.getAllByUserId(ADMIN_ID);
         VOTE_MATCHER.assertMatch(actual, VOTE_1, VOTE_3);
     }
 
-    @Order(2)
+//    @Order(2)
     @Test
     void getLast() {
         Vote last = service.getLast(ADMIN_ID);
         VOTE_MATCHER.assertMatch(last, VOTE_3);
     }
 
-    @Order(3)
+//    @Order(3)
     @Test
     void update() {
         Vote updated = getUpdated();
@@ -46,7 +45,7 @@ class VoteServiceTest extends AbstractServiceTest {
         }
     }
 
-    @Order(4)
+//    @Order(4)
     @Test
     void create() {
         Vote newVote = getNew();
