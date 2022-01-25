@@ -27,15 +27,16 @@ class CacheTest {
     @Autowired
     private DishService dishService;
 
-    @AfterAll
-    static void afterAll() {
+    private static Cache cache;
 
+    @BeforeEach
+    void getCache() {
+        cache = cacheManager.getCache("dishes");
     }
 
     @Order(1)
     @Test
     void ehCacheExists() {
-        Cache cache = cacheManager.getCache("dishes");
         Assertions.assertEquals("dishes", cache.getName());
         Assertions.assertEquals("Eh107Cache", cache.getNativeCache().getClass().getSimpleName());
     }
@@ -43,7 +44,6 @@ class CacheTest {
     @Order(2)
     @Test
     void cacheable() {
-        Cache cache = cacheManager.getCache("dishes");
         dishService.getAllByRestaurantAndDate(RESTAURANT_1_ID, now());
         DISH_MATCHER.assertMatch((Iterable<Dish>) cache.get("all").get(), TODAY_REST1_MENU);
     }
@@ -51,7 +51,6 @@ class CacheTest {
     @Order(3)
     @Test
     void cacheEvict() {
-        Cache cache = cacheManager.getCache("dishes");
         dishService.delete(100008);
         Assertions.assertNull(cache.get("all"));
     }

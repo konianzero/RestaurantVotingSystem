@@ -6,7 +6,21 @@
         <expiry>
             <class>org.restaurant.voting.config.ExpireCacheOnMidnight</class>
         </expiry>
-        <heap unit="entries">5000</heap>
+        <listeners>
+            <listener>
+                <class>org.restaurant.voting.util.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <resources>
+            <heap unit="entries">5000</heap>
+        </resources>
     </cache-template>
 
     <cache alias="dishes" uses-template="expiryCache"/>
