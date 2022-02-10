@@ -20,15 +20,19 @@ ___
 Project uses:
 
    - _Tomcat_ as web server
-   - _Spring MVC_ as MVC framework
-   - _Spring Security_ for separate access for regular users and admins
-   - _HSQLDB_ for storing data
-   - _Hibernate_ and _Spring Data JPA_ for working with DB
-   - _Ehcache_ for caching
-   - _MapStruct_ for mapping entities from/to transfer objects
+   - _Spring MVC_ as MVC framework ([Controllers](src/main/java/org/restaurant/voting/web/controller))
+   - _Spring Security_ for [separate access](src/main/java/org/restaurant/voting/config/WebSecurityConfig.java) for regular users and admins
+   - _HSQLDB_ for [storing data](src/main/resources/db)
+   - _Hibernate_ and _Spring Data JPA_ for [working with DB](src/main/java/org/restaurant/voting/repository)
+   - _Ehcache_ for [caching](src/main/resources/cache/ehcache.xml)
+   - _MapStruct_ for [mapping](src/main/java/org/restaurant/voting/util/mapper) entities from/to transfer objects
    - _Jackson_ for processing JSON
-   - _JUnit_ for testing
-   - _Swagger/OpenAPI 3.0_ for API documentation
+   - _JUnit_ for [testing](src/test/java/org/restaurant/voting)
+   - _Swagger/OpenAPI 3.0_ for [API documentation](src/main/java/org/restaurant/voting/config/OpenApiConfig.java)
+   - _Docker_ to run app in container ([Dockerfile](Dockerfile))
+
+[Application Properties](src/main/resources/application.yaml)
+
 ---
 
 ### Requirements
