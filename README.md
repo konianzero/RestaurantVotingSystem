@@ -107,7 +107,8 @@ URL: [http://localhost:8080/voting](http://localhost:8080/voting)
 
 ---
 
-### CURL commands for the restaurant voting system REST API.
+### CURL commands for the restaurant voting system REST API 
+You can use IntelliJ IDEA HTTP client with [endpoints.http](endpoints.http).
 
 1. **Restaurant**
 

@@ -1,0 +1,150 @@
+# --- Restaurant ---
+
+### Create restaurant
+POST {{url}}/voting/rest/restaurants
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json;charset=UTF-8
+
+{"name":"Restaurant3","address":"ул. Зеленая, д.20"}
+
+### Get restaurante
+GET {{url}}/voting/rest/restaurants/100002
+Authorization: Basic user@gmail.com userpass
+
+> {%
+client.test("Restaurant is not empty", function (){
+    client.assert(response.status === 200, "Result OK")
+})
+%}
+
+### Get restaurant with today's dishes
+GET {{url}}/voting/rest/restaurants/100003/today
+Authorization: Basic user@gmail.com userpass
+
+### Get all restaurants
+GET {{url}}/voting/rest/restaurants/
+Authorization: Basic user@gmail.com userpass
+
+### Get all restaurants with today's dishes
+GET {{url}}/voting/rest/restaurants/today
+Authorization: Basic user@gmail.com userpass
+
+### Update restaurant
+PUT {{url}}/voting/rest/restaurants/100002
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json
+
+{"id":100002,"name":"RestOne","address":"ул. Мира, 67"}
+
+### Delete restaurant
+DELETE {{url}}/voting/rest/restaurants/100002
+Authorization: Basic admin@gmail.com admin
+
+# --- Dish ---
+
+### Create dish
+POST {{url}}/voting/rest/dishes
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json;charset=UTF-8
+
+{"restaurantId":100003,"name":"Sandwich","price":6}
+
+### Get dish
+GET {{url}}/voting/rest/dishes/100010
+Authorization: Basic user@gmail.com userpass
+
+### Get all dishes by restaurant
+GET {{url}}/voting/rest/dishes?restaurantId=100003
+Authorization: Basic user@gmail.com userpass
+
+### Get all dishes by restaurant and date
+GET {{url}}/voting/rest/dishes?restaurantId=100003&date=2022-01-25
+Authorization: Basic user@gmail.com userpass
+
+### Update dish
+PUT {{url}}/voting/rest/dishes/100010
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json
+
+{"id":100010,"restaurantId":100003,"name":"Sandwich with tune","price":8}
+
+### Delete dish
+DELETE {{url}}/voting/rest/dishes/100010
+Authorization: Basic admin@gmail.com admin
+
+# --- Admin user ---
+
+### Create user
+POST {{url}}/voting/rest/admin/users
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json;charset=UTF-8
+
+{"name":"New","email":"new@gmail.com","password":"password","enabled":true,"roles":["USER"]}
+
+### Get user
+GET {{url}}/voting/rest/admin/users/100001
+Authorization: Basic admin@gmail.com admin
+
+### Get user by Email
+GET {{url}}/voting/rest/admin/users/by?email=user@gmail.com
+Authorization: Basic admin@gmail.com admin
+
+### Get all users
+GET {{url}}/voting/rest/admin/users
+Authorization: Basic admin@gmail.com admin
+
+### Update user
+PUT {{url}}/voting/rest/admin/users/100001
+Authorization: Basic admin@gmail.com admin
+Content-Type: application/json
+
+{"id":100001,"name":"NewAdmin","email":"newadmin@gmail.com","password":"password","enabled":true,"roles":["USER","ADMIN"]}
+
+### Delete user
+DELETE {{url}}/voting/rest/admin/users/100001
+Authorization: Basic admin@gmail.com admin
+
+# --- Regular user ---
+
+### Register user
+POST {{url}}/voting/rest/profile/register
+Content-Type: application/json;charset=UTF-8
+
+{"name":"Other","email":"other@gmail.com","password":"password"}
+
+### Get user
+GET {{url}}/voting/rest/profile
+Authorization: Basic other@gmail.com password
+
+### Update user
+PUT {{url}}/voting/rest/profile
+Authorization: Basic other@gmail.com password
+Content-Type: application/json
+
+{"name":"UpdatedUser","email":"updated@gmail.com","password":"passupdate"}
+
+### Delete user
+DELETE {{url}}/voting/rest/profile
+Authorization: Basic updated@gmail.com passupdate
+
+# --- Vote ---
+
+### Create vote
+POST {{url}}/voting/rest/votes?restaurantId=100003
+Authorization: Basic new@gmail.com password
+Content-Type: application/json
+
+### Get own votes
+GET {{url}}/voting/rest/votes
+Authorization: Basic new@gmail.com password
+
+###Get last vote of user
+GET {{url}}/voting/rest/votes/last
+Authorization: Basic new@gmail.com password
+
+### Update vote
+PUT {{url}}/voting/rest/votes?restaurantId=100003
+Authorization: Basic new@gmail.com password
+
+
+
