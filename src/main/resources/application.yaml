@@ -41,7 +41,6 @@ spring:
     password:
 
   jackson:
-    mapper.default-view-inclusion: true
     visibility:
       field: any
       getter: none
