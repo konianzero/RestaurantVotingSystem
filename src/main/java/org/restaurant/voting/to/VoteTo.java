@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+import static org.restaurant.voting.model.BaseEntity.START_SEQ;
 
 public class VoteTo extends BaseTo {
     @NotNull

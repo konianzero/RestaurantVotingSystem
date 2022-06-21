@@ -9,7 +9,7 @@ import java.util.List;
 import static java.time.LocalDate.now;
 import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.RestaurantTestData.SECOND_RESTAURANT;
-import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+import static org.restaurant.voting.model.BaseEntity.START_SEQ;
 
 public class DishTestData {
     public static final TestMatcher<Dish> DISH_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Dish.class, "restaurant");

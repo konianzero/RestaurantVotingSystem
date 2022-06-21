@@ -4,7 +4,7 @@ import org.restaurant.voting.model.Role;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.util.JsonUtil;
 
-import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+import static org.restaurant.voting.model.BaseEntity.START_SEQ;
 
 public class UserTestData {
     public static final TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator(User.class, "registered", "password");

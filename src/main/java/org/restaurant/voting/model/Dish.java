@@ -2,6 +2,9 @@ package org.restaurant.voting.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -14,6 +17,9 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "dishes", uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "date", "name"}, name = "dishes_unique_idx"))
+@NoArgsConstructor
+@Getter
+@Setter
 public class Dish extends AbstractNamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,47 +37,10 @@ public class Dish extends AbstractNamedEntity {
     @NotNull
     private LocalDate date;
 
-    public Dish() {
-    }
-
     public Dish(Integer id, String name, Restaurant restaurant, int price, LocalDate date) {
         super(id, name);
         this.restaurant = restaurant;
         this.price = price;
         this.date = date;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    @Override
-    public String toString() {
-        return "Dish{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", date=" + date +
-                '}';
     }
 }

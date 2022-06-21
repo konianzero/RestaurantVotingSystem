@@ -7,7 +7,7 @@ import org.restaurant.voting.to.RestaurantWithMenuTo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+import static org.restaurant.voting.model.BaseEntity.START_SEQ;
 
 public class RestaurantTestData {
     public static final TestMatcher<Restaurant> RESTAURANT_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Restaurant.class, "menu");

@@ -8,7 +8,7 @@ import static org.restaurant.voting.RestaurantTestData.FIRST_RESTAURANT;
 import static org.restaurant.voting.RestaurantTestData.SECOND_RESTAURANT;
 import static org.restaurant.voting.UserTestData.ADMIN;
 import static org.restaurant.voting.UserTestData.USER;
-import static org.restaurant.voting.model.AbstractBaseEntity.START_SEQ;
+import static org.restaurant.voting.model.BaseEntity.START_SEQ;
 
 public class VoteTestData {
     public static final TestMatcher<Vote> VOTE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Vote.class, "user", "restaurant");

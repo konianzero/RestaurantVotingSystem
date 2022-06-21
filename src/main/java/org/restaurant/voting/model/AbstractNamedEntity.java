@@ -1,5 +1,9 @@
 package org.restaurant.voting.model;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.restaurant.voting.util.validation.SafeHtml;
 
 import javax.persistence.Column;
@@ -8,7 +12,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @MappedSuperclass
-public abstract class AbstractNamedEntity extends AbstractBaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+public abstract class AbstractNamedEntity extends BaseEntity {
 
     @NotBlank
     @Size(min = 2, max = 100)
@@ -16,24 +23,8 @@ public abstract class AbstractNamedEntity extends AbstractBaseEntity {
     @SafeHtml
     protected String name;
 
-    protected AbstractNamedEntity() {
-    }
-
     protected AbstractNamedEntity(Integer id, String name) {
         super(id);
         this.name = name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + '(' + name + ')';
     }
 }

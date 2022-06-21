@@ -1,5 +1,6 @@
 package org.restaurant.voting.model;
 
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.restaurant.voting.HasId;
 import org.springframework.util.Assert;
@@ -7,7 +8,11 @@ import org.springframework.util.Assert;
 import javax.persistence.*;
 
 @MappedSuperclass
-public abstract class AbstractBaseEntity implements HasId {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+public abstract class BaseEntity implements HasId {
     public static final int START_SEQ = 100000;
 
     @Id
@@ -16,32 +21,10 @@ public abstract class AbstractBaseEntity implements HasId {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     protected Integer id;
 
-    protected AbstractBaseEntity() {
-    }
-
-    protected AbstractBaseEntity(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
     // doesn't work for hibernate lazy proxy
     public int id() {
         Assert.notNull(id, "Entity must have id");
         return id;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ":" + id;
     }
 
     @Override
@@ -52,7 +35,7 @@ public abstract class AbstractBaseEntity implements HasId {
         if (o == null || !getClass().equals(Hibernate.getClass(o))) {
             return false;
         }
-        AbstractBaseEntity that = (AbstractBaseEntity) o;
+        BaseEntity that = (BaseEntity) o;
         return id != null && id.equals(that.id);
     }
 
