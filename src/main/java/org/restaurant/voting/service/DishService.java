@@ -1,5 +1,6 @@
 package org.restaurant.voting.service;
 
+import lombok.RequiredArgsConstructor;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.repository.CrudDishRepository;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
@@ -17,17 +18,12 @@ import java.util.List;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
+@RequiredArgsConstructor
 public class DishService {
 
     private final CrudDishRepository crudDishRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
     private final DishMapper mapper;
-
-    public DishService(CrudDishRepository crudDishRepository, CrudRestaurantRepository crudRestaurantRepository, DishMapper mapper) {
-        this.crudDishRepository = crudDishRepository;
-        this.crudRestaurantRepository = crudRestaurantRepository;
-        this.mapper = mapper;
-    }
 
     @CacheEvict(value = "dishes", allEntries = true)
     @Transactional

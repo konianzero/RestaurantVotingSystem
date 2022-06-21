@@ -1,5 +1,6 @@
 package org.restaurant.voting.service;
 
+import lombok.RequiredArgsConstructor;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.repository.CrudUserRepository;
@@ -21,6 +22,7 @@ import static java.time.LocalDate.now;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
+@RequiredArgsConstructor
 public class VoteService {
 
     @Value("${app.vote_endtime}")
@@ -30,12 +32,6 @@ public class VoteService {
     private final CrudVoteRepository crudVoteRepository;
     private final CrudUserRepository crudUserRepository;
     private final CrudRestaurantRepository crudRestaurantRepository;
-
-    public VoteService(CrudVoteRepository crudVoteRepository, CrudUserRepository crudUserRepository, CrudRestaurantRepository crudRestaurantRepository) {
-        this.crudVoteRepository = crudVoteRepository;
-        this.crudUserRepository = crudUserRepository;
-        this.crudRestaurantRepository = crudRestaurantRepository;
-    }
 
     @Transactional
     public Vote create(int restaurantId, int userId) {

@@ -1,5 +1,6 @@
 package org.restaurant.voting.service;
 
+import lombok.RequiredArgsConstructor;
 import org.restaurant.voting.model.Restaurant;
 import org.restaurant.voting.repository.CrudRestaurantRepository;
 import org.restaurant.voting.to.RestaurantTo;
@@ -16,16 +17,12 @@ import java.util.List;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
+@RequiredArgsConstructor
 public class RestaurantService {
 
     private final LocalDate today = LocalDate.now();
     private final CrudRestaurantRepository crudRestaurantRepository;
     private final RestaurantMapper mapper;
-
-    public RestaurantService(CrudRestaurantRepository crudRestaurantRepository, RestaurantMapper mapper) {
-        this.crudRestaurantRepository = crudRestaurantRepository;
-        this.mapper = mapper;
-    }
 
     @Transactional
     public Restaurant create(RestaurantTo restaurantTo) {

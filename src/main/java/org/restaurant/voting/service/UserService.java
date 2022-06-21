@@ -1,5 +1,6 @@
 package org.restaurant.voting.service;
 
+import lombok.RequiredArgsConstructor;
 import org.restaurant.voting.AuthorizedUser;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.CrudUserRepository;
@@ -22,16 +23,12 @@ import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFound
 
 @Service("userService")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private static final Sort SORT_BY_DATE = Sort.by(Sort.Direction.DESC, "registered");
 
     private final CrudUserRepository crudUserRepository;
     private final UserMapper mapper;
-
-    public UserService(CrudUserRepository crudUserRepository, UserMapper mapper) {
-        this.crudUserRepository = crudUserRepository;
-        this.mapper = mapper;
-    }
 
     public User create(User user) {
         Assert.notNull(user, "User must be not null");
