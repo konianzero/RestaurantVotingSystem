@@ -1,7 +1,12 @@
 package org.restaurant.voting.util.exception;
 
-public class VotingTimeOverException extends RuntimeException {
-    public VotingTimeOverException(String message) {
-        super(message);
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.http.HttpStatus;
+
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.MESSAGE;
+
+public class VotingTimeOverException extends AppException {
+    public VotingTimeOverException(String msg) {
+        super(HttpStatus.CONFLICT, msg, ErrorAttributeOptions.of(MESSAGE));
     }
 }

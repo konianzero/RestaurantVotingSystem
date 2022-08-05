@@ -2,7 +2,7 @@ package org.restaurant.voting.web;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.restaurant.voting.util.exception.*;
+import org.restaurant.voting.util.exception.AppException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.core.NestedExceptionUtils;
@@ -21,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.MESSAGE;
 
 @RestControllerAdvice
 @AllArgsConstructor
@@ -71,24 +69,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(), getRootCause(ex).getMessage()), status);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> persistException(WebRequest request, NotFoundException ex) {
-        log.error("NotFoundException: {}", ex.getMessage());
-        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler({DataConflictException.class, VotingTimeOverException.class})
-    public ResponseEntity<Object> dataConflictException(WebRequest request, RuntimeException ex) {
-        log.error("Conflict Exception: {}", ex.getMessage());
-        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(IllegalRequestDataException.class)
-    public ResponseEntity<Object> illegalRequestException(WebRequest request, IllegalRequestDataException ex) {
-        log.error("IllegalRequestDataException: {}", ex.getMessage());
-        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleAllUncaughtException(WebRequest request, RuntimeException ex) {
         log.error("Internal Error", ex);
@@ -97,7 +77,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Map<String, Object>> handleAppException(WebRequest request, AppException ex) {
-        log.error("AppException: {}", ex.getMessage());
+        log.error("{}: {}", ex.getClass().getSimpleName(), ex.getMessage());
         return createResponseEntity(getDefaultBody(request, ex.getOptions(), ex.getMessage()), ex.getStatus());
     }
 
