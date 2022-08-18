@@ -37,7 +37,7 @@ Project uses:
 
 ### Requirements
 
-- JDK 15+
+- JDK 17
 - maven 3
 - Docker 20
 
