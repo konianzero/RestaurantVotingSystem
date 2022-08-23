@@ -20,7 +20,6 @@ import static org.restaurant.voting.util.validation.ValidationUtil.checkNotFound
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    private final LocalDate today = LocalDate.now();
     private final CrudRestaurantRepository crudRestaurantRepository;
     private final RestaurantMapper mapper;
 
@@ -39,7 +38,7 @@ public class RestaurantService {
     }
 
     public Restaurant getWithTodayMenu(int id) {
-        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id, today), id);
+        return checkNotFoundWithId(crudRestaurantRepository.getWithDishes(id, today()), id);
     }
 
     public List<Restaurant> getAll() {
@@ -48,7 +47,7 @@ public class RestaurantService {
 
     @Cacheable(value = "dishes", key = "T(java.lang.String).valueOf(\"all\".toCharArray())")
     public List<Restaurant> getAllWithTodayMenu() {
-        return crudRestaurantRepository.getAllWithDishes(today);
+        return crudRestaurantRepository.getAllWithDishes(today());
     }
 
     @CacheEvict(value = "dishes", allEntries = true)
@@ -61,5 +60,9 @@ public class RestaurantService {
     @CacheEvict(value = "dishes", allEntries = true)
     public void delete(int id) {
         crudRestaurantRepository.deleteExisted(id);
+    }
+
+    private LocalDate today() {
+        return LocalDate.now();
     }
 }
