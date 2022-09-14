@@ -1,11 +1,11 @@
 package org.restaurant.voting.web.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.restaurant.voting.model.Dish;
 import org.restaurant.voting.service.DishService;
 import org.restaurant.voting.to.DishTo;
 import org.restaurant.voting.util.mapper.DishMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +23,13 @@ import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = DishRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
+@RequiredArgsConstructor
 public class DishRestController {
     public static final String REST_URL = "/rest/dishes";
-    private static final Logger log = LoggerFactory.getLogger(DishRestController.class);
 
     private final DishService service;
     private final DishMapper mapper;
-
-    public DishRestController(DishService service, DishMapper mapper) {
-        this.service = service;
-         this.mapper = mapper;
-     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DishTo> createWithLocation(@Valid @RequestBody DishTo dishTo) {
@@ -55,7 +51,7 @@ public class DishRestController {
     }
 
     @GetMapping
-    private List<DishTo> getAllBy(@RequestParam int restaurantId,
+    public List<DishTo> getAllBy(@RequestParam int restaurantId,
                                   @RequestParam Optional<LocalDate> date) {
         log.info("Get all dishes from restaurant {}{}", restaurantId, date.isPresent() ? " for " + date : "");
         return date.map(d -> mapper.getEntityList(service.getAllByRestaurantAndDate(restaurantId, d)))

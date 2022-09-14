@@ -1,12 +1,12 @@
 package org.restaurant.voting.web.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.restaurant.voting.model.Vote;
 import org.restaurant.voting.service.VoteService;
 import org.restaurant.voting.to.VoteTo;
 import org.restaurant.voting.util.SecurityUtil;
 import org.restaurant.voting.util.mapper.VoteMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
+@RequiredArgsConstructor
 public class VoteRestController {
     public static final String REST_URL = "/rest/votes";
-    private static final Logger log = LoggerFactory.getLogger(VoteRestController.class);
 
     private final VoteService service;
     private final VoteMapper mapper;
-
-    public VoteRestController(VoteService service, VoteMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VoteTo> voteToday(@RequestParam int restaurantId) {

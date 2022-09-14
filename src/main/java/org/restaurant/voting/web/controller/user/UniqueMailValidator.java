@@ -1,5 +1,6 @@
 package org.restaurant.voting.web.controller.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -9,13 +10,10 @@ import org.restaurant.voting.model.User;
 import org.restaurant.voting.repository.CrudUserRepository;
 
 @Component
+@RequiredArgsConstructor
 public class UniqueMailValidator implements org.springframework.validation.Validator {
 
     private final CrudUserRepository crudUserRepository;
-
-    public UniqueMailValidator(CrudUserRepository crudUserRepository) {
-        this.crudUserRepository = crudUserRepository;
-    }
 
     @Override
     public boolean supports(Class<?> clazz) {

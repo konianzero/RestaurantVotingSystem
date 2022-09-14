@@ -1,12 +1,11 @@
 package org.restaurant.voting.web.controller.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.restaurant.voting.HasId;
 import org.restaurant.voting.model.User;
 import org.restaurant.voting.service.UserService;
 import org.restaurant.voting.to.UserTo;
 import org.restaurant.voting.util.mapper.UserMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.BindException;
@@ -20,12 +19,11 @@ import java.util.List;
 import static org.restaurant.voting.util.validation.ValidationUtil.assureIdConsistent;
 import static org.restaurant.voting.util.validation.ValidationUtil.checkNew;
 
+@Slf4j
 public abstract class AbstractUserController {
 
-    protected Logger log = LoggerFactory.getLogger(AbstractUserController.class);
-
     @Autowired
-    protected UserService service;
+    private UserService service;
     @Autowired
     private UserMapper mapper;
     @Autowired
